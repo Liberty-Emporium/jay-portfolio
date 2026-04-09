@@ -1,5 +1,6 @@
 {
-    "photo": "👨‍💻",
+    "photo": "<img src='/static/uploads/jay.jpg' alt='Jay' style='width:100%;height:100%;object-fit:cover;border-radius:50%;'>",
+    "photo_url": "/static/uploads/jay.jpg",
     "name": "Jay Alexander",
     "tagline": "Building the Future with AI & Code",
     "email": "jay@libertyemporium.com",

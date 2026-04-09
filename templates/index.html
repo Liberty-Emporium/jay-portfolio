@@ -56,9 +56,9 @@
         
         .about { padding: 8rem 0; }
         .about-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem; align-items: center; }
-        .about-image-wrapper { position: relative; width: 100%; max-width: 400px; margin: 0 auto; }
-        .about-image-wrapper::before { content: ''; position: absolute; inset: 0; background: var(--gradient-1); border-radius: 24px; opacity: 0.3; transform: rotate(6deg); }
-        .about-image-inner { position: relative; width: 100%; aspect-ratio: 1; background: var(--bg-card); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 6rem; border: 1px solid var(--border); }
+        .about-image-wrapper { position: relative; width: 100%; max-width: 300px; margin: 0 auto; }
+        .about-image-wrapper::before { content: ''; position: absolute; inset: 0; background: var(--gradient-1); border-radius: 50%; opacity: 0.3; transform: rotate(6deg); }
+        .about-image-inner { position: relative; width: 100%; aspect-ratio: 1; background: transparent; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; border: none; }
         .about-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem; }
         .about-content p { color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1.5rem; }
         .skills { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
@@ -135,7 +135,7 @@
             <div class="about-grid">
                 <div class="about-image">
                     <div class="about-image-wrapper">
-                        <div class="about-image-inner"><img src='/static/uploads/jay.jpg' alt='Jay' style='width:100%;height:100%;object-fit:cover;border-radius:50%;'></div>
+                        <div class="about-image-inner">src='/static/uploads/jay.jpg' alt='Jay' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;'>
                     </div>
                 </div>
                 <div class="about-content">

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay Alexander | Developer Portfolio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            min-height: 100vh;
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.4);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            color: var(--light);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Projects */
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin: 3rem 0 2rem;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+        
+        .project-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+            animation: fadeIn 0.8s ease;
+            animation-fill-mode: both;
+        }
+        
+        .project-card:nth-child(1) { animation-delay: 0.1s; }
+        .project-card:nth-child(2) { animation-delay: 0.2s; }
+        .project-card:nth-child(3) { animation-delay: 0.3s; }
+        .project-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .project-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .project-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-card p {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        .project-links {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--light);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .tech {
+            padding: 0.4rem 0.8rem;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #a5b4fc;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+            margin-top: 3rem;
+        }
+        
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .stats { gap: 1.5rem; }
+            .stat-value { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero -->
+        <div class="hero">
+            <div class="avatar">👨‍💻</div>
+            <h1>Jay Alexander</h1>
+            <p class="tagline">Building AI-powered solutions for businesses</p>
+            <p style="max-width: 600px; margin: 0 auto 1rem; color: var(--gray);">
+                Entrepreneur & Developer creating powerful web applications with AI integration. 
+                From inventory management to pet health diagnostics — I build tools that help businesses grow.
+            </p>
+            <div class="tech-stack">
+                <span class="tech">Python</span>
+                <span class="tech">Flask</span>
+                <span class="tech">React</span>
+                <span class="tech">AI/ML</span>
+                <span class="tech">Cloud Deployment</span>
+            </div>
+            <div class="social-links">
+                <a href="mailto:jay@libertyemporium.com">📧 Contact</a>
+                <a href="https://github.com/Liberty-Emporium">🐙 GitHub</a>
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">5+</div>
+                <div class="stat-label">Projects Built</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Live Apps</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">AI</div>
+                <div class="stat-label">Integrated</div>
+            </div>
+        </div>
+        
+        <!-- Projects -->
+        <h2 class="section-title">🚀 My Projects</h2>
+        
+        <div class="projects-grid">
+            <!-- GymForge -->
+            <div class="project-card">
+                <div class="project-icon">🏋️</div>
+                <h3>GymForge</h3>
+                <p>All-in-one gym management platform with AI coaching, class scheduling, member management, and 8 role-based portals.</p>
+                <div class="tech-stack">
+                    <span class="tech">Python</span>
+                    <span class="tech">Flask</span>
+                    <span class="tech">AI</span>
+                </div>
+                <div class="project-links">
+                    <a href="https://web-production-1c23.up.railway.app" class="btn btn-primary">Live Demo</a>
+                    <a href="https://github.com/Liberty-Emporium/GymForge" class="btn btn-secondary">GitHub</a>
+                </div>
+            </div>
+            
+            <!-- Liberty Emporium Inventory -->
+            <div class="project-card">
+                <div class="project-icon">🏪</div>
+                <h3>Liberty Emporium Inventory</h3>
+                <p>Inventory management for thrift stores with AI photo analysis, ad generation, and multi-tenant support for resellers.</p>
+                <div class="tech-stack">
+                    <span class="tech">Python</span>
+                    <span class="tech">Flask</span>
+                    <span class="tech">Claude AI</span>
+                </div>
+                <div class="project-links">
+                    <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" class="btn btn-primary">Live Demo</a>
+                    <a href="https://github.com/Liberty-Emporium/Liberty-Emporium-Inventory-App" class="btn btn-secondary">GitHub</a>
+                </div>
+            </div>
+            
+            <!-- Pet Vet AI -->
+            <div class="project-card">
+                <div class="project-icon">🐕</div>
+                <h3>Pet Vet AI</h3>
+                <p>AI-powered pet health diagnosis. Upload a photo of symptoms and get AI analysis with possible conditions.</p>
+                <div class="tech-stack">
+                    <span class="tech">Python</span>
+                    <span class="tech">Flask</span>
+                    <span class="tech">Groq AI</span>
+                </div>
+                <div class="project-links">
+                    <a href="https://pet-vet-ai-production.up.railway.app" class="btn btn-primary">Live Demo</a>
+                    <a href="https://github.com/Liberty-Emporium/Pet-Vet-AI" class="btn btn-secondary">GitHub</a>
+                </div>
+            </div>
+            
+            <!-- My AI Platform -->
+            <div class="project-card">
+                <div class="project-icon">💬</div>
+                <h3>My AI Platform</h3>
+                <p>Chat with AI using Groq's fast inference. Multiple AI models available with easy-to-use interface.</p>
+                <div class="tech-stack">
+                    <span class="tech">Next.js</span>
+                    <span class="tech">React</span>
+                    <span class="tech">Groq</span>
+                </div>
+                <div class="project-links">
+                    <a href="https://my-ai-platform-production.up.railway.app" class="btn btn-primary">Live Demo</a>
+                    <a href="https://github.com/Liberty-Emporium/my-ai-platform" class="btn btn-secondary">GitHub</a>
+                </div>
+            </div>
+            
+            <!-- AI API Tracker -->
+            <div class="project-card">
+                <div class="project-icon">🔑</div>
+                <h3>AI API Tracker</h3>
+                <p>SaaS app to track all your AI API keys in one place. Sign up, add keys, manage providers.</p>
+                <div class="tech-stack">
+                    <span class="tech">Python</span>
+                    <span class="tech">Flask</span>
+                    <span class="tech">SQLite</span>
+                </div>
+                <div class="project-links">
+                    <a href="https://ai-api-tracker-production.up.railway.app" class="btn btn-primary">Live Demo</a>
+                    <a href="https://github.com/Liberty-Emporium/ai-api-tracker" class="btn btn-secondary">GitHub</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact -->
+        <div style="text-align: center; margin-top: 4rem; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 16px;">
+            <h2 style="margin-bottom: 1rem;">📬 Let's Work Together</h2>
+            <p style="color: var(--gray); margin-bottom: 1.5rem;">
+                Interested in custom software, AI integration, or web development?<br>
+                I'd love to hear about your project!
+            </p>
+            <a href="mailto:jay@libertyemporium.com" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                Get In Touch
+            </a>
+        </div>
+        
+        <footer>
+            <p>© 2026 Jay Alexander | Built with 💜 and AI</p>
+            <p><a href="https://github.com/Liberty-Emporium">GitHub</a> • <a href="mailto:jay@libertyemporium.com">Contact</a></p>
+        </footer>
+    </div>
+</body>
+</html>

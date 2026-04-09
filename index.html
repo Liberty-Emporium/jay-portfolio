@@ -3,376 +3,1008 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jay Alexander - Building AI-powered solutions for businesses. Entrepreneur & Developer creating powerful web applications.">
     <title>Jay Alexander | Developer Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        /* ========================================
+           CSS VARIABLES & RESET
+           ======================================== */
         :root {
-            --primary: #6366f1;
-            --secondary: #8b5cf6;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-            --gray: #64748b;
+            --bg-primary: #030712;
+            --bg-secondary: #0a0f1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2234;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #a78bfa;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #1f2937;
+            --border-light: #374151;
+            --success: #10b981;
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+            --gradient-dark: linear-gradient(180deg, #030712 0%, #0a0f1a 100%);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px var(--accent-glow);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
         }
-        
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
-            min-height: 100vh;
-            color: var(--light);
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
+            overflow-x: hidden;
         }
-        
+
+        /* ========================================
+           UTILITIES
+           ======================================== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0 1.5rem;
         }
-        
-        /* Hero */
-        .hero {
-            text-align: center;
-            padding: 4rem 1rem;
-            animation: fadeIn 0.8s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 0 60px rgba(99, 102, 241, 0.4);
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fff, #94a3b8);
+
+        .gradient-text {
+            background: var(--gradient-1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
-        .tagline {
-            font-size: 1.3rem;
-            color: var(--gray);
-            margin-bottom: 2rem;
+
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
         }
-        
-        .social-links {
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 0;
+            background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-cta {
+            background: var(--gradient-1);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 0 4rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+            animation: subtleFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes subtleFloat {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(2%, 2%); }
+            50% { transform: translate(0, 4%); }
+            75% { transform: translate(-2%, 2%); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--accent-tertiary);
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            animation: slideUp 0.8s ease forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+
+        .hero h1 .highlight {
+            position: relative;
+        }
+
+        .hero h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            animation: slideUp 0.8s ease forwards;
+            animation-delay: 0.4s;
+            opacity: 0;
+        }
+
+        .hero-cta {
             display: flex;
             gap: 1rem;
             justify-content: center;
-            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            animation: slideUp 0.8s ease forwards;
+            animation-delay: 0.6s;
+            opacity: 0;
         }
-        
-        .social-links a {
-            color: var(--light);
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        
-        .social-links a:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        /* Stats */
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .stat-label {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        /* Projects */
-        .section-title {
-            text-align: center;
-            font-size: 2rem;
-            margin: 3rem 0 2rem;
-        }
-        
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-            padding: 1rem;
-        }
-        
-        .project-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s;
-            animation: fadeIn 0.8s ease;
-            animation-fill-mode: both;
-        }
-        
-        .project-card:nth-child(1) { animation-delay: 0.1s; }
-        .project-card:nth-child(2) { animation-delay: 0.2s; }
-        .project-card:nth-child(3) { animation-delay: 0.3s; }
-        .project-card:nth-child(4) { animation-delay: 0.4s; }
-        
-        .project-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .project-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .project-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .project-card p {
-            color: var(--gray);
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-        
-        .project-links {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-        
+
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
             text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
         }
-        
+
         .btn-primary {
-            background: var(--primary);
+            background: var(--gradient-1);
             color: white;
+            box-shadow: var(--shadow-md);
         }
-        
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+
         .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: var(--light);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-muted);
         }
-        
-        /* Tech Stack */
-        .tech-stack {
+
+        /* ========================================
+           STATS SECTION
+           ======================================== */
+        .stats {
+            padding: 4rem 0;
+            border-y: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* ========================================
+           ABOUT SECTION
+           ======================================== */
+        .about {
+            padding: 8rem 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-image {
+            position: relative;
+        }
+
+        .about-image-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .about-image-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-1);
+            border-radius: 24px;
+            opacity: 0.3;
+            transform: rotate(6deg);
+        }
+
+        .about-image-inner {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--bg-card);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            border: 1px solid var(--border);
+        }
+
+        .about-content h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-content p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .skills {
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
-            justify-content: center;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
         }
-        
-        .tech {
-            padding: 0.4rem 0.8rem;
-            background: rgba(99, 102, 241, 0.2);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: #a5b4fc;
+
+        .skill-tag {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--accent-tertiary);
         }
-        
-        /* Footer */
-        footer {
+
+        /* ========================================
+           PROJECTS SECTION
+           ======================================== */
+        .projects {
+            padding: 8rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .section-header {
             text-align: center;
-            padding: 3rem;
-            color: var(--gray);
-            margin-top: 3rem;
+            margin-bottom: 4rem;
         }
-        
-        footer a {
-            color: var(--primary);
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-xl), 0 0 30px rgba(99, 102, 241, 0.15);
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .project-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-tech span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
             text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s;
         }
-        
+
+        .project-link:hover {
+            color: var(--accent-tertiary);
+        }
+
+        .project-link.primary {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ========================================
+           SERVICES SECTION
+           ======================================== */
+        .services {
+            padding: 8rem 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ========================================
+           CONTACT SECTION
+           ======================================== */
+        .contact {
+            padding: 8rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .contact-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .contact p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .contact-form .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
         @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .stats { gap: 1.5rem; }
-            .stat-value { font-size: 1.8rem; }
+            .nav-links { display: none; }
+            .hero { padding: 6rem 0 3rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .about-image-wrapper { max-width: 300px; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .footer-content { flex-direction: column; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-value { font-size: 2rem; }
+            .hero-cta { flex-direction: column; }
+            .hero-cta .btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Hero -->
-        <div class="hero">
-            <div class="avatar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);"></div>
-            <h1>Jay Alexander</h1>
-            <p class="tagline">Building AI-powered solutions for businesses</p>
-            <p style="max-width: 600px; margin: 0 auto 1rem; color: var(--gray);">
-                Entrepreneur & Developer creating powerful web applications with AI integration. 
-                From inventory management to pet health diagnostics — I build tools that help businesses grow.
-            </p>
-            <div class="tech-stack">
-                <span class="tech">Python</span>
-                <span class="tech">Flask</span>
-                <span class="tech">React</span>
-                <span class="tech">AI/ML</span>
-                <span class="tech">Cloud Deployment</span>
-            </div>
-            <div class="social-links">
-                <a href="mailto:jay@libertyemporium.com">📧 Contact</a>
-                <a href="https://github.com/Liberty-Emporium">🐙 GitHub</a>
-            </div>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#" class="nav-logo">JA</a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#contact" class="nav-cta">Let's Talk</a>
         </div>
-        
-        <!-- Stats -->
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value">5+</div>
-                <div class="stat-label">Projects Built</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">4</div>
-                <div class="stat-label">Live Apps</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">AI</div>
-                <div class="stat-label">Integrated</div>
-            </div>
-        </div>
-        
-        <!-- Projects -->
-        <h2 class="section-title">🚀 My Projects</h2>
-        
-        <div class="projects-grid">
-            <!-- GymForge -->
-            <div class="project-card">
-                <div class="project-icon">🏋️</div>
-                <h3>GymForge</h3>
-                <p>All-in-one gym management platform with AI coaching, class scheduling, member management, and 8 role-based portals.</p>
-                <div class="tech-stack">
-                    <span class="tech">Python</span>
-                    <span class="tech">Flask</span>
-                    <span class="tech">AI</span>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>Available for Projects</span>
                 </div>
-                <div class="project-links">
-                    <a href="https://web-production-1c23.up.railway.app" class="btn btn-primary">Live Demo</a>
-                    <a href="https://github.com/Liberty-Emporium/GymForge" class="btn btn-secondary">GitHub</a>
-                </div>
-            </div>
-            
-            <!-- Liberty Emporium Inventory -->
-            <div class="project-card">
-                <div class="project-icon">🏪</div>
-                <h3>Liberty Emporium Inventory</h3>
-                <p>Inventory management for thrift stores with AI photo analysis, ad generation, and multi-tenant support for resellers.</p>
-                <div class="tech-stack">
-                    <span class="tech">Python</span>
-                    <span class="tech">Flask</span>
-                    <span class="tech">Claude AI</span>
-                </div>
-                <div class="project-links">
-                    <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" class="btn btn-primary">Live Demo</a>
-                    <a href="https://github.com/Liberty-Emporium/Liberty-Emporium-Inventory-App" class="btn btn-secondary">GitHub</a>
-                </div>
-            </div>
-            
-            <!-- Pet Vet AI -->
-            <div class="project-card">
-                <div class="project-icon">🐕</div>
-                <h3>Pet Vet AI</h3>
-                <p>AI-powered pet health diagnosis. Upload a photo of symptoms and get AI analysis with possible conditions.</p>
-                <div class="tech-stack">
-                    <span class="tech">Python</span>
-                    <span class="tech">Flask</span>
-                    <span class="tech">Groq AI</span>
-                </div>
-                <div class="project-links">
-                    <a href="https://pet-vet-ai-production.up.railway.app" class="btn btn-primary">Live Demo</a>
-                    <a href="https://github.com/Liberty-Emporium/Pet-Vet-AI" class="btn btn-secondary">GitHub</a>
-                </div>
-            </div>
-            
-            <!-- My AI Platform -->
-            <div class="project-card">
-                <div class="project-icon">💬</div>
-                <h3>My AI Platform</h3>
-                <p>Chat with AI using Groq's fast inference. Multiple AI models available with easy-to-use interface.</p>
-                <div class="tech-stack">
-                    <span class="tech">Next.js</span>
-                    <span class="tech">React</span>
-                    <span class="tech">Groq</span>
-                </div>
-                <div class="project-links">
-                    <a href="https://my-ai-platform-production.up.railway.app" class="btn btn-primary">Live Demo</a>
-                    <a href="https://github.com/Liberty-Emporium/my-ai-platform" class="btn btn-secondary">GitHub</a>
-                </div>
-            </div>
-            
-            <!-- AI API Tracker -->
-            <div class="project-card">
-                <div class="project-icon">🔑</div>
-                <h3>AI API Tracker</h3>
-                <p>SaaS app to track all your AI API keys in one place. Sign up, add keys, manage providers.</p>
-                <div class="tech-stack">
-                    <span class="tech">Python</span>
-                    <span class="tech">Flask</span>
-                    <span class="tech">SQLite</span>
-                </div>
-                <div class="project-links">
-                    <a href="https://ai-api-tracker-production.up.railway.app" class="btn btn-primary">Live Demo</a>
-                    <a href="https://github.com/Liberty-Emporium/ai-api-tracker" class="btn btn-secondary">GitHub</a>
+                <h1>
+                    Building the Future with <span class="gradient-text highlight">AI & Code</span>
+                </h1>
+                <p>
+                    Entrepreneur & Developer crafting powerful web applications with AI integration. 
+                    From inventory management to pet health diagnostics — I build tools that help businesses grow.
+                </p>
+                <div class="hero-cta">
+                    <a href="#projects" class="btn btn-primary">
+                        View My Work
+                    </a>
+                    <a href="#contact" class="btn btn-secondary">
+                        Get In Touch
+                    </a>
                 </div>
             </div>
         </div>
-        
-        <!-- Contact -->
-        <div style="text-align: center; margin-top: 4rem; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 16px;">
-            <h2 style="margin-bottom: 1rem;">📬 Let's Work Together</h2>
-            <p style="color: var(--gray); margin-bottom: 1.5rem;">
-                Interested in custom software, AI integration, or web development?<br>
-                I'd love to hear about your project!
-            </p>
-            <a href="mailto:jay@libertyemporium.com" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
-                Get In Touch
-            </a>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">5+</div>
+                    <div class="stat-label">Projects Built</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Live Apps</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3+</div>
+                    <div class="stat-label">AI Integrations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Dedication</div>
+                </div>
+            </div>
         </div>
-        
-        <footer>
-            <p>© 2026 Jay Alexander | Built with 💜 and AI</p>
-            <p><a href="https://github.com/Liberty-Emporium">GitHub</a> • <a href="mailto:jay@libertyemporium.com">Contact</a></p>
-        </footer>
-    </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <div class="about-image-wrapper">
+                        <div class="about-image-inner">
+                            👨‍💻
+                        </div>
+                    </div>
+                </div>
+                <div class="about-content">
+                    <h2>About Me</h2>
+                    <p>
+                        I'm Jay Alexander — an entrepreneur and developer building AI-powered solutions 
+                        that solve real business problems. I specialize in creating intelligent web applications 
+                        that help businesses streamline operations and grow.
+                    </p>
+                    <p>
+                        From gym management platforms with AI coaching to inventory systems with computer vision,
+                        my work combines cutting-edge AI technology with practical, user-friendly design. 
+                        Every project is built with attention to detail and a focus on delivering real value.
+                    </p>
+                    <div class="skills">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Flask</span>
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">AI/ML</span>
+                        <span class="skill-tag">Cloud Deploy</span>
+                        <span class="skill-tag">SQL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Projects</h2>
+                <p>A selection of my recent work — each one built with care and powered by AI</p>
+            </div>
+            <div class="projects-grid">
+                <!-- GymForge -->
+                <div class="project-card">
+                    <div class="project-icon">🏋️</div>
+                    <h3>GymForge</h3>
+                    <p>All-in-one gym management platform with AI coaching, class scheduling, member management, and 8 role-based portals.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Flask</span>
+                        <span>AI</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://web-production-1c23.up.railway.app" class="project-link primary" target="_blank">Live Demo →</a>
+                        <a href="https://github.com/Liberty-Emporium/GymForge" class="project-link" target="_blank">GitHub →</a>
+                    </div>
+                </div>
+
+                <!-- Liberty Emporium Inventory -->
+                <div class="project-card">
+                    <div class="project-icon">🏪</div>
+                    <h3>Liberty Emporium Inventory</h3>
+                    <p>Inventory management for thrift stores with AI photo analysis, ad generation, and multi-tenant support for resellers.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Flask</span>
+                        <span>Claude AI</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" class="project-link primary" target="_blank">Live Demo →</a>
+                        <a href="https://github.com/Liberty-Emporium/Liberty-Emporium-Inventory-App" class="project-link" target="_blank">GitHub →</a>
+                    </div>
+                </div>
+
+                <!-- Pet Vet AI -->
+                <div class="project-card">
+                    <div class="project-icon">🐕</div>
+                    <h3>Pet Vet AI</h3>
+                    <p>AI-powered pet health diagnosis. Upload a photo of symptoms and get instant AI analysis with possible conditions.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Flask</span>
+                        <span>Groq AI</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://pet-vet-ai-production.up.railway.app" class="project-link primary" target="_blank">Live Demo →</a>
+                        <a href="https://github.com/Liberty-Emporium/Pet-Vet-AI" class="project-link" target="_blank">GitHub →</a>
+                    </div>
+                </div>
+
+                <!-- AI API Tracker -->
+                <div class="project-card">
+                    <div class="project-icon">🔑</div>
+                    <h3>AI API Tracker</h3>
+                    <p>SaaS app to track all your AI API keys in one place. Sign up, add keys, manage providers securely.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Flask</span>
+                        <span>SQLite</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://ai-api-tracker-production.up.railway.app" class="project-link primary" target="_blank">Live Demo →</a>
+                        <a href="https://github.com/Liberty-Emporium/ai-api-tracker" class="project-link" target="_blank">GitHub →</a>
+                    </div>
+                </div>
+
+                <!-- My AI Platform -->
+                <div class="project-card">
+                    <div class="project-icon">💬</div>
+                    <h3>My AI Platform</h3>
+                    <p>Chat with AI using Groq's fast inference. Multiple AI models available with easy-to-use interface.</p>
+                    <div class="project-tech">
+                        <span>Next.js</span>
+                        <span>React</span>
+                        <span>Groq</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://my-ai-platform-production.up.railway.app" class="project-link primary" target="_blank">Live Demo →</a>
+                        <a href="https://github.com/Liberty-Emporium/my-ai-platform" class="project-link" target="_blank">GitHub →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>What I Do</h2>
+                <p>Specialized services for businesses ready to embrace AI</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🤖</div>
+                    <h3>AI Integration</h3>
+                    <p>Add intelligent AI features to your existing apps — from chatbots to image recognition.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🌐</div>
+                    <h3>Web Development</h3>
+                    <p>Custom web applications built with modern tech — fast, secure, and scalable.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📱</div>
+                    <h3>Mobile Apps</h3>
+                    <p>Responsive designs that work perfectly on any device — phone, tablet, or desktop.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">☁️</div>
+                    <h3>Cloud Deployment</h3>
+                    <p>Deploy and manage your apps in the cloud with professional infrastructure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content">
+                <h2>Let's Build Something Amazing</h2>
+                <p>Have a project in mind? I'd love to hear about it. Let's discuss how AI and custom software can help your business grow.</p>
+                <form class="contact-form" action="mailto:jay@libertyemporium.com" method="post" enctype="text/plain">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="Tell me about your project..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Send Message 🚀
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">Jay Alexander</div>
+                <div class="footer-links">
+                    <a href="https://github.com/Liberty-Emporium">GitHub</a>
+                    <a href="mailto:jay@libertyemporium.com">Email</a>
+                </div>
+                <p class="footer-copy">© 2026 Jay Alexander. Built with 💜 and AI.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

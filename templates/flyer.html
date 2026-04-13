@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Court Statement Flyer — Jay Alexander</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #e5e7eb; color: #1a1a2e; }
+
+    @media print {
+      body { background: white; }
+      .no-print { display: none !important; }
+      .page { box-shadow: none !important; margin: 0 !important; page-break-after: always; }
+      .page:last-child { page-break-after: avoid; }
+    }
+
+    /* Print controls */
+    .print-bar { background: #1a1a2e; padding: 0.85rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .print-bar span { color: #a5b4fc; font-size: 0.85rem; font-weight: 600; }
+    .print-btn { background: #6366f1; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+    .print-btn:hover { background: #4f46e5; }
+
+    /* Page shell */
+    .page { 
+      width: 8.5in; min-height: 11in; 
+      margin: 1.5rem auto; 
+      background: white; 
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+    }
+
+    /* Top stripe */
+    .top-stripe { background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); padding: 2.2rem 2.5rem 2rem; color: white; }
+    .top-label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: #a5b4fc; margin-bottom: 0.5rem; }
+    .top-title { font-family: 'Merriweather', serif; font-size: 1.9rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.35rem; }
+    .top-title span { color: #a5b4fc; }
+    .top-sub { font-size: 0.88rem; color: #94a3b8; }
+
+    /* Body layout */
+    .body { padding: 1.5rem 2.5rem; flex: 1; display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* QR + intro row */
+    .qr-row { display: flex; gap: 1.5rem; align-items: flex-start; }
+    .qr-block { flex-shrink: 0; text-align: center; }
+    .qr-block img { width: 150px; height: 150px; border: 3px solid #1a1a2e; border-radius: 10px; display: block; }
+    .qr-label { font-size: 0.7rem; font-weight: 700; color: #6366f1; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 0.4rem; }
+    .qr-url { font-size: 0.62rem; color: #6b7280; font-family: monospace; margin-top: 0.2rem; word-break: break-all; }
+    .intro-text { flex: 1; }
+    .intro-text h3 { font-size: 1rem; font-weight: 800; color: #1a1a2e; margin-bottom: 0.4rem; }
+    .intro-text p { font-size: 0.82rem; color: #374151; line-height: 1.65; }
+
+    /* Section */
+    .section-head { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; margin-bottom: 0.4rem; }
+    .divider { border: none; border-top: 1.5px solid #e5e7eb; margin: 0; }
+
+    /* Medical box */
+    .med-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 10px; padding: 1rem 1.25rem; display: flex; gap: 1rem; align-items: flex-start; }
+    .med-box .med-text h4 { color: #c2410c; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .med-box .med-text p { font-size: 0.78rem; color: #7c2d12; line-height: 1.6; }
+
+    /* Apps grid */
+    .apps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .app-item { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.65rem 0.85rem; }
+    .app-item .app-name { font-weight: 700; font-size: 0.82rem; color: #1a1a2e; }
+    .app-item .app-price { font-size: 0.72rem; color: #059669; font-weight: 600; margin-top: 0.15rem; }
+    .app-item .app-url { font-size: 0.62rem; color: #6366f1; font-family: monospace; margin-top: 0.15rem; word-break: break-all; }
+
+    /* Payment table */
+    .pay-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .pay-table th { background: #1a1a2e; color: white; padding: 0.45rem 0.7rem; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .pay-table td { padding: 0.45rem 0.7rem; border-bottom: 1px solid #f1f5f9; color: #374151; }
+    .pay-table tr:nth-child(even) td { background: #f8fafc; }
+    .pay-table .total td { font-weight: 800; background: #ede9fe !important; color: #1a1a2e; }
+
+    /* Quote */
+    .quote-block { border-left: 3px solid #6366f1; padding: 0.75rem 1rem; background: #f5f3ff; border-radius: 0 8px 8px 0; }
+    .quote-block p { font-size: 0.82rem; font-style: italic; color: #1e293b; line-height: 1.65; }
+    .quote-block .attr { font-size: 0.7rem; color: #6b7280; font-weight: 700; margin-top: 0.35rem; }
+
+    /* Footer stripe */
+    .bottom-stripe { background: #1a1a2e; color: #64748b; padding: 0.75rem 2.5rem; font-size: 0.7rem; display: flex; justify-content: space-between; }
+    .bottom-stripe strong { color: #a5b4fc; }
+
+    /* Version badge */
+    .version-badge { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 100px; letter-spacing: 0.05em; }
+  </style>
+</head>
+<body>
+
+<!-- Print bar -->
+<div class="print-bar no-print">
+  <span>📄 Print-Ready Flyer — Two versions: Lawyer &amp; Judge</span>
+  <button class="print-btn" onclick="window.print()">🖨️ Print Both Flyers</button>
+</div>
+
+<!-- ============================== -->
+<!-- FLYER 1: LAWYER VERSION        -->
+<!-- ============================== -->
+<div class="page">
+  <div class="top-stripe">
+    <div class="version-badge">FOR YOUR ATTORNEY</div>
+    <div class="top-label">Statement of Good Faith &amp; Repayment Plan</div>
+    <div class="top-title">Jay Alexander<br><span>Technology Entrepreneur</span></div>
+    <div class="top-sub">Formal documentation of active work, medical context, and committed repayment plan · April 2026</div>
+  </div>
+
+  <div class="body">
+
+    <!-- QR + intro -->
+    <div class="qr-row">
+      <div class="qr-block">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdYAAAHWCAIAAABFeD8NAAAKpklEQVR4nO3dwbHcyBFAQVFBL9YI+W+GjFg7RtfVpcWNZukVMJlXxh+AA8yLvlTUj8/n8w8ACv+sbwDge0kwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDMz7mP/uOPf819eOLPP/99+Nfz/3fub8/mPnnuunN/+z5z38bcW/dEc78Up2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCAzOB03NnctMmNuameav5t7m+feM9PVM2/zb2x3/bbP3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshk03Fnc5Mqc5M5N7NGN5NIO/ew+eRf/+SzamqrmmF74m//hlMwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQGbpdNwTVXNoO69749v2ku2c2Lz5ZH6dUzBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAxnTcV5vbaVZtS5vbpDd33bk5w2oqj1/nFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQWTodZ27nr6oZp2qzXDWz975Zsifujnvi93zDKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggk03Hze3Lep+5ma6df3u2856rvXM7n9GZ3/5fOQUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZH58Pp/6Hvgf5nZ87ZyeOtt5V2dz2/Dmrsv/h1MwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQCbbHXdjbotX9ck3dm5pq1R3tXNWcKcn/hbmvmenYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMtjtu56TKWTUttnOaqNrhVt1zNXlV/VKqb/Js5x7FG07BABkJBshIMEBGggEyEgyQkWCAjAQDZCQYICPBAJnB6bhqm9acnVN5c943AXVz3Z1b2qopxBs7y1A9X6dggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+6Jdu5Su7Fzhu2J04Bzdk7lnZlv/HVOwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQCZn/UN/H4759DOnjgRdDNLtnOK6X172Oa2/71v/q16J52CATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATJLd8d925xSpbrnnbNVO6979r67OqumAec4BQNkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkHrk7bufszdyurbPqujd2TrhV39XOb+PGt83d3XAKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsgMTsftnMs627nh7eau3jcBdTPhdnPP1VTeznfyxs450opTMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEDmx+fzGfronZu4dm4e2zm3czO19b5v42xuwu19b+zce1Xd1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDM4O64narJq2o+6mznHFo1p2SH2+/ybW/sDadggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggMzg7riznRNQZ++bzKm8bw5t5/v8xF1q79uVd+YUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJB55O64m7mdaofbzdzOE//2xs7ZuZ3f1c75t50TbjfXneMUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJDJpuNuZlGeuIlrzhOniXZO9FXP9+ae5yZF596cG+97N5yCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATKD03FPnK7ZOf92Y27y6ua6ZzfXfd+Gt/fZOVdZcQoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyPz4fD5DH13tYto5A/Nt++6eOMW0cy9Z9U3ufGPfN8HoFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQGdwdd6Oa+Komc27+v3OzVXPm7mpu79ycnfOcZ9UTfOLbfuYUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJBZOh1XbcTaOZV3tnO2auduwJ3f885Zsp0763be1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMNh1XbUs7q2a6dm61mrPz6Z/dPKMnbjvcOUc6p7pnp2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCATDYdV83e7Ny0Vt3Vzlmys53bw3bOZO78pczNRt6o5v2cggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyS3fH3ajmZ8523tXZzTzY3KxRtTvuxs57rp7Ct22lO3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsj8+Hw+9T38be/bLPfETXo7J74qc09h5yzZE2fYdk63OgUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZLLpuJ3TU0/ciDV3Vzfmrlt9VzefXKmm1HY+3xum4wBeSIIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAZnA67tumtm6ue7bzrm6873909m3/37Od++7OTMcBvJAEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+7Gt22m2rmX7Gzn3F2132/Ozm14O69rOg6A/yLBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYIPPC3XE7J2Tetz3sfc/oRjXBuHPT2pwn7n48cwoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyDxyd9xOT9w8dvbEvWQ756OqSdGznZv0qu1/1f/XKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBgg83Puo3funrpxnpB54tzO3DN64ubAJ04wVpN1Z9Ub+8Sn7xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkBmcjjvbOYm0c/PY3HdVffLN9/zEWcFvU/26nzg75xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkMmm4852TqnN2TmXNTdNNPcUqr1zN58897dzqje22js3xykYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYILN0Ou6Jds4L7ZwImtvxdVZ9VzufQmXu+d5ct+IUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJAxHffb7JxSe+Inz3nilNrctFi1DW+n6t1wCgbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbILJ2Oe9/szY1qW9qN83Vvnu/cuzE3H1U9hcrO/X47ZyOdggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEy2XTc+yaCbnzbfrCd01M7JwnPqt/Rzjf2iZyCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATI/Pp9PfQ8AX8opGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMv8Bh2GNMXthxMgAAAAASUVORK5CYII=" alt="QR Code">
+        <div class="qr-label">📱 Scan to View Full Statement</div>
+        <div class="qr-url">jay-portfolio-production.up.railway.app/court</div>
+      </div>
+      <div class="intro-text">
+        <h3>Scan this QR code to view the full interactive statement online.</h3>
+        <p>The linked page includes live links to all five working software applications, the complete repayment schedule, medical context, and Jay's personal statement — all formatted for court review. All app links are clickable and go directly to the live, deployed products.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Medical -->
+    <div>
+      <div class="section-head">Medical Context</div>
+      <div class="med-box">
+        <div class="med-text">
+          <h4>🩺 Cervical Spine Injury — Documented Medical Condition</h4>
+          <p>Jay (Ronald) Alexander has been diagnosed with cervical spondylosis with radiculopathy and degenerative disc disease of the cervical spine. These cause constant chronic pain in the neck and upper back radiating into both shoulders and arms, with numbness, tingling, and weakness. Treated by Dr. Lewis Rogatnick with prescription pain management. This condition significantly limited his ability to perform prior physical employment.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Apps -->
+    <div>
+      <div class="section-head">Live Software Products (Revenue-Generating)</div>
+      <div class="apps-grid">
+        <div class="app-item">
+          <div class="app-name">🏪 Liberty Inventory</div>
+          <div class="app-price">9 setup + 0/mo per client</div>
+          <div class="app-url">liberty-emporium-and-thrift-inventory-app-production.up.railway.app</div>
+        </div>
+        <div class="app-item">
+          <div class="app-name">🚢 Dropship Shipping</div>
+          <div class="app-price">9/month per client</div>
+          <div class="app-url">dropship-shipping-production.up.railway.app</div>
+        </div>
+        <div class="app-item">
+          <div class="app-name">🔑 Andy — Keep Your Secrets</div>
+          <div class="app-price">/mo Pro · 0/mo Enterprise</div>
+          <div class="app-url">ai-api-tracker-production.up.railway.app</div>
+        </div>
+        <div class="app-item">
+          <div class="app-name">🏗️ Contractor Pro AI</div>
+          <div class="app-price">9/month per client</div>
+          <div class="app-url">contractor-pro-ai-production.up.railway.app</div>
+        </div>
+        <div class="app-item">
+          <div class="app-name">🐾 Pet Vet AI</div>
+          <div class="app-price">.99/month per user</div>
+          <div class="app-url">pet-vet-ai-production.up.railway.app</div>
+        </div>
+        <div class="app-item" style="background:#f5f3ff; border-color:#c4b5fd;">
+          <div class="app-name" style="color:#6d28d9;">🤖 AI CEO (Built-in to all apps)</div>
+          <div class="app-price" style="color:#7c3aed;">Core differentiator feature</div>
+          <div class="app-url" style="color:#8b5cf6;">Fully functional AI in every product</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Payment -->
+    <div>
+      <div class="section-head">Proposed Repayment Plan — 0,000 Balance</div>
+      <table class="pay-table">
+        <thead><tr><th>Period</th><th>Est. Monthly Revenue</th><th>Court Payment</th><th>Running Balance</th></tr></thead>
+        <tbody>
+          <tr><td>Month 1–3 (Ramp)</td><td>00 – 00</td><td>50/mo</td><td>~,250</td></tr>
+          <tr><td>Month 4–6</td><td>00 – ,200</td><td>00/mo</td><td>~,850</td></tr>
+          <tr><td>Month 7–12</td><td>,200 – ,500</td><td>00/mo</td><td>~,250</td></tr>
+          <tr><td>Month 13–18</td><td>,500+</td><td>00/mo</td><td>~sh</td></tr>
+          <tr class="total"><td>✅ Paid in Full</td><td>Growing monthly</td><td>Escalating plan</td><td>≤ 18 months</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Quote -->
+    <div class="quote-block">
+      <p>"I have not stopped working. I changed how I work. Every app on this page is proof that I am doing everything in my power to meet my obligations — not run from them."</p>
+      <div class="attr">— Jay Alexander, April 2026</div>
+    </div>
+
+  </div>
+
+  <div class="bottom-stripe">
+    <span>Prepared by <strong>Jay Alexander</strong> · April 2026 · Good Faith Statement for Court</span>
+    <span><strong>jay-portfolio-production.up.railway.app/court</strong></span>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- FLYER 2: JUDGE VERSION         -->
+<!-- ============================== -->
+<div class="page">
+  <div class="top-stripe">
+    <div class="version-badge">FOR THE HONORABLE COURT</div>
+    <div class="top-label">Respectfully Submitted to the Court — Statement of Good Faith</div>
+    <div class="top-title">Jay Alexander<br><span>Requesting Structured Repayment</span></div>
+    <div class="top-sub">Prepared for the Court's consideration · April 2026 · 0,000 balance · Ready to begin payments immediately</div>
+  </div>
+
+  <div class="body">
+
+    <!-- QR + intro -->
+    <div class="qr-row">
+      <div class="qr-block">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdYAAAHWCAIAAABFeD8NAAAKpklEQVR4nO3dwbHcyBFAQVFBL9YI+W+GjFg7RtfVpcWNZukVMJlXxh+AA8yLvlTUj8/n8w8ACv+sbwDge0kwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDMz7mP/uOPf819eOLPP/99+Nfz/3fub8/mPnnuunN/+z5z38bcW/dEc78Up2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCAzOB03NnctMmNuameav5t7m+feM9PVM2/zb2x3/bbP3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshk03Fnc5Mqc5M5N7NGN5NIO/ew+eRf/+SzamqrmmF74m//hlMwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQGbpdNwTVXNoO69749v2ku2c2Lz5ZH6dUzBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAxnTcV5vbaVZtS5vbpDd33bk5w2oqj1/nFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQWTodZ27nr6oZp2qzXDWz975Zsifujnvi93zDKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggk03Hze3Lep+5ma6df3u2856rvXM7n9GZ3/5fOQUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZH58Pp/6Hvgf5nZ87ZyeOtt5V2dz2/Dmrsv/h1MwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQCbbHXdjbotX9ck3dm5pq1R3tXNWcKcn/hbmvmenYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMtjtu56TKWTUttnOaqNrhVt1zNXlV/VKqb/Js5x7FG07BABkJBshIMEBGggEyEgyQkWCAjAQDZCQYICPBAJnB6bhqm9acnVN5c943AXVz3Z1b2qopxBs7y1A9X6dggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+6Jdu5Su7Fzhu2J04Bzdk7lnZlv/HVOwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQCZn/UN/H4759DOnjgRdDNLtnOK6X172Oa2/71v/q16J52CATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATJLd8d925xSpbrnnbNVO6979r67OqumAec4BQNkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkHrk7bufszdyurbPqujd2TrhV39XOb+PGt83d3XAKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsgMTsftnMs627nh7eau3jcBdTPhdnPP1VTeznfyxs450opTMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEDmx+fzGfronZu4dm4e2zm3czO19b5v42xuwu19b+zce1Xd1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDM4O64narJq2o+6mznHFo1p2SH2+/ybW/sDadggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggMzg7riznRNQZ++bzKm8bw5t5/v8xF1q79uVd+YUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJB55O64m7mdaofbzdzOE//2xs7ZuZ3f1c75t50TbjfXneMUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJDJpuNuZlGeuIlrzhOniXZO9FXP9+ae5yZF596cG+97N5yCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATKD03FPnK7ZOf92Y27y6ua6ZzfXfd+Gt/fZOVdZcQoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyPz4fD5DH13tYto5A/Nt++6eOMW0cy9Z9U3ufGPfN8HoFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQGdwdd6Oa+Komc27+v3OzVXPm7mpu79ycnfOcZ9UTfOLbfuYUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJBZOh1XbcTaOZV3tnO2auduwJ3f885Zsp0763be1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMNh1XbUs7q2a6dm61mrPz6Z/dPKMnbjvcOUc6p7pnp2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCATDYdV83e7Ny0Vt3Vzlmys53bw3bOZO78pczNRt6o5v2cggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyS3fH3ajmZ8523tXZzTzY3KxRtTvuxs57rp7Ct22lO3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsj8+Hw+9T38be/bLPfETXo7J74qc09h5yzZE2fYdk63OgUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZLLpuJ3TU0/ciDV3Vzfmrlt9VzefXKmm1HY+3xum4wBeSIIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAZnA67tumtm6ue7bzrm6873909m3/37Od++7OTMcBvJAEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+7Gt22m2rmX7Gzn3F2132/Ozm14O69rOg6A/yLBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYIPPC3XE7J2Tetz3sfc/oRjXBuHPT2pwn7n48cwoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyDxyd9xOT9w8dvbEvWQ756OqSdGznZv0qu1/1f/XKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBgg83Puo3funrpxnpB54tzO3DN64ubAJ04wVpN1Z9Ub+8Sn7xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkBmcjjvbOYm0c/PY3HdVffLN9/zEWcFvU/26nzg75xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkMmm4852TqnN2TmXNTdNNPcUqr1zN58897dzqje22js3xykYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYILN0Ou6Jds4L7ZwImtvxdVZ9VzufQmXu+d5ct+IUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJAxHffb7JxSe+Inz3nilNrctFi1DW+n6t1wCgbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbILJ2Oe9/szY1qW9qN83Vvnu/cuzE3H1U9hcrO/X47ZyOdggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEy2XTc+yaCbnzbfrCd01M7JwnPqt/Rzjf2iZyCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATI/Pp9PfQ8AX8opGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMv8Bh2GNMXthxMgAAAAASUVORK5CYII=" alt="QR Code">
+        <div class="qr-label">📱 Scan to View Full Statement</div>
+        <div class="qr-url">jay-portfolio-production.up.railway.app/court</div>
+      </div>
+      <div class="intro-text">
+        <h3>Your Honor — this QR code links to my full statement, live products, and medical records.</h3>
+        <p>I am not asking for sympathy. I am asking for the opportunity to repay what I owe through the legitimate business I have been building. The link above contains live, working software products I personally built — evidence of my work ethic, capability, and commitment to fulfilling my obligations to this court.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Personal statement summary -->
+    <div>
+      <div class="section-head">Summary — To the Honorable Court</div>
+      <div class="quote-block">
+        <p>Your Honor, I am Jay Alexander. In the past year I sustained a serious cervical spine injury that ended my ability to work physically. Rather than give up, I taught myself software development and built five working, revenue-generating applications — without a team, without investors, and without stopping. I am ready to begin court-ordered payments immediately and am requesting only the time to generate the revenue I am actively building toward. Every product listed here is live on the internet today.</p>
+        <div class="attr">— Jay Alexander · April 2026</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Medical summary -->
+    <div>
+      <div class="section-head">Medical Documentation (Full Records Available via QR)</div>
+      <div class="med-box">
+        <div class="med-text">
+          <h4>🩺 Cervical Spondylosis with Radiculopathy · Degenerative Disc Disease</h4>
+          <p>Treating physician: Dr. Lewis Rogatnick. Diagnosis confirmed via clinical examination. Condition causes constant chronic neck and back pain radiating into both shoulders and arms, with numbness, weakness, and severely limited range of motion. Pain rated 6–9/10 on a consistent basis. Managed with prescription opioids and muscle relaxers under physician supervision. This condition directly caused the loss of prior physical employment and income.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Apps condensed -->
+    <div>
+      <div class="section-head">Five Live Software Products — Built &amp; Deployed April 2026</div>
+      <div class="apps-grid">
+        <div class="app-item"><div class="app-name">🏪 Liberty Inventory — Thrift Store SaaS</div><div class="app-price">9 setup + 0/mo · Live &amp; operational</div></div>
+        <div class="app-item"><div class="app-name">🚢 Dropship Shipping — AI SaaS Platform</div><div class="app-price">9/mo · Live &amp; operational</div></div>
+        <div class="app-item"><div class="app-name">🔑 Andy — Credential Management SaaS</div><div class="app-price">–0/mo · Live &amp; operational</div></div>
+        <div class="app-item"><div class="app-name">🏗️ Contractor Pro AI — Construction SaaS</div><div class="app-price">9/mo · Live &amp; operational</div></div>
+        <div class="app-item" style="grid-column: span 2;"><div class="app-name">🐾 Pet Vet AI — Consumer Health App</div><div class="app-price">.99/mo per user · Live &amp; operational · All five apps include a built-in AI CEO assistant</div></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Payment condensed -->
+    <div>
+      <div class="section-head">Proposed Payment Plan — Beginning Immediately</div>
+      <table class="pay-table">
+        <thead><tr><th>Period</th><th>Projected Revenue</th><th>Monthly Payment</th><th>Balance</th></tr></thead>
+        <tbody>
+          <tr><td>Months 1–3</td><td>00–00/mo</td><td>50/mo</td><td>~,250</td></tr>
+          <tr><td>Months 4–12</td><td>00–,500/mo</td><td>00–00/mo</td><td>~,250</td></tr>
+          <tr><td>Months 13–18</td><td>,500+/mo</td><td>00/mo</td><td>~sh</td></tr>
+          <tr class="total"><td colspan="3">✅ Paid in full within 18 months · Willing to negotiate any schedule</td><td>sh</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="bottom-stripe">
+    <span>Respectfully submitted by <strong>Jay Alexander</strong> · April 2026</span>
+    <span>Full statement: <strong>jay-portfolio-production.up.railway.app/court</strong></span>
+  </div>
+</div>
+
+</body>
+</html>

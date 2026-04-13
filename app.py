@@ -40,6 +40,10 @@ def index():
 def court_qr():
     return render_template('court_qr.html')
 
+@app.route('/flyer')
+def flyer():
+    return render_template('flyer.html')
+
 @app.route('/court')
 def court():
     return render_template('court.html')

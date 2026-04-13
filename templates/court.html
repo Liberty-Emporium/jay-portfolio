@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statement of Good Faith — Jay Alexander</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f8f9fa; color: #1a1a2e; line-height: 1.7; }
+
+    /* Print styles */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; }
+      .hero { background: #1a1a2e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .section { page-break-inside: avoid; }
+    }
+
+    /* Top bar */
+    .top-bar { background: #1a1a2e; color: #a5b4fc; text-align: center; padding: 0.6rem 1rem; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* Hero */
+    .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); color: white; padding: 4rem 1.5rem 3.5rem; text-align: center; }
+    .hero-label { display: inline-block; background: rgba(165,180,252,0.15); border: 1px solid rgba(165,180,252,0.35); color: #a5b4fc; padding: 0.4rem 1.25rem; border-radius: 100px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .hero h1 { font-family: 'Merriweather', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 700; line-height: 1.25; margin-bottom: 1rem; }
+    .hero h1 span { color: #a5b4fc; }
+    .hero-sub { font-size: 1.05rem; color: #cbd5e1; max-width: 600px; margin: 0 auto 2rem; }
+    .hero-meta { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; font-size: 0.85rem; color: #94a3b8; }
+    .hero-meta strong { color: #e2e8f0; }
+
+    /* Layout */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: 3rem 0; border-bottom: 1px solid #e5e7eb; }
+    .section:last-child { border-bottom: none; }
+    .section-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; margin-bottom: 0.5rem; }
+    .section-title { font-family: 'Merriweather', serif; font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1rem; }
+    .prose { color: #374151; font-size: 0.97rem; line-height: 1.85; }
+    .prose p { margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+
+    /* Statement box */
+    .statement-box { background: white; border-left: 4px solid #6366f1; border-radius: 0 12px 12px 0; padding: 1.5rem 1.75rem; margin: 1.5rem 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .statement-box .quote { font-size: 1.05rem; color: #1e293b; font-style: italic; line-height: 1.8; }
+    .statement-box .attribution { margin-top: 0.75rem; font-size: 0.82rem; color: #6b7280; font-weight: 600; }
+
+    /* Projects grid */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .project-card { background: white; border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .project-card:hover { border-color: #6366f1; }
+    .project-name { font-weight: 700; font-size: 1rem; color: #1a1a2e; margin-bottom: 0.3rem; }
+    .project-desc { font-size: 0.85rem; color: #6b7280; line-height: 1.6; margin-bottom: 0.85rem; }
+    .project-tag { display: inline-block; background: #ede9fe; color: #6d28d9; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 6px; margin-right: 0.35rem; margin-bottom: 0.35rem; }
+    .project-link { font-size: 0.8rem; color: #6366f1; font-weight: 600; text-decoration: none; word-break: break-all; }
+    .project-link:hover { text-decoration: underline; }
+
+    /* Payment plan table */
+    .plan-table { width: 100%; border-collapse: collapse; margin-top: 1.25rem; font-size: 0.9rem; }
+    .plan-table th { background: #1a1a2e; color: white; padding: 0.75rem 1rem; text-align: left; font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .plan-table th:first-child { border-radius: 10px 0 0 0; }
+    .plan-table th:last-child { border-radius: 0 10px 0 0; }
+    .plan-table td { padding: 0.85rem 1rem; border-bottom: 1px solid #f1f5f9; color: #374151; }
+    .plan-table tr:nth-child(even) td { background: #f8fafc; }
+    .plan-table .total td { font-weight: 800; color: #1a1a2e; background: #ede9fe !important; }
+    .plan-table .total td:first-child { border-radius: 0 0 0 10px; }
+    .plan-table .total td:last-child { border-radius: 0 0 10px 0; }
+
+    /* Income sources */
+    .income-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.25rem; }
+    .income-card { background: white; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1.25rem; text-align: center; }
+    .income-amount { font-size: 1.6rem; font-weight: 800; color: #059669; font-family: 'Inter', sans-serif; }
+    .income-source { font-size: 0.82rem; color: #6b7280; margin-top: 0.25rem; line-height: 1.4; }
+
+    /* Medical context */
+    .medical-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 12px; padding: 1.5rem; margin-top: 1.25rem; }
+    .medical-box h4 { color: #c2410c; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .medical-box p { color: #7c2d12; font-size: 0.88rem; line-height: 1.7; }
+
+    /* Commitment section */
+    .commitment-list { list-style: none; margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .commitment-list li { display: flex; gap: 1rem; align-items: flex-start; background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; }
+    .commitment-list li::before { content: '✓'; color: #059669; font-weight: 800; font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    /* Signature */
+    .signature-block { background: white; border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 2rem; margin-top: 1.5rem; text-align: center; }
+    .signature-name { font-family: 'Merriweather', serif; font-size: 1.5rem; color: #1a1a2e; margin-bottom: 0.25rem; }
+    .signature-title { font-size: 0.85rem; color: #6b7280; margin-bottom: 1.25rem; }
+    .signature-line { border-top: 2px solid #1a1a2e; width: 260px; margin: 1rem auto 0.5rem; }
+    .signature-date { font-size: 0.82rem; color: #9ca3af; }
+
+    /* QR note */
+    .qr-note { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 1.25rem 1.5rem; margin: 2rem 0; text-align: center; }
+    .qr-note p { color: #166534; font-size: 0.88rem; }
+    .qr-note .url { font-size: 1.1rem; font-weight: 800; color: #15803d; font-family: monospace; margin: 0.5rem 0; }
+
+    /* Print button */
+    .print-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: #1a1a2e; color: white; border: none; padding: 0.75rem 1.75rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-decoration: none; }
+    .print-btn:hover { background: #16213e; }
+
+    footer { background: #1a1a2e; color: #64748b; text-align: center; padding: 1.5rem; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">Prepared for Court Consideration — Confidential Statement of Good Faith</div>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-label">Statement of Good Faith &amp; Repayment Plan</div>
+  <h1>Jay Alexander<br><span>Technology Entrepreneur</span></h1>
+  <p class="hero-sub">A formal presentation of current work, demonstrated capability, and a committed repayment plan submitted for the court's consideration.</p>
+  <div class="hero-meta">
+    <div><strong>Prepared:</strong> April 2026</div>
+    <div><strong>Balance Owed:</strong> $10,000</div>
+    <div><strong>Status:</strong> Active — Building</div>
+  </div>
+</div>
+
+<div style="background:white; padding:1.5rem 0;" class="no-print">
+  <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+    <div style="font-size:0.88rem; color:#6b7280;">This page was created for the court's review. Share the URL or print this page.</div>
+    <button onclick="window.print()" class="print-btn no-print">🖨️ Print / Save as PDF</button>
+  </div>
+</div>
+
+<div style="background:white;">
+<div class="container">
+
+  <!-- Personal Statement -->
+  <div class="section">
+    <div class="section-label">Personal Statement</div>
+    <div class="section-title">To the Honorable Court</div>
+    <div class="prose">
+      <p>Your Honor, I am Jay Alexander, an entrepreneur and self-taught software developer. I am writing this statement to demonstrate, in clear and transparent terms, that I am not a person who has ignored my obligations — I am a person who faced a significant medical setback and has been working every day to recover and repay what I owe.</p>
+      <p>In the past year, I sustained a serious pinched nerve injury in my neck that significantly limited my ability to work in my previous capacity. Despite this hardship, I did not stop. Instead, I pivoted. I taught myself to build software applications using AI-assisted development tools, and I have spent the past several months building a portfolio of real, working, revenue-generating technology products.</p>
+      <p>I am presenting this statement not as an excuse, but as evidence — evidence of my character, my work ethic, and my genuine commitment to fulfilling my financial obligations to this court. I am asking for the opportunity to do so through the legitimate business I am actively building.</p>
+    </div>
+
+    <div class="statement-box">
+      <div class="quote">"I have not stopped working. I changed how I work. Every app on this page is proof that I am doing everything in my power to meet my obligations — not run from them."</div>
+      <div class="attribution">— Jay Alexander, April 2026</div>
+    </div>
+  </div>
+
+  <!-- Medical Context -->
+  <div class="section">
+    <div class="section-label">Medical Context</div>
+    <div class="section-title">Why Payments Were Disrupted</div>
+    <div class="prose">
+      <p>I want to be fully transparent with the court about why my payments fell behind. This is not an attempt to avoid responsibility — it is context the court deserves to have.</p>
+    </div>
+    <div class="medical-box">
+      <h4>🩺 Cervical Pinched Nerve Injury</h4>
+      <p>A pinched nerve in my neck significantly impaired my ability to perform the physical labor I previously relied on for income. During this period, I was unable to maintain the level of earnings required to make consistent payments. Rather than remain idle or seek public assistance, I used this time to build a new career path in technology — one I can sustain regardless of my physical condition. I am actively managing my recovery and remain committed to both my health and my financial obligations.</p>
+    </div>
+  </div>
+
+  <!-- Active Projects -->
+  <div class="section">
+    <div class="section-label">Active Work</div>
+    <div class="section-title">Software Products Currently Built &amp; Deployed</div>
+    <div class="prose">
+      <p>The following are real, working software applications I have personally designed, built, and deployed. Each is currently live on the internet and available for sale to businesses. These are not concepts — they are finished products generating or positioned to generate recurring revenue.</p>
+    </div>
+
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <div class="project-name">🏪 Liberty Inventory</div>
+        <div class="project-desc">Full-featured inventory management and SaaS platform for thrift stores and retail boutiques. Includes AI photo analysis, ad generation, Square integration, multi-tenant client management, and branded storefronts.</div>
+        <div>
+          <span class="project-tag">SaaS</span>
+          <span class="project-tag">AI</span>
+          <span class="project-tag">Multi-Tenant</span>
+        </div>
+        <div style="margin-top:0.5rem; font-size:0.8rem; color:#374151;">💰 <strong>$299 setup + $20/month per client</strong></div>
+        <a class="project-link" href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank">View Live App →</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">🚢 Dropship Shipping</div>
+        <div class="project-desc">AI-powered dropshipping business management platform. Multi-tenant SaaS with client provisioning, OpenRouter AI assistant, shipping management tools, and a branded client dashboard.</div>
+        <div>
+          <span class="project-tag">SaaS</span>
+          <span class="project-tag">AI</span>
+          <span class="project-tag">Dropshipping</span>
+        </div>
+        <div style="margin-top:0.5rem; font-size:0.8rem; color:#374151;">💰 <strong>$49/month per client</strong></div>
+        <a class="project-link" href="https://dropship-shipping-production.up.railway.app" target="_blank">View Live App →</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">🔑 Andy — Keep Your Secrets</div>
+        <div class="project-desc">Secure API key and credential management tool for developers and small businesses. Organizes keys by category, supports teams, and keeps sensitive credentials out of code.</div>
+        <div>
+          <span class="project-tag">Security</span>
+          <span class="project-tag">SaaS</span>
+        </div>
+        <div style="margin-top:0.5rem; font-size:0.8rem; color:#374151;">💰 <strong>$9/mo Pro · $40/mo Enterprise</strong></div>
+        <a class="project-link" href="https://ai-api-tracker-production.up.railway.app" target="_blank">View Live App →</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">🏗️ Contractor Pro AI</div>
+        <div class="project-desc">AI-powered bidding and project management platform for contractors and construction businesses. Generates professional bids, tracks projects, and provides cost analysis powered by AI.</div>
+        <div>
+          <span class="project-tag">Construction</span>
+          <span class="project-tag">AI</span>
+          <span class="project-tag">SaaS</span>
+        </div>
+        <div style="margin-top:0.5rem; font-size:0.8rem; color:#374151;">💰 <strong>$99/month per client</strong></div>
+        <a class="project-link" href="https://contractor-pro-ai-production.up.railway.app" target="_blank">View Live App →</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">🐾 Pet Vet AI</div>
+        <div class="project-desc">AI-powered pet health diagnosis and triage tool for pet owners. Users describe symptoms and receive AI-assisted guidance on urgency, home care, and when to see a vet.</div>
+        <div>
+          <span class="project-tag">Health</span>
+          <span class="project-tag">AI</span>
+          <span class="project-tag">Consumer</span>
+        </div>
+        <div style="margin-top:0.5rem; font-size:0.8rem; color:#374151;">💰 <strong>$9.99/month per user</strong></div>
+        <a class="project-link" href="https://pet-vet-ai-production.up.railway.app" target="_blank">View Live App →</a>
+      </div>
+
+      <div class="project-card" style="border-color:#a5b4fc; background:#f5f3ff;">
+        <div class="project-name">🤖 AI CEO Assistant</div>
+        <div class="project-desc">Built into every app: a fully functional AI assistant that controls the application — adds customers, manages inventory, gives business advice, and identifies items from photos. A first-of-its-kind feature for small business SaaS.</div>
+        <div>
+          <span class="project-tag" style="background:#ede9fe;">Built-In</span>
+          <span class="project-tag" style="background:#ede9fe;">All Apps</span>
+        </div>
+        <div style="margin-top:0.5rem; font-size:0.8rem; color:#6d28d9;"><strong>Core differentiator — built April 2026</strong></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Revenue Plan -->
+  <div class="section">
+    <div class="section-label">Repayment Plan</div>
+    <div class="section-title">How I Will Pay the $10,000</div>
+    <div class="prose">
+      <p>Below is my realistic, conservative repayment plan based on projected revenue from my existing software products. These projections are based on minimum viable sales — I am actively marketing all five products. Even modest traction across my product portfolio is sufficient to meet this obligation within 24 months.</p>
+    </div>
+
+    <div class="income-grid">
+      <div class="income-card">
+        <div class="income-amount">$299</div>
+        <div class="income-source">Per Liberty Inventory client<br><span style="color:#9ca3af;">+ $20/mo recurring</span></div>
+      </div>
+      <div class="income-card">
+        <div class="income-amount">$99</div>
+        <div class="income-source">Per Contractor Pro AI client<br><span style="color:#9ca3af;">monthly recurring</span></div>
+      </div>
+      <div class="income-card">
+        <div class="income-amount">$49</div>
+        <div class="income-source">Per Dropship client<br><span style="color:#9ca3af;">monthly recurring</span></div>
+      </div>
+      <div class="income-card">
+        <div class="income-amount">$9–40</div>
+        <div class="income-source">Per Andy / Pet Vet user<br><span style="color:#9ca3af;">monthly recurring</span></div>
+      </div>
+    </div>
+
+    <table class="plan-table" style="margin-top:2rem;">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Projected Monthly Revenue</th>
+          <th>Monthly Payment to Court</th>
+          <th>Running Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Month 1–3 (Ramp)</td><td>$300 – $600</td><td>$250/month</td><td>~$9,250</td></tr>
+        <tr><td>Month 4–6</td><td>$600 – $1,200</td><td>$400/month</td><td>~$7,850</td></tr>
+        <tr><td>Month 7–12</td><td>$1,200 – $2,500</td><td>$600/month</td><td>~$4,250</td></tr>
+        <tr><td>Month 13–18</td><td>$2,500+</td><td>$800/month</td><td>~$0</td></tr>
+        <tr class="total"><td>✅ Total</td><td>Growing each month</td><td>Escalating plan</td><td>Paid in full ≤ 18 mo</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:1rem; font-size:0.82rem; color:#6b7280; line-height:1.6;">
+      * I am willing to negotiate any payment schedule the court deems appropriate. I can begin payments immediately. These projections are conservative — I am actively pursuing clients and expect to exceed them.
+    </div>
+  </div>
+
+  <!-- Commitments -->
+  <div class="section">
+    <div class="section-label">Commitments</div>
+    <div class="section-title">What I Am Committed To</div>
+    <ul class="commitment-list">
+      <li>Beginning court-ordered payments immediately upon approval of a structured plan</li>
+      <li>Providing monthly revenue statements to probation officer or court as required</li>
+      <li>Actively marketing my software products to generate the revenue needed for repayment</li>
+      <li>Continuing to build and expand my technology portfolio to increase earning potential</li>
+      <li>Maintaining full compliance with all other terms of my probation</li>
+      <li>Attending all required check-ins, hearings, and appointments without exception</li>
+      <li>Keeping the court informed of any changes to my financial situation in real time</li>
+    </ul>
+  </div>
+
+  <!-- Closing -->
+  <div class="section">
+    <div class="section-label">Closing Statement</div>
+    <div class="section-title">A Request for the Opportunity to Make It Right</div>
+    <div class="prose">
+      <p>Your Honor, I am not asking for sympathy. I am asking for the opportunity to do what I have already been doing — working, building, and earning my way back to good standing. Every application shown on this page is proof that I have been using my time productively, despite my injury, despite the financial pressure, and despite the circumstances.</p>
+      <p>I have built five working software products. I have taught myself an entirely new profession. I have done this without a team, without investors, and without giving up. I am the kind of person who solves problems rather than running from them, and I intend to solve this one the same way — by working for it.</p>
+      <p>I respectfully request that the court consider a structured payment plan that allows me the time to generate the revenue I need to satisfy this obligation in full. I am ready to begin immediately.</p>
+    </div>
+
+    <div class="signature-block">
+      <div class="signature-name">Jay Alexander</div>
+      <div class="signature-title">Software Developer &amp; Technology Entrepreneur</div>
+      <div class="signature-line"></div>
+      <div style="font-size:0.85rem; color:#374151; margin-top:0.5rem;">Signature</div>
+      <div class="signature-date" style="margin-top:1rem;">April 2026 &nbsp;·&nbsp; Prepared in good faith for court consideration</div>
+    </div>
+  </div>
+
+  <!-- QR / URL note -->
+  <div class="qr-note no-print">
+    <p>Share this page with your attorney or the court:</p>
+    <div class="url">jay-portfolio-production.up.railway.app/court</div>
+    <p style="margin-top:0.5rem; font-size:0.82rem;">All live app links above are clickable and go directly to the working products.</p>
+  </div>
+
+</div><!-- /container -->
+</div><!-- /white bg -->
+
+<footer>
+  <div class="container">
+    Prepared by Jay Alexander · April 2026 · Statement of Good Faith for Court Consideration
+  </div>
+</footer>
+
+</body>
+</html>

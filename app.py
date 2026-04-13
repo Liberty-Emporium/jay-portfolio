@@ -36,6 +36,10 @@ config = load_config()
 def index():
     return render_template('index.html', config=config)
 
+@app.route('/court')
+def court():
+    return render_template('court.html')
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     global config

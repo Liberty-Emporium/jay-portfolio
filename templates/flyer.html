@@ -16,39 +16,28 @@
     }
     .print-bar { background: #1a1a2e; padding: 0.85rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; }
     .print-bar span { color: #a5b4fc; font-size: 0.85rem; font-weight: 600; }
-    .print-btn { background: #6366f1; color: white; border: none; padding: 0.6rem 1.75rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; letter-spacing:0.02em; }
+    .print-btn { background: #6366f1; color: white; border: none; padding: 0.6rem 1.75rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; }
     .print-btn:hover { background: #4f46e5; }
-
     .page { width:8.5in; min-height:11in; margin:1.5rem auto; background:white; box-shadow:0 8px 48px rgba(0,0,0,0.2); display:flex; flex-direction:column; border-radius:4px; overflow:hidden; position:relative; }
-
-    /* HERO */
     .hero { background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 45%, #0f3460 100%); padding: 1.8rem 2.2rem 1.5rem; color:white; position:relative; }
     .hero-badge { position:absolute; top:1rem; right:1rem; background:rgba(99,102,241,0.3); border:1.5px solid #6366f1; color:#a5b4fc; font-size:0.62rem; font-weight:800; padding:0.25rem 0.65rem; border-radius:100px; letter-spacing:0.12em; text-transform:uppercase; }
     .hero-eyebrow { font-size:0.65rem; font-weight:800; letter-spacing:0.18em; text-transform:uppercase; color:#a5b4fc; margin-bottom:0.4rem; }
     .hero-name { font-family:'Merriweather',serif; font-size:1.75rem; font-weight:700; line-height:1.15; color:white; }
     .hero-name span { color:#a5b4fc; }
     .hero-sub { font-size:0.78rem; color:#94a3b8; margin-top:0.3rem; }
-
-
     .body { padding:1.1rem 2.2rem; flex:1; display:flex; flex-direction:column; gap:1rem; }
     .sh { font-size:0.6rem; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#6366f1; margin-bottom:0.3rem; }
     .divider { border:none; border-top:1px solid #e5e7eb; }
-
-    /* QR row */
     .qr-row { display:flex; gap:1.25rem; align-items:center; background:#f8fafc; border:1.5px solid #e0e7ff; border-radius:12px; padding:1rem 1.25rem; }
     .qr-img { width:110px; height:110px; border:2.5px solid #1a1a2e; border-radius:8px; flex-shrink:0; }
     .qr-text h3 { font-size:0.88rem; font-weight:800; color:#1a1a2e; margin-bottom:0.3rem; }
     .qr-text p { font-size:0.75rem; color:#374151; line-height:1.6; }
     .qr-url { font-size:0.7rem; font-family:monospace; color:#6366f1; font-weight:700; margin-top:0.35rem; background:#ede9fe; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block; }
-
-    /* Medical */
     .med { background:#fff7ed; border:1.5px solid #fed7aa; border-radius:10px; padding:0.85rem 1.1rem; }
     .med h4 { color:#c2410c; font-size:0.78rem; font-weight:800; margin-bottom:0.25rem; }
     .med p { font-size:0.74rem; color:#7c2d12; line-height:1.6; }
-
-    /* Portfolio grid — the SHOWSTOPPER */
     .portfolio-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; }
-    .p-card { border-radius:9px; padding:0.65rem 0.75rem; border:1.5px solid; position:relative; }
+    .p-card { border-radius:9px; padding:0.65rem 0.75rem; border:1.5px solid; }
     .p-card .p-emoji { font-size:1.1rem; margin-bottom:0.2rem; }
     .p-card .p-name { font-weight:800; font-size:0.75rem; color:#1a1a2e; line-height:1.2; }
     .p-card .p-desc { font-size:0.63rem; color:#6b7280; margin-top:0.15rem; line-height:1.4; }
@@ -63,19 +52,14 @@
     .portfolio-banner { background:linear-gradient(135deg,#1a1a2e,#0f3460); border-radius:10px; padding:0.7rem 1rem; display:flex; align-items:center; justify-content:space-between; }
     .portfolio-banner p { color:#e2e8f0; font-size:0.75rem; font-weight:700; }
     .portfolio-banner span { color:#a5b4fc; font-size:0.65rem; }
-
-    /* Payment table */
     .pay-table { width:100%; border-collapse:collapse; font-size:0.73rem; }
     .pay-table th { background:#1a1a2e; color:white; padding:0.4rem 0.65rem; text-align:left; font-size:0.63rem; text-transform:uppercase; letter-spacing:0.06em; }
     .pay-table td { padding:0.4rem 0.65rem; border-bottom:1px solid #f1f5f9; }
     .pay-table tr:nth-child(even) td { background:#f8fafc; }
     .pay-table .ttl td { font-weight:800; background:#ede9fe !important; color:#4c1d95; }
-
-    /* Quote */
     .quote { border-left:3px solid #6366f1; padding:0.65rem 0.9rem; background:#f5f3ff; border-radius:0 8px 8px 0; }
     .quote p { font-size:0.77rem; font-style:italic; color:#1e293b; line-height:1.65; }
     .quote .attr { font-size:0.65rem; color:#6b7280; font-weight:700; margin-top:0.3rem; }
-
     .foot { background:#1a1a2e; padding:0.6rem 2.2rem; display:flex; justify-content:space-between; font-size:0.65rem; color:#475569; }
     .foot strong { color:#a5b4fc; }
   </style>
@@ -83,246 +67,223 @@
 <body>
 
 <div class="print-bar no-print">
-  <span>🖨️ Two flyers ready to print — Lawyer version &amp; Judge version</span>
-  <button class="print-btn" onclick="window.print()">🖨️ Print Both Flyers (2 pages)</button>
+  <span>&#128438; Two flyers ready to print &mdash; Lawyer version &amp; Judge version</span>
+  <button class="print-btn" onclick="window.print()">&#128438; Print Both Flyers (2 pages)</button>
 </div>
 
-<!-- ==============================
-     FLYER 1 — ATTORNEY VERSION
-     ============================== -->
+<!-- FLYER 1: ATTORNEY -->
 <div class="page">
   <div class="hero">
     <div class="hero-badge">FOR YOUR ATTORNEY</div>
     <div class="hero-eyebrow">Statement of Good Faith &amp; Repayment Plan</div>
     <div class="hero-name">Ronald J. Alexander Jr.<br><span>Technology Entrepreneur &amp; Software Developer</span></div>
-    <div class="hero-sub">Self-taught developer · 6 live SaaS products · Ready to repay · April 2026</div>
-      <div class="hero-stat"><div class="val">sh</div><div class="lbl">Outside Investment</div></div>
-      <div class="hero-stat"><div class="val">0K</div><div class="lbl">Balance Owed</div></div>
-      <div class="hero-stat"><div class="val">≤18mo</div><div class="lbl">Repayment Plan</div></div>
-    </div>
+    <div class="hero-sub">Self-taught developer &middot; 6 live SaaS products &middot; Low investment &middot; Ready to repay &middot; April 2026</div>
   </div>
 
   <div class="body">
-
-    <!-- QR -->
     <div class="qr-row">
       <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdYAAAHWCAIAAABFeD8NAAAKpklEQVR4nO3dwbHcyBFAQVFBL9YI+W+GjFg7RtfVpcWNZukVMJlXxh+AA8yLvlTUj8/n8w8ACv+sbwDge0kwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDMz7mP/uOPf819eOLPP/99+Nfz/3fub8/mPnnuunN/+z5z38bcW/dEc78Up2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCAzOB03NnctMmNuameav5t7m+feM9PVM2/zb2x3/bbP3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshk03Fnc5Mqc5M5N7NGN5NIO/ew+eRf/+SzamqrmmF74m//hlMwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQGbpdNwTVXNoO69749v2ku2c2Lz5ZH6dUzBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAxnTcV5vbaVZtS5vbpDd33bk5w2oqj1/nFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQWTodZ27nr6oZp2qzXDWz975Zsifujnvi93zDKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggk03Hze3Lep+5ma6df3u2856rvXM7n9GZ3/5fOQUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZH58Pp/6Hvgf5nZ87ZyeOtt5V2dz2/Dmrsv/h1MwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQCbbHXdjbotX9ck3dm5pq1R3tXNWcKcn/hbmvmenYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMtjtu56TKWTUttnOaqNrhVt1zNXlV/VKqb/Js5x7FG07BABkJBshIMEBGggEyEgyQkWCAjAQDZCQYICPBAJnB6bhqm9acnVN5c943AXVz3Z1b2qopxBs7y1A9X6dggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+6Jdu5Su7Fzhu2J04Bzdk7lnZlv/HVOwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQCZn/UN/H4759DOnjgRdDNLtnOK6X172Oa2/71v/q16J52CATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATJLd8d925xSpbrnnbNVO6979r67OqumAec4BQNkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkHrk7bufszdyurbPqujd2TrhV39XOb+PGt83d3XAKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsgMTsftnMs627nh7eau3jcBdTPhdnPP1VTeznfyxs450opTMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEDmx+fzGfronZu4dm4e2zm3czO19b5v42xuwu19b+zce1Xd1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDM4O64narJq2o+6mznHFo1p2SH2+/ybW/sDadggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggMzg7riznRNQZ++bzKm8bw5t5/v8xF1q79uVd+YUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJB55O64m7mdaofbzdzOE//2xs7ZuZ3f1c75t50TbjfXneMUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJDJpuNuZlGeuIlrzhOniXZO9FXP9+ae5yZF596cG+97N5yCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATKD03FPnK7ZOf92Y27y6ua6ZzfXfd+Gt/fZOVdZcQoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyPz4fD5DH13tYto5A/Nt++6eOMW0cy9Z9U3ufGPfN8HoFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQGdwdd6Oa+Komc27+v3OzVXPm7mpu79ycnfOcZ9UTfOLbfuYUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJBZOh1XbcTaOZV3tnO2auduwJ3f885Zsp0763be1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMNh1XbUs7q2a6dm61mrPz6Z/dPKMnbjvcOUc6p7pnp2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCATDYdV83e7Ny0Vt3Vzlmys53bw3bOZO78pczNRt6o5v2cggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyS3fH3ajmZ8523tXZzTzY3KxRtTvuxs57rp7Ct22lO3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsj8+Hw+9T38be/bLPfETXo7J74qc09h5yzZE2fYdk63OgUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZLLpuJ3TU0/ciDV3Vzfmrlt9VzefXKmm1HY+3xum4wBeSIIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAZnA67tumtm6ue7bzrm6873909m3/37Od++7OTMcBvJAEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+7Gt22m2rmX7Gzn3F2132/Ozm14O69rOg6A/yLBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYIPPC3XE7J2Tetz3sfc/oRjXBuHPT2pwn7n48cwoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyDxyd9xOT9w8dvbEvWQ756OqSdGznZv0qu1/1f/XKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBgg83Puo3funrpxnpB54tzO3DN64ubAJ04wVpN1Z9Ub+8Sn7xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkBmcjjvbOYm0c/PY3HdVffLN9/zEWcFvU/26nzg75xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkMmm4852TqnN2TmXNTdNNPcUqr1zN58897dzqje22js3xykYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYILN0Ou6Jds4L7ZwImtvxdVZ9VzufQmXu+d5ct+IUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJAxHffb7JxSe+Inz3nilNrctFi1DW+n6t1wCgbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbILJ2Oe9/szY1qW9qN83Vvnu/cuzE3H1U9hcrO/X47ZyOdggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEy2XTc+yaCbnzbfrCd01M7JwnPqt/Rzjf2iZyCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATI/Pp9PfQ8AX8opGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMv8Bh2GNMXthxMgAAAAASUVORK5CYII=" class="qr-img" alt="QR Code">
       <div class="qr-text">
-        <h3>📱 Scan to see every live product in action — right now, on your phone.</h3>
-        <p>The QR code links to Jay's full interactive court statement with clickable live product demos, complete medical records (view-only), full repayment schedule, and personal statement — all in one place.</p>
+        <h3>&#128241; Scan to see every live product in action &mdash; right now, on your phone.</h3>
+        <p>The QR code links to the full interactive court statement with clickable live product demos, view-only medical records, complete repayment schedule, and personal statement &mdash; all in one place.</p>
         <div class="qr-url">jay-portfolio-production.up.railway.app/court</div>
       </div>
     </div>
 
     <hr class="divider">
 
-    <!-- Medical -->
     <div>
       <div class="sh">Medical Documentation</div>
       <div class="med">
-        <h4>🩺 Cervical Spondylosis w/ Radiculopathy · Degenerative Disc Disease · Dr. Lewis Rogatnick</h4>
+        <h4>&#129658; Cervical Spondylosis w/ Radiculopathy &middot; Degenerative Disc Disease &middot; Dr. Lewis Rogatnick</h4>
         <p>Chronic cervical spine injury causing constant neck/back pain radiating into both arms with numbness, tingling and weakness. Managed with prescription pain medication. Condition directly caused loss of prior physical employment. Full medical records available via the QR code above.</p>
       </div>
     </div>
 
     <hr class="divider">
 
-    <!-- Portfolio — SHOWSTOPPER -->
     <div>
-      <div class="sh">Live Portfolio — 6 Products Built Solo · Low Investment · All Running Now</div>
+      <div class="sh">Live Portfolio &mdash; 6 Products Built Solo &middot; Low Investment &middot; All Running Now</div>
       <div class="portfolio-grid">
         <div class="p-card c1">
-          <div class="p-emoji">🏪</div>
+          <div class="p-emoji">&#127ชา;</div>
           <div class="p-name">Liberty Inventory</div>
-          <div class="p-desc">Thrift store SaaS · AI photo analysis · Multi-tenant · Square integration</div>
-          <div class="p-price">9 startup + 0/mo hosting<br>14-day free trial</div>
+          <div class="p-desc">Thrift store SaaS &middot; AI photo analysis &middot; Multi-tenant &middot; Square integration</div>
+          <div class="p-price">$99 startup + $20/mo hosting &middot; 14-day free trial</div>
           <div class="p-url">liberty-emporium-and-thrift-inventory-app-production.up.railway.app</div>
         </div>
         <div class="p-card c2">
-          <div class="p-emoji">🚢</div>
+          <div class="p-emoji">&#128674;</div>
           <div class="p-name">Dropship Shipping</div>
-          <div class="p-desc">Dropshipping CRM · Fully automated · AI assistant · Multi-tenant SaaS</div>
-          <div class="p-price">99 startup<br>Fully automated CRM</div>
+          <div class="p-desc">Dropshipping CRM &middot; Fully automated &middot; AI assistant &middot; Multi-tenant</div>
+          <div class="p-price">$299 startup &middot; Fully automated CRM</div>
           <div class="p-url">dropship-shipping-production.up.railway.app</div>
         </div>
         <div class="p-card c3">
-          <div class="p-emoji">🏬</div>
+          <div class="p-emoji">&#127ซ;</div>
           <div class="p-name">Consignment Solutions</div>
-          <div class="p-desc">Consignment store mgmt · Vendor portals · Auto rent settlement · Square POS</div>
-          <div class="p-price">9.95 startup + 0/mo<br>14-day free trial</div>
+          <div class="p-desc">Consignment store mgmt &middot; Vendor portals &middot; Auto rent &middot; Square POS</div>
+          <div class="p-price">$69.95 startup + $20/mo &middot; 14-day free trial</div>
           <div class="p-url">web-production-43ce4.up.railway.app</div>
         </div>
         <div class="p-card c4">
-          <div class="p-emoji">🔑</div>
-          <div class="p-name">Andy — Keep Your Secrets</div>
-          <div class="p-desc">API key &amp; credential management · Secure · Developer SaaS</div>
-          <div class="p-price">4.99/month per user</div>
+          <div class="p-emoji">&#128273;</div>
+          <div class="p-name">Andy &mdash; Keep Your Secrets</div>
+          <div class="p-desc">API key &amp; credential management &middot; Secure &middot; Developer SaaS</div>
+          <div class="p-price">$14.99/month per user</div>
           <div class="p-url">ai-api-tracker-production.up.railway.app</div>
         </div>
         <div class="p-card c5">
-          <div class="p-emoji">🏗️</div>
+          <div class="p-emoji">&#127959;</div>
           <div class="p-name">Contractor Pro AI</div>
-          <div class="p-desc">AI bidding &amp; project mgmt for contractors · Cost analysis · SaaS</div>
-          <div class="p-price">9/month per client</div>
+          <div class="p-desc">AI bidding &amp; project mgmt for contractors &middot; Cost analysis</div>
+          <div class="p-price">$99/month per client</div>
           <div class="p-url">contractor-pro-ai-production.up.railway.app</div>
         </div>
         <div class="p-card c6">
-          <div class="p-emoji">🐾</div>
+          <div class="p-emoji">&#128062;</div>
           <div class="p-name">Pet Vet AI</div>
-          <div class="p-desc">Pet health diagnosis · AI triage · Consumer subscription app</div>
-          <div class="p-price">.99/month per user</div>
+          <div class="p-desc">Pet health diagnosis &middot; AI triage &middot; Consumer subscription app</div>
+          <div class="p-price">$9.99/month per user</div>
           <div class="p-url">pet-vet-ai-production.up.railway.app</div>
         </div>
       </div>
       <div class="portfolio-banner" style="margin-top:0.5rem;">
-        <p>🤖 Every product includes a built-in AI CEO assistant — a first in small business SaaS</p>
-        <span>Built solo · April 2026</span>
+        <p>&#129302; Every product includes a built-in AI CEO assistant &mdash; a first in small business SaaS</p>
+        <span>Built solo &middot; April 2026</span>
       </div>
     </div>
 
     <hr class="divider">
 
-    <!-- Payment -->
     <div>
-      <div class="sh">Proposed Repayment Plan — 0,000 Balance</div>
+      <div class="sh">Proposed Repayment Plan &mdash; $10,000 Balance</div>
       <table class="pay-table">
         <thead><tr><th>Period</th><th>Projected Revenue</th><th>Court Payment</th><th>Balance</th></tr></thead>
         <tbody>
-          <tr><td>Month 1–3 (Ramp)</td><td>00–00/mo</td><td>50/mo</td><td>~,250</td></tr>
-          <tr><td>Month 4–6</td><td>00–,200/mo</td><td>00/mo</td><td>~,850</td></tr>
-          <tr><td>Month 7–12</td><td>,200–,500/mo</td><td>00/mo</td><td>~,250</td></tr>
-          <tr><td>Month 13–18</td><td>,500+/mo</td><td>00/mo</td><td>~sh</td></tr>
-          <tr class="ttl"><td colspan="3">✅ Paid in full — ready to begin immediately — will negotiate any schedule</td><td>sh</td></tr>
+          <tr><td>Month 1&ndash;3 (Ramp)</td><td>$300&ndash;$600/mo</td><td>$250/mo</td><td>~$9,250</td></tr>
+          <tr><td>Month 4&ndash;6</td><td>$600&ndash;$1,200/mo</td><td>$400/mo</td><td>~$7,850</td></tr>
+          <tr><td>Month 7&ndash;12</td><td>$1,200&ndash;$2,500/mo</td><td>$600/mo</td><td>~$4,250</td></tr>
+          <tr><td>Month 13&ndash;18</td><td>$2,500+/mo</td><td>$800/mo</td><td>~$0</td></tr>
+          <tr class="ttl"><td colspan="3">&#9989; Paid in full &mdash; ready to begin immediately &mdash; will negotiate any schedule</td><td>$0</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="quote">
-      <p>"I have not stopped working. I changed how I work. Every product on this page is proof I am doing everything in my power to meet my obligations — not run from them."</p>
-      <div class="attr">— Ronald J. Alexander Jr. · April 2026</div>
+      <p>&ldquo;I have not stopped working. I changed how I work. Every product on this page is proof I am doing everything in my power to meet my obligations &mdash; not run from them.&rdquo;</p>
+      <div class="attr">&mdash; Ronald J. Alexander Jr. &middot; April 2026</div>
     </div>
-
   </div>
+
   <div class="foot">
-    <span>Prepared by <strong>Ronald J. Alexander Jr.</strong> · April 2026 · Good Faith Court Statement</span>
+    <span>Prepared by <strong>Ronald J. Alexander Jr.</strong> &middot; April 2026 &middot; Good Faith Court Statement</span>
     <span><strong>jay-portfolio-production.up.railway.app/court</strong></span>
   </div>
 </div>
 
-<!-- ==============================
-     FLYER 2 — JUDGE VERSION
-     ============================== -->
+<!-- FLYER 2: JUDGE -->
 <div class="page">
   <div class="hero">
     <div class="hero-badge">FOR THE HONORABLE COURT</div>
-    <div class="hero-eyebrow">Respectfully Submitted — Statement of Good Faith &amp; Request for Structured Repayment</div>
-    <div class="hero-name">Ronald J. Alexander Jr.<br><span>Software Developer · Six Live Products · Ready to Pay</span></div>
-    <div class="hero-sub">Balance: 0,000 · Requesting structured repayment plan · Payments can begin immediately · April 2026</div>
-      <div class="hero-stat"><div class="val">Solo</div><div class="lbl">No Team/Investors</div></div>
-      <div class="hero-stat"><div class="val">Live</div><div class="lbl">All Deployed Now</div></div>
-      <div class="hero-stat"><div class="val">18mo</div><div class="lbl">Full Repayment</div></div>
-    </div>
+    <div class="hero-eyebrow">Respectfully Submitted &mdash; Statement of Good Faith &amp; Request for Structured Repayment</div>
+    <div class="hero-name">Ronald J. Alexander Jr.<br><span>Software Developer &middot; Six Live Products &middot; Ready to Pay</span></div>
+    <div class="hero-sub">Balance: $10,000 &middot; Requesting structured repayment plan &middot; Payments can begin immediately &middot; April 2026</div>
   </div>
 
   <div class="body">
-
-    <!-- QR -->
     <div class="qr-row">
       <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdYAAAHWCAIAAABFeD8NAAAKpklEQVR4nO3dwbHcyBFAQVFBL9YI+W+GjFg7RtfVpcWNZukVMJlXxh+AA8yLvlTUj8/n8w8ACv+sbwDge0kwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDMz7mP/uOPf819eOLPP/99+Nfz/3fub8/mPnnuunN/+z5z38bcW/dEc78Up2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCAzOB03NnctMmNuameav5t7m+feM9PVM2/zb2x3/bbP3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshk03Fnc5Mqc5M5N7NGN5NIO/ew+eRf/+SzamqrmmF74m//hlMwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQGbpdNwTVXNoO69749v2ku2c2Lz5ZH6dUzBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAxnTcV5vbaVZtS5vbpDd33bk5w2oqj1/nFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQWTodZ27nr6oZp2qzXDWz975Zsifujnvi93zDKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBggk03Hze3Lep+5ma6df3u2856rvXM7n9GZ3/5fOQUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZH58Pp/6Hvgf5nZ87ZyeOtt5V2dz2/Dmrsv/h1MwQEaCATISDJCRYICMBANkJBggI8EAGQkGyEgwQCbbHXdjbotX9ck3dm5pq1R3tXNWcKcn/hbmvmenYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMtjtu56TKWTUttnOaqNrhVt1zNXlV/VKqb/Js5x7FG07BABkJBshIMEBGggEyEgyQkWCAjAQDZCQYICPBAJnB6bhqm9acnVN5c943AXVz3Z1b2qopxBs7y1A9X6dggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+6Jdu5Su7Fzhu2J04Bzdk7lnZlv/HVOwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQCZn/UN/H4759DOnjgRdDNLtnOK6X172Oa2/71v/q16J52CATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATJLd8d925xSpbrnnbNVO6979r67OqumAec4BQNkJBggI8EAGQkGyEgwQEaCATISDJCRYICMBANkHrk7bufszdyurbPqujd2TrhV39XOb+PGt83d3XAKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsgMTsftnMs627nh7eau3jcBdTPhdnPP1VTeznfyxs450opTMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEDmx+fzGfronZu4dm4e2zm3czO19b5v42xuwu19b+zce1Xd1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIDM4O64narJq2o+6mznHFo1p2SH2+/ybW/sDadggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggMzg7riznRNQZ++bzKm8bw5t5/v8xF1q79uVd+YUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJB55O64m7mdaofbzdzOE//2xs7ZuZ3f1c75t50TbjfXneMUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJDJpuNuZlGeuIlrzhOniXZO9FXP9+ae5yZF596cG+97N5yCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATKD03FPnK7ZOf92Y27y6ua6ZzfXfd+Gt/fZOVdZcQoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyPz4fD5DH13tYto5A/Nt++6eOMW0cy9Z9U3ufGPfN8HoFAyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyEgyQGdwdd6Oa+Komc27+v3OzVXPm7mpu79ycnfOcZ9UTfOLbfuYUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJBZOh1XbcTaOZV3tnO2auduwJ3f885Zsp0763be1Q2nYICMBANkJBggI8EAGQkGyEgwQEaCATISDJCRYIBMNh1XbUs7q2a6dm61mrPz6Z/dPKMnbjvcOUc6p7pnp2CAjAQDZCQYICPBABkJBshIMEBGggEyEgyQkWCATDYdV83e7Ny0Vt3Vzlmys53bw3bOZO78pczNRt6o5v2cggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEyS3fH3ajmZ8523tXZzTzY3KxRtTvuxs57rp7Ct22lO3MKBshIMEBGggEyEgyQkWCAjAQDZCQYICPBABkJBsj8+Hw+9T38be/bLPfETXo7J74qc09h5yzZE2fYdk63OgUDZCQYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZLLpuJ3TU0/ciDV3Vzfmrlt9VzefXKmm1HY+3xum4wBeSIIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBAZnA67tumtm6ue7bzrm6873909m3/37Od++7OTMcBvJAEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggEy2O+7Gt22m2rmX7Gzn3F2132/Ozm14O69rOg6A/yLBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYIPPC3XE7J2Tetz3sfc/oRjXBuHPT2pwn7n48cwoGyEgwQEaCATISDJCRYICMBANkJBggI8EAGQkGyDxyd9xOT9w8dvbEvWQ756OqSdGznZv0qu1/1f/XKRggI8EAGQkGyEgwQEaCATISDJCRYICMBANkJBgg83Puo3funrpxnpB54tzO3DN64ubAJ04wVpN1Z9Ub+8Sn7xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkBmcjjvbOYm0c/PY3HdVffLN9/zEWcFvU/26nzg75xQMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkMmm4852TqnN2TmXNTdNNPcUqr1zN58897dzqje22js3xykYICPBABkJBshIMEBGggEyEgyQkWCAjAQDZCQYILN0Ou6Jds4L7ZwImtvxdVZ9VzufQmXu+d5ct+IUDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATISDJAxHffb7JxSe+Inz3nilNrctFi1DW+n6t1wCgbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbILJ2Oe9/szY1qW9qN83Vvnu/cuzE3H1U9hcrO/X47ZyOdggEyEgyQkWCAjAQDZCQYICPBABkJBshIMEBGggEy2XTc+yaCbnzbfrCd01M7JwnPqt/Rzjf2iZyCATISDJCRYICMBANkJBggI8EAGQkGyEgwQEaCATI/Pp9PfQ8AX8opGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMhIMkJFggIwEA2QkGCAjwQAZCQbISDBARoIBMv8Bh2GNMXthxMgAAAAASUVORK5CYII=" class="qr-img" alt="QR Code">
       <div class="qr-text">
-        <h3>Your Honor — scan this to see the work. Every product is live right now.</h3>
-        <p>The link above opens my complete court statement, including live clickable product demos, view-only medical records, full repayment schedule, and my personal statement to the court. Everything I am claiming here can be verified in under 60 seconds with a phone.</p>
+        <h3>Your Honor &mdash; scan this to see the work. Every product is live right now.</h3>
+        <p>The link opens the complete court statement including live clickable product demos, view-only medical records, full repayment schedule, and personal statement. Everything claimed here can be verified in under 60 seconds with a phone.</p>
         <div class="qr-url">jay-portfolio-production.up.railway.app/court</div>
       </div>
     </div>
 
     <hr class="divider">
 
-    <!-- Personal summary -->
     <div class="quote">
-      <p>Your Honor, I am not asking for sympathy. I faced a serious cervical spine injury that ended my physical career. Instead of giving up, I taught myself software development and built six working, revenue-generating products — without a team, without investors, and without stopping. I am ready to begin repayment immediately and respectfully request only the structured time to generate what I am already actively building toward. The QR code above is the proof.</p>
-      <div class="attr">— Ronald J. Alexander Jr. · April 2026</div>
+      <p>Your Honor, I am not asking for sympathy. I faced a serious cervical spine injury that ended my physical career. Instead of giving up, I taught myself software development and built six working, revenue-generating products &mdash; without a team, without major investment, and without stopping. I am ready to begin repayment immediately and respectfully request only the structured time to generate what I am already actively building toward.</p>
+      <div class="attr">&mdash; Ronald J. Alexander Jr. &middot; April 2026</div>
     </div>
 
     <hr class="divider">
 
-    <!-- Medical -->
     <div>
       <div class="sh">Medical Documentation (Full Records Available via QR Code Above)</div>
       <div class="med">
-        <h4>🩺 Cervical Spondylosis with Radiculopathy · Degenerative Disc Disease · Treating Physician: Dr. Lewis Rogatnick</h4>
-        <p>Diagnosed condition causing constant chronic neck &amp; back pain (rated 6–9/10), radiating into both shoulders and arms with numbness, tingling, stiffness, and weakness. Pain managed with prescription opioids and muscle relaxers under physician supervision. This condition directly ended prior physical employment and disrupted the ability to maintain consistent income. Full scanned medical records are viewable (not downloadable) via the QR code above.</p>
+        <h4>&#129658; Cervical Spondylosis with Radiculopathy &middot; Degenerative Disc Disease &middot; Treating Physician: Dr. Lewis Rogatnick</h4>
+        <p>Diagnosed condition causing constant chronic neck &amp; back pain (rated 6&ndash;9/10), radiating into both shoulders and arms with numbness, tingling, stiffness, and weakness. Managed with prescription opioids and muscle relaxers under physician supervision. This condition directly ended prior physical employment. Full scanned medical records viewable (not downloadable) via the QR code above.</p>
       </div>
     </div>
 
     <hr class="divider">
 
-    <!-- Portfolio -->
     <div>
-      <div class="sh">Six Live Software Products — Built &amp; Deployed by Jay Alexander · April 2026</div>
+      <div class="sh">Six Live Software Products &mdash; Built &amp; Deployed by Ronald J. Alexander Jr. &middot; April 2026</div>
       <div class="portfolio-grid">
         <div class="p-card c1">
-          <div class="p-emoji">🏪</div>
+          <div class="p-emoji">&#127ชา;</div>
           <div class="p-name">Liberty Inventory</div>
-          <div class="p-desc">Thrift store SaaS · AI · Multi-tenant · Square POS</div>
-          <div class="p-price">9 startup + 0/mo · Live &amp; operational</div>
+          <div class="p-desc">Thrift store SaaS &middot; AI &middot; Multi-tenant &middot; Square POS</div>
+          <div class="p-price">$99 startup + $20/mo &middot; Live &amp; operational</div>
         </div>
         <div class="p-card c2">
-          <div class="p-emoji">🚢</div>
+          <div class="p-emoji">&#128674;</div>
           <div class="p-name">Dropship Shipping</div>
-          <div class="p-desc">Dropshipping CRM · Fully automated · AI assistant</div>
-          <div class="p-price">99 startup · Live &amp; operational</div>
+          <div class="p-desc">Dropshipping CRM &middot; Fully automated &middot; AI assistant</div>
+          <div class="p-price">$299 startup &middot; Live &amp; operational</div>
         </div>
         <div class="p-card c3">
-          <div class="p-emoji">🏬</div>
+          <div class="p-emoji">&#127ซ;</div>
           <div class="p-name">Consignment Solutions</div>
-          <div class="p-desc">Consignment store mgmt · Vendor portals · Square</div>
-          <div class="p-price">9.95 startup + 0/mo · Live &amp; operational</div>
+          <div class="p-desc">Consignment store mgmt &middot; Vendor portals &middot; Square</div>
+          <div class="p-price">$69.95 startup + $20/mo &middot; Live &amp; operational</div>
         </div>
         <div class="p-card c4">
-          <div class="p-emoji">🔑</div>
-          <div class="p-name">Andy — Keep Your Secrets</div>
+          <div class="p-emoji">&#128273;</div>
+          <div class="p-name">Andy &mdash; Keep Your Secrets</div>
           <div class="p-desc">API key &amp; credential management SaaS</div>
-          <div class="p-price">4.99/mo · Live &amp; operational</div>
+          <div class="p-price">$14.99/mo &middot; Live &amp; operational</div>
         </div>
         <div class="p-card c5">
-          <div class="p-emoji">🏗️</div>
+          <div class="p-emoji">&#127959;</div>
           <div class="p-name">Contractor Pro AI</div>
           <div class="p-desc">AI bidding &amp; project mgmt for contractors</div>
-          <div class="p-price">9/mo · Live &amp; operational</div>
+          <div class="p-price">$99/mo &middot; Live &amp; operational</div>
         </div>
         <div class="p-card c6">
-          <div class="p-emoji">🐾</div>
+          <div class="p-emoji">&#128062;</div>
           <div class="p-name">Pet Vet AI</div>
-          <div class="p-desc">Pet health AI diagnosis · Consumer app</div>
-          <div class="p-price">.99/mo · Live &amp; operational</div>
+          <div class="p-desc">Pet health AI diagnosis &middot; Consumer app</div>
+          <div class="p-price">$9.99/mo &middot; Live &amp; operational</div>
         </div>
       </div>
       <div class="portfolio-banner" style="margin-top:0.5rem;">
-        <p>🤖 Every product includes a built-in AI CEO assistant — built solo, no team, no investors</p>
-        <span>All 6 apps live · April 2026</span>
+        <p>&#129302; Every product includes a built-in AI CEO assistant &mdash; built solo, low investment, no excuses</p>
+        <span>All 6 apps live &middot; April 2026</span>
       </div>
     </div>
 
     <hr class="divider">
 
-    <!-- Payment -->
     <div>
-      <div class="sh">Repayment Plan — Beginning Immediately Upon Court Approval</div>
+      <div class="sh">Repayment Plan &mdash; Beginning Immediately Upon Court Approval</div>
       <table class="pay-table">
         <thead><tr><th>Period</th><th>Projected Revenue</th><th>Monthly Payment</th><th>Balance</th></tr></thead>
         <tbody>
-          <tr><td>Months 1–3</td><td>00–00/mo</td><td>50/mo</td><td>~,250</td></tr>
-          <tr><td>Months 4–12</td><td>00–,500/mo</td><td>00–00/mo</td><td>~,250</td></tr>
-          <tr><td>Months 13–18</td><td>,500+/mo</td><td>00/mo</td><td>~sh</td></tr>
-          <tr class="ttl"><td colspan="3">✅ Paid in full within 18 months · Willing to negotiate any schedule the Court deems appropriate</td><td>sh</td></tr>
+          <tr><td>Months 1&ndash;3</td><td>$300&ndash;$600/mo</td><td>$250/mo</td><td>~$9,250</td></tr>
+          <tr><td>Months 4&ndash;12</td><td>$600&ndash;$2,500/mo</td><td>$400&ndash;$600/mo</td><td>~$4,250</td></tr>
+          <tr><td>Months 13&ndash;18</td><td>$2,500+/mo</td><td>$800/mo</td><td>~$0</td></tr>
+          <tr class="ttl"><td colspan="3">&#9989; Paid in full within 18 months &middot; Willing to negotiate any schedule the Court deems appropriate</td><td>$0</td></tr>
         </tbody>
       </table>
     </div>
-
   </div>
+
   <div class="foot">
-    <span>Respectfully submitted by <strong>Ronald J. Alexander Jr.</strong> · April 2026 · Good Faith Statement for the Honorable Court</span>
+    <span>Respectfully submitted by <strong>Ronald J. Alexander Jr.</strong> &middot; April 2026 &middot; Good Faith Statement for the Honorable Court</span>
     <span><strong>jay-portfolio-production.up.railway.app/court</strong></span>
   </div>
 </div>

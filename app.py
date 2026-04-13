@@ -36,6 +36,10 @@ config = load_config()
 def index():
     return render_template('index.html', config=config)
 
+@app.route('/court/qr')
+def court_qr():
+    return render_template('court_qr.html')
+
 @app.route('/court')
 def court():
     return render_template('court.html')

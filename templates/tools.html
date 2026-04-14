@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Echo Tool Library — Liberty Emporium</title>
+  <meta name="description" content="Echo & Jay's reusable SaaS building blocks. 30+ named tools for rapid app development.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #00c851; --dark: #0f0f0f; --dark2: #1a1a1a; --dark3: #252525;
+      --border: #2a2a2a; --text: #e8e8e8; --muted: #888; --radius: 10px;
+      --yellow: #ffbb33; --blue: #4d9fff; --purple: #a855f7; --red: #ff4444;
+    }
+    body { background: var(--dark); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
+    a { color: var(--green); text-decoration: none; }
+    nav { background: var(--dark2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .brand { font-size: 1.2rem; font-weight: 800; color: var(--green); }
+    .brand span { color: var(--text); }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: var(--muted); font-size: 0.9rem; }
+    .nav-links a:hover { color: var(--text); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .hero { text-align: center; padding: 60px 20px 40px; }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; margin-bottom: 12px; }
+    .hero h1 span { color: var(--green); }
+    .hero p { color: var(--muted); max-width: 500px; margin: 0 auto 24px; }
+    .search-bar { max-width: 400px; margin: 0 auto; position: relative; }
+    .search-bar input { width: 100%; padding: 12px 40px 12px 16px; background: var(--dark2); border: 1px solid var(--border); border-radius: 30px; color: var(--text); font-size: 0.95rem; }
+    .search-bar input:focus { outline: none; border-color: var(--green); }
+    .filter-bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 24px 0 32px; }
+    .filter-btn { background: var(--dark2); border: 1px solid var(--border); color: var(--muted); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; }
+    .filter-btn:hover, .filter-btn.active { background: var(--green); border-color: var(--green); color: #000; font-weight: 700; }
+    .section-title { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 32px 0 16px; display: flex; align-items: center; gap: 8px; }
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 8px; }
+    .tool-card { background: var(--dark2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color 0.15s, transform 0.15s; cursor: default; }
+    .tool-card:hover { border-color: var(--green); transform: translateY(-2px); }
+    .tool-card.hidden { display: none; }
+    .tool-num { font-size: 0.75rem; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+    .tool-name { font-size: 1.05rem; font-weight: 800; margin-bottom: 6px; }
+    .tool-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+    .tool-apps { font-size: 0.8rem; color: var(--muted); }
+    .tool-apps strong { color: var(--text); }
+    .tool-trigger { display: inline-block; margin-top: 10px; padding: 4px 10px; background: var(--dark3); border-radius: 20px; font-size: 0.78rem; color: var(--green); font-style: italic; }
+    .cat-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .cat-ai { background: rgba(168,85,247,0.15); color: var(--purple); }
+    .cat-auth { background: rgba(255,187,51,0.15); color: var(--yellow); }
+    .cat-saas { background: rgba(77,159,255,0.15); color: var(--blue); }
+    .cat-db { background: rgba(0,200,81,0.15); color: var(--green); }
+    .cat-analytics { background: rgba(255,100,100,0.15); color: #ff6464; }
+    .cat-ui { background: rgba(255,155,50,0.15); color: #ff9b32; }
+    .cat-deploy { background: rgba(100,200,255,0.15); color: #64c8ff; }
+    .cat-security { background: rgba(255,68,68,0.15); color: var(--red); }
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); display: none; }
+    .stats-bar { display: flex; gap: 32px; justify-content: center; padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 32px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-n { font-size: 1.8rem; font-weight: 900; color: var(--green); }
+    .stat-l { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    footer { text-align: center; padding: 32px 20px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 48px; }
+    @media (max-width: 600px) { .tools-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="brand">Liberty <span>Emporium</span></a>
+  <div class="nav-links">
+    <a href="/">Portfolio</a>
+    <a href="/tools" style="color:var(--green)">Tool Library</a>
+    <a href="/court">Court</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <h1>Echo <span>Tool Library</span></h1>
+    <p>Every reusable building block we've built. Drop them into any app by name.</p>
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Search tools..." oninput="filterTools()">
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-n" id="tool-count">31</div><div class="stat-l">Tools Built</div></div>
+    <div class="stat"><div class="stat-n">7</div><div class="stat-l">Live Apps</div></div>
+    <div class="stat"><div class="stat-n">8</div><div class="stat-l">Categories</div></div>
+    <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Reusable</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCat('all',this)">All</button>
+    <button class="filter-btn" onclick="filterCat('ai',this)">🤖 AI</button>
+    <button class="filter-btn" onclick="filterCat('auth',this)">🔐 Auth</button>
+    <button class="filter-btn" onclick="filterCat('saas',this)">🏢 SaaS</button>
+    <button class="filter-btn" onclick="filterCat('db',this)">🗄️ Database</button>
+    <button class="filter-btn" onclick="filterCat('analytics',this)">📊 Analytics</button>
+    <button class="filter-btn" onclick="filterCat('ui',this)">🎨 UI</button>
+    <button class="filter-btn" onclick="filterCat('deploy',this)">🚀 Deploy</button>
+    <button class="filter-btn" onclick="filterCat('security',this)">🔒 Security</button>
+  </div>
+
+  <div id="tools-grid" class="tools-grid">
+  </div>
+  <div class="empty" id="empty-state">No tools match your search.</div>
+</div>
+
+<footer>
+  <strong style="color:var(--text)">Echo Tool Library</strong> · Built by Echo &amp; Jay · Liberty Emporium<br>
+  <span style="font-size:0.8rem">Say a tool name → Echo builds it. No explanation needed.</span>
+</footer>
+
+<script>
+const TOOLS = [
+  {num:1, cat:"ai", name:"AI Content Generator", desc:"Button that sends item details to AI and gets back a title, description, and tags — written and optimized automatically.", apps:"List It Everywhere", trigger:"Add AI Generate"},
+  {num:2, cat:"ai", name:"Image Analyzer", desc:"User snaps a photo → AI vision reads the image → auto-fills the entire form: title, brand, condition, price, description, tags, category.", apps:"List It Everywhere", trigger:"Add Image AI"},
+  {num:3, cat:"ai", name:"AI Chat Widget", desc:"Floating chat bubble on every page. Users talk to an AI assistant in real time with conversation history and quick-ask buttons.", apps:"List It Everywhere (Liz)", trigger:"Add AI chat"},
+  {num:4, cat:"ai", name:"AI Listing Exporter", desc:"One listing → formatted copy-paste text for 10+ platforms: eBay, Poshmark, Mercari, Depop, Etsy, Facebook, Grailed, Vinted, OfferUp, Craigslist.", apps:"List It Everywhere", trigger:"Add platform exporter"},
+  {num:5, cat:"ai", name:"AI Health Score", desc:"AI reads your app's code or a live URL and returns a score (0-100) with a prioritized fix list.", apps:"Skills: app-auditor, seo-analyzer", trigger:"Audit this app"},
+  {num:6, cat:"auth", name:"Single-Tenant Auth", desc:"Basic login, signup, logout, session cookies, and password hashing. One user type, no organizations.", apps:"Pet Vet AI, Contractor Pro, Keep Your Secrets", trigger:"Add basic auth"},
+  {num:7, cat:"auth", name:"Multi-Tenant Auth", desc:"Every signup creates an isolated Tenant (organization). Users belong to a tenant and can't see other tenants' data.", apps:"Liberty Inventory, List It Everywhere, Dropship Shipping", trigger:"Make it multi-tenant"},
+  {num:8, cat:"auth", name:"Role-Based Access", desc:"Users have roles: owner, admin, member, overseer. Each role sees different pages and can perform different actions.", apps:"Liberty Inventory, List It Everywhere", trigger:"Add roles"},
+  {num:9, cat:"auth", name:"Trial System", desc:"New signups get 14 days free. After trial ends, users hit a paywall and must upgrade. Expiry checked on every protected page.", apps:"Liberty Inventory, List It Everywhere, Consignment Solutions", trigger:"Add a free trial"},
+  {num:10, cat:"auth", name:"Rate Limiter", desc:"Counts requests per IP per time window. Blocks abuse on login, signup, AI calls. Uses SQLite — no Redis needed.", apps:"Every app", trigger:"Add rate limiting"},
+  {num:11, cat:"saas", name:"Overseer Panel", desc:"Hidden admin dashboard for the overseer role. Shows ALL tenants, plans, usage stats, MRR. Suspend, activate, change plans, impersonate.", apps:"Liberty Inventory, List It Everywhere", trigger:"Add overseer panel"},
+  {num:12, cat:"saas", name:"Client Impersonation", desc:"Overseer clicks 'View As' on any tenant and logs in as that user — sees exactly what they see. Used for support and debugging.", apps:"Liberty Inventory, List It Everywhere", trigger:"Add impersonation"},
+  {num:13, cat:"saas", name:"Stripe Billing", desc:"Full subscription payment flow: signup → trial → paid → cancel → webhook events. Updates tenant plan automatically.", apps:"Liberty Inventory", trigger:"Add Stripe"},
+  {num:14, cat:"saas", name:"Plan Enforcement", desc:"Each plan has limits (listings, AI credits, team seats). Every action checks limits before proceeding. Shows upgrade wall when over.", apps:"List It Everywhere", trigger:"Add plan limits"},
+  {num:15, cat:"db", name:"WAL Mode SQLite", desc:"Production-grade SQLite: WAL journal mode, NORMAL sync, foreign keys on, 5s busy timeout. Handles concurrent reads without locking.", apps:"Every app", trigger:"Production SQLite"},
+  {num:16, cat:"db", name:"Persistent Volume", desc:"Railway volume mounted at /data so SQLite survives deploys. Without this, every deploy wipes your data.", apps:"Every Railway app", trigger:"Add persistent storage"},
+  {num:17, cat:"db", name:"Custom Form Builder", desc:"Users add their own fields to any form — text, dropdown, number, checkbox. Fields stored in custom_fields table. Values saved as JSON.", apps:"List It Everywhere", trigger:"Add custom fields"},
+  {num:18, cat:"analytics", name:"Health Endpoint", desc:"/health returns {status:ok,db:ok} when healthy, 503 when down. Railway uses it to monitor if the app is alive.", apps:"Every app", trigger:"Add health check"},
+  {num:19, cat:"analytics", name:"Metrics Tracker", desc:"A metrics SQLite table and track() helper that logs signups, AI calls, revenue, errors. Powers analytics dashboards.", apps:"All 5 core apps", trigger:"Add metrics"},
+  {num:20, cat:"analytics", name:"Structured Logging", desc:"Flask logger with timestamps on all events. Logs signups, AI calls, errors, slow requests (>800ms warning).", apps:"Every app", trigger:"Add logging"},
+  {num:21, cat:"ui", name:"Dark Theme Base Template", desc:"The base.html every app inherits. Dark background, green accent, sticky nav, toast notifications, responsive grid. Zero external dependencies.", apps:"Every app", trigger:"Use the dark theme"},
+  {num:22, cat:"ui", name:"Toast Notifications", desc:"Small corner popup showing success/error messages for 3.5 seconds. No page reload needed. Built into base template.", apps:"Every app", trigger:"Add toast messages"},
+  {num:23, cat:"ui", name:"Stats Dashboard", desc:"Row of large number stat boxes at the top of any page — total users, revenue, listings, etc.", apps:"List It Everywhere, Overseer panel", trigger:"Add stat boxes"},
+  {num:24, cat:"ui", name:"Landing Page with Pricing", desc:"Full marketing homepage: hero section, how-it-works steps, 3-tier pricing cards, CTA. No external CSS frameworks.", apps:"List It Everywhere", trigger:"Add a landing page"},
+  {num:25, cat:"deploy", name:"Railway Deploy Config", desc:"railway.json + Procfile + requirements.txt that tells Railway exactly how to build and run the app with health checks.", apps:"Every app", trigger:"Set up for Railway"},
+  {num:26, cat:"deploy", name:"SEO Package", desc:"title, meta description, Open Graph, Twitter Card, canonical link, sitemap.xml, robots.txt — all correct and unique per page.", apps:"Every app", trigger:"Add SEO"},
+  {num:27, cat:"deploy", name:"Email Onboarding Sequence", desc:"6 automated emails after signup: welcome → quick start → feature spotlight → check-in → upgrade reminder → last chance. SQLite queue, SMTP background thread.", apps:"Liberty Inventory", trigger:"Add email drip"},
+  {num:28, cat:"security", name:"Security Headers", desc:"HTTP headers on every response blocking XSS, clickjacking, MIME sniffing: X-Frame-Options, X-Content-Type, X-XSS-Protection, CSP.", apps:"All 6 apps", trigger:"Add security headers"},
+  {num:29, cat:"security", name:"bcrypt Passwords", desc:"Industry-standard bcrypt password hashing. Replaced SHA-256 across all apps. Slow by design to resist brute force attacks.", apps:"All 6 apps", trigger:"Use bcrypt"},
+  {num:30, cat:"security", name:"Global Error Handlers", desc:"Custom 404 and 500 pages. API routes return JSON errors. HTML routes return styled error pages. No ugly stack traces.", apps:"Every app", trigger:"Add error pages"},
+  {num:31, cat:"saas", name:"Settings Panel + API Key Vault", desc:"Full multi-tenant settings: profile, password, API key vault (BYOK encrypted), team management, billing, branding. Drop-in blueprint.", apps:"New tool — available now", trigger:"Add settings"},
+];
+
+const CAT_COLORS = {ai:'cat-ai',auth:'cat-auth',saas:'cat-saas',db:'cat-db',analytics:'cat-analytics',ui:'cat-ui',deploy:'cat-deploy',security:'cat-security'};
+const CAT_LABELS = {ai:'🤖 AI',auth:'🔐 Auth',saas:'🏢 SaaS',db:'🗄️ Database',analytics:'📊 Analytics',ui:'🎨 UI',deploy:'🚀 Deploy',security:'🔒 Security'};
+
+let currentCat = 'all';
+
+function renderTools(tools) {
+  const grid = document.getElementById('tools-grid');
+  const empty = document.getElementById('empty-state');
+  const visible = tools.filter(t => currentCat === 'all' || t.cat === currentCat);
+  const search = document.getElementById('search').value.toLowerCase();
+  const filtered = visible.filter(t =>
+    !search || t.name.toLowerCase().includes(search) ||
+    t.desc.toLowerCase().includes(search) ||
+    t.trigger.toLowerCase().includes(search) ||
+    t.apps.toLowerCase().includes(search)
+  );
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = filtered.map(t => `
+      <div class="tool-card">
+        <div class="tool-num">#${String(t.num).padStart(2,'0')}</div>
+        <div class="cat-badge ${CAT_COLORS[t.cat]}">${CAT_LABELS[t.cat]}</div>
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-desc">${t.desc}</div>
+        <div class="tool-apps"><strong>Used in:</strong> ${t.apps}</div>
+        <div class="tool-trigger">"${t.trigger}"</div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('tool-count').textContent = TOOLS.length;
+}
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTools(TOOLS);
+}
+
+function filterTools() {
+  renderTools(TOOLS);
+}
+
+renderTools(TOOLS);
+</script>
+</body>
+</html>

@@ -48,6 +48,10 @@ def flyer():
 def court():
     return render_template('court.html')
 
+@app.route('/tools')
+def tools():
+    return render_template('tools.html')
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     global config

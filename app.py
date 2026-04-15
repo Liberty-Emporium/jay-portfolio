@@ -75,6 +75,11 @@ def admin():
         flash('Changes saved!', 'success')
     return render_template('admin.html', config=config)
 
+@app.route('/card')
+def business_card():
+    return render_template('business_card.html')
+
+
 if __name__ == '__main__':
     if not os.path.exists(CONFIG_FILE):
         save_config(DEFAULT_CONFIG)

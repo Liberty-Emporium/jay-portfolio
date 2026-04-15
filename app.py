@@ -51,7 +51,7 @@ def court():
 @app.route('/robots.txt')
 def robots():
     return app.response_class(
-        "User-agent: *\nAllow: /\nAllow: /apps\nDisallow: /tools\nDisallow: /admin\n",
+        "User-agent: *\nAllow: /\nAllow: /apps\nDisallow: /tools\nDisallow: /admin\nDisallow: /court\nDisallow: /flyer\n",
         mimetype="text/plain")
 
 @app.route('/apps')

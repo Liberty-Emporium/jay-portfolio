@@ -3,289 +3,361 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alexander AI Digital — Business Card Preview</title>
+<title>Alexander AI Digital — Business Card</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
 body {
   font-family: 'Inter', sans-serif;
-  background: #1a1a2e;
+  background: #0a0a1a;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 2.5rem;
   padding: 3rem 1rem;
 }
 
-h2 {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
+.section-label {
+  color: #334155;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
 }
 
-/* ── CARD DIMENSIONS: 3.5" x 2" standard = 350px x 200px at 100dpi ── */
-.card-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
+/* Standard business card: 3.5in x 2in */
 .card {
-  width: 420px;
-  height: 240px;
-  border-radius: 14px;
+  width: 440px;
+  height: 248px;
+  border-radius: 16px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
 }
 
-/* ── FRONT ── */
-.card-front {
+/* ─── FRONT ─────────────────────────────────── */
+.front {
   background: #0f172a;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 28px 32px;
+  padding: 26px 32px 22px;
 }
 
-/* Indigo glow orb */
-.card-front::before {
+/* Top-right glow */
+.front::before {
   content: '';
   position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
+  top: -80px; right: -80px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 65%);
   border-radius: 50%;
+  pointer-events: none;
 }
 
-/* Bottom accent line */
-.card-front::after {
+/* Bottom accent bar */
+.front::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #6366f1, #818cf8, #6366f1);
+  background: linear-gradient(90deg, transparent, #6366f1, #818cf8, #6366f1, transparent);
 }
 
-.brand-top {
+.brand-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.brand-dot {
-  width: 10px;
-  height: 10px;
-  background: #6366f1;
-  border-radius: 50%;
-  box-shadow: 0 0 12px rgba(99,102,241,0.8);
-  flex-shrink: 0;
-}
-
-.brand-name {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #818cf8;
-}
-
-.name-block {
+  gap: 9px;
   position: relative;
   z-index: 1;
 }
 
-.person-name {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  margin-bottom: 4px;
+.dot {
+  width: 9px; height: 9px;
+  background: #6366f1;
+  border-radius: 50%;
+  box-shadow: 0 0 14px rgba(99,102,241,0.9);
+  flex-shrink: 0;
 }
 
-.person-title {
-  font-size: 0.72rem;
+.brand-text {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #818cf8;
+}
+
+.name-block { position: relative; z-index: 1; }
+
+.full-name {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.title-line {
+  font-size: 0.7rem;
   font-weight: 500;
-  color: #64748b;
-  letter-spacing: 0.08em;
+  color: #475569;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.contact-block {
+.contact-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
+  position: relative;
+  z-index: 1;
 }
 
-.contact-item {
+.contact-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.68rem;
   color: #94a3b8;
-  font-weight: 400;
-  letter-spacing: 0.02em;
 }
 
-.contact-item span {
-  color: #6366f1;
-  margin-right: 6px;
+.contact-line .dot-sm {
+  width: 4px; height: 4px;
+  background: #6366f1;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-/* ── BACK ── */
-.card-back {
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+/* ─── BACK ──────────────────────────────────── */
+.back {
+  background: linear-gradient(135deg, #0f172a 0%, #1a1040 60%, #0f172a 100%);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+  gap: 24px;
+}
+
+/* Subtle grid pattern */
+.back::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Bottom accent */
+.back::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #6366f1, #818cf8, #6366f1, transparent);
+}
+
+/* Photo circle */
+.photo-wrap {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.photo-ring {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #6366f1, #818cf8, #4f46e5);
+  box-shadow: 0 0 30px rgba(99,102,241,0.5);
+}
+
+.photo-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1e293b;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
 }
 
-.back-logo {
+.photo-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* Brand block on back */
+.back-brand {
+  flex: 1;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.back-logo-row {
+  display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.back-icon {
-  width: 52px;
-  height: 52px;
-  background: rgba(99,102,241,0.15);
-  border: 1px solid rgba(99,102,241,0.3);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.6rem;
+.back-dot {
+  width: 10px; height: 10px;
+  background: #6366f1;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(99,102,241,0.8);
 }
 
-.back-brand {
-  font-size: 1.1rem;
+.back-company {
+  font-size: 1rem;
   font-weight: 800;
   color: white;
   letter-spacing: -0.02em;
 }
 
-.back-brand span {
-  color: #818cf8;
-}
+.back-company span { color: #818cf8; }
 
 .back-tagline {
   font-size: 0.65rem;
   color: #475569;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 500;
+  line-height: 1.6;
 }
 
-.back-dots {
+.back-divider {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1, transparent);
+  border-radius: 2px;
+}
+
+.back-services {
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.service-item {
+  font-size: 0.62rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
   gap: 6px;
-  margin-top: 4px;
 }
 
-.back-dot {
-  width: 5px;
-  height: 5px;
+.service-dot {
+  width: 3px; height: 3px;
+  background: #6366f1;
   border-radius: 50%;
-  background: #6366f1;
-  opacity: 0.4;
+  flex-shrink: 0;
 }
 
-.back-dot:nth-child(2) { opacity: 0.7; }
-.back-dot:nth-child(3) { opacity: 1; background: #818cf8; box-shadow: 0 0 6px rgba(129,140,248,0.8); }
-.back-dot:nth-child(4) { opacity: 0.7; }
-.back-dot:nth-child(5) { opacity: 0.4; }
-
-/* ── CARD LABEL ── */
-.card-label {
-  font-size: 0.7rem;
-  color: #334155;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+/* ─── PRINT BUTTON ───────────────────────────── */
+.btn-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
 
-/* ── PRINT BUTTON ── */
-.print-btn {
-  margin-top: 1rem;
-  padding: 0.75rem 2rem;
-  background: #6366f1;
-  color: white;
+.btn {
+  padding: 0.65rem 1.75rem;
   border: none;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
-  letter-spacing: 0.02em;
   transition: all 0.2s;
 }
 
-.print-btn:hover { background: #4f46e5; transform: translateY(-1px); }
+.btn-primary { background: #6366f1; color: white; }
+.btn-primary:hover { background: #4f46e5; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(99,102,241,0.4); }
+.btn-secondary { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
+.btn-secondary:hover { background: #334155; color: white; }
+
+.hint { color: #334155; font-size: 0.7rem; margin-top: 0.5rem; text-align: center; }
 
 @media print {
-  body { background: white; }
-  .print-btn { display: none; }
-  h2 { color: #666; }
+  body { background: white; padding: 0; }
+  .btn-row, .hint, .section-label { display: none; }
+  .card { box-shadow: none; }
 }
 </style>
 </head>
 <body>
 
-<h2>Alexander AI Digital — Business Card Preview</h2>
+<div class="section-label">Front</div>
+<div class="card front">
+  <div class="brand-row">
+    <div class="dot"></div>
+    <div class="brand-text">Alexander AI Digital</div>
+  </div>
 
-<!-- FRONT -->
-<div class="card-wrap">
-  <div class="card-label">FRONT</div>
-  <div class="card card-front">
-    <div class="brand-top">
-      <div class="brand-dot"></div>
-      <div class="brand-name">Alexander AI Digital</div>
+  <div class="name-block">
+    <div class="full-name">Jay Alexander</div>
+    <div class="title-line">Founder &amp; CEO</div>
+  </div>
+
+  <div class="contact-row">
+    <div class="contact-line">
+      <div class="dot-sm"></div>
+      alexanderaidigital.com
     </div>
-
-    <div class="name-block">
-      <div class="person-name">Jay Alexander</div>
-      <div class="person-title">Founder &amp; CEO</div>
+    <div class="contact-line">
+      <div class="dot-sm"></div>
+      jay@alexanderaidigital.com
     </div>
-
-    <div class="contact-block">
-      <div class="contact-item"><span>✦</span>alexanderaidigital.com</div>
-      <div class="contact-item"><span>✦</span>jay@alexanderaidigital.com</div>
-      <div class="contact-item"><span>✦</span>AI-Powered SaaS Solutions</div>
+    <div class="contact-line">
+      <div class="dot-sm"></div>
+      AI-Powered SaaS Solutions
     </div>
   </div>
 </div>
 
-<!-- BACK -->
-<div class="card-wrap">
-  <div class="card-label">BACK</div>
-  <div class="card card-back">
-    <div class="back-logo">
-      <div class="back-icon">⚡</div>
-      <div class="back-brand">Alexander <span>AI</span> Digital</div>
-      <div class="back-tagline">Intelligent Software. Built to Scale.</div>
+<div class="section-label">Back</div>
+<div class="card back">
+  <div class="photo-wrap">
+    <div class="photo-ring">
+      <div class="photo-inner">
+        <img src="{{ jay_photo_b64 }}" alt="Jay Alexander">
+      </div>
     </div>
-    <div class="back-dots">
+  </div>
+
+  <div class="back-brand">
+    <div class="back-logo-row">
       <div class="back-dot"></div>
-      <div class="back-dot"></div>
-      <div class="back-dot"></div>
-      <div class="back-dot"></div>
-      <div class="back-dot"></div>
+      <div class="back-company">Alexander <span>AI</span> Digital</div>
+    </div>
+    <div class="back-divider"></div>
+    <div class="back-tagline">Intelligent Software.<br>Built to Scale.</div>
+    <div class="back-services">
+      <div class="service-item"><div class="service-dot"></div>SaaS Platforms</div>
+      <div class="service-item"><div class="service-dot"></div>AI Integration</div>
+      <div class="service-item"><div class="service-dot"></div>Business Automation</div>
     </div>
   </div>
 </div>
 
-<button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+<div class="btn-row">
+  <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+  <button class="btn btn-secondary" onclick="document.body.style.background='white'">☀️ Light Mode</button>
+</div>
+<div class="hint">Standard 3.5" × 2" business card size</div>
 
 </body>
 </html>

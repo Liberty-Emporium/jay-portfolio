@@ -1,3 +1,4 @@
+import base64
 import os
 import json
 from flask import Flask, render_template, request, redirect, url_for, flash
@@ -77,7 +78,14 @@ def admin():
 
 @app.route('/card')
 def business_card():
-    return render_template('business_card.html')
+    # Jay's photo - base64 embedded
+    import os
+    photo_b64 = ''
+    photo_path = os.path.join(os.path.dirname(__file__), 'static', 'jay_photo.jpg')
+    if os.path.exists(photo_path):
+        with open(photo_path, 'rb') as f:
+            photo_b64 = 'data:image/jpeg;base64,' + base64.b64encode(f.read()).decode()
+    return render_template('business_card.html', jay_photo_b64=photo_b64)
 
 
 if __name__ == '__main__':

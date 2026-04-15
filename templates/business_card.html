@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexander AI Digital — Business Card Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #1a1a2e;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding: 3rem 1rem;
+}
+
+h2 {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+/* ── CARD DIMENSIONS: 3.5" x 2" standard = 350px x 200px at 100dpi ── */
+.card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card {
+  width: 420px;
+  height: 240px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+}
+
+/* ── FRONT ── */
+.card-front {
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 32px;
+}
+
+/* Indigo glow orb */
+.card-front::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* Bottom accent line */
+.card-front::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #818cf8, #6366f1);
+}
+
+.brand-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  background: #6366f1;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(99,102,241,0.8);
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #818cf8;
+}
+
+.name-block {
+  position: relative;
+  z-index: 1;
+}
+
+.person-name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.person-title {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-item {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.contact-item span {
+  color: #6366f1;
+  margin-right: 6px;
+}
+
+/* ── BACK ── */
+.card-back {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.back-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.back-brand {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.back-brand span {
+  color: #818cf8;
+}
+
+.back-tagline {
+  font-size: 0.65rem;
+  color: #475569;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.back-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.back-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #6366f1;
+  opacity: 0.4;
+}
+
+.back-dot:nth-child(2) { opacity: 0.7; }
+.back-dot:nth-child(3) { opacity: 1; background: #818cf8; box-shadow: 0 0 6px rgba(129,140,248,0.8); }
+.back-dot:nth-child(4) { opacity: 0.7; }
+.back-dot:nth-child(5) { opacity: 0.4; }
+
+/* ── CARD LABEL ── */
+.card-label {
+  font-size: 0.7rem;
+  color: #334155;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── PRINT BUTTON ── */
+.print-btn {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+
+.print-btn:hover { background: #4f46e5; transform: translateY(-1px); }
+
+@media print {
+  body { background: white; }
+  .print-btn { display: none; }
+  h2 { color: #666; }
+}
+</style>
+</head>
+<body>
+
+<h2>Alexander AI Digital — Business Card Preview</h2>
+
+<!-- FRONT -->
+<div class="card-wrap">
+  <div class="card-label">FRONT</div>
+  <div class="card card-front">
+    <div class="brand-top">
+      <div class="brand-dot"></div>
+      <div class="brand-name">Alexander AI Digital</div>
+    </div>
+
+    <div class="name-block">
+      <div class="person-name">Jay Alexander</div>
+      <div class="person-title">Founder &amp; CEO</div>
+    </div>
+
+    <div class="contact-block">
+      <div class="contact-item"><span>✦</span>alexanderaidigital.com</div>
+      <div class="contact-item"><span>✦</span>jay@alexanderaidigital.com</div>
+      <div class="contact-item"><span>✦</span>AI-Powered SaaS Solutions</div>
+    </div>
+  </div>
+</div>
+
+<!-- BACK -->
+<div class="card-wrap">
+  <div class="card-label">BACK</div>
+  <div class="card card-back">
+    <div class="back-logo">
+      <div class="back-icon">⚡</div>
+      <div class="back-brand">Alexander <span>AI</span> Digital</div>
+      <div class="back-tagline">Intelligent Software. Built to Scale.</div>
+    </div>
+    <div class="back-dots">
+      <div class="back-dot"></div>
+      <div class="back-dot"></div>
+      <div class="back-dot"></div>
+      <div class="back-dot"></div>
+      <div class="back-dot"></div>
+    </div>
+  </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+</body>
+</html>

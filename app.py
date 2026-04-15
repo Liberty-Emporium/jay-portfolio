@@ -48,6 +48,12 @@ def flyer():
 def court():
     return render_template('court.html')
 
+@app.route('/robots.txt')
+def robots():
+    return app.response_class(
+        "User-agent: *\nAllow: /\nDisallow: /tools\nDisallow: /admin\n",
+        mimetype="text/plain")
+
 @app.route('/tools')
 def tools():
     return render_template('tools.html')

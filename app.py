@@ -51,8 +51,12 @@ def court():
 @app.route('/robots.txt')
 def robots():
     return app.response_class(
-        "User-agent: *\nAllow: /\nDisallow: /tools\nDisallow: /admin\n",
+        "User-agent: *\nAllow: /\nAllow: /apps\nDisallow: /tools\nDisallow: /admin\n",
         mimetype="text/plain")
+
+@app.route('/apps')
+def apps():
+    return render_template('apps.html')
 
 @app.route('/tools')
 def tools():

@@ -286,8 +286,8 @@ const CAT_LABELS = {ai:'🤖 AI',auth:'🔐 Auth',saas:'🏢 SaaS',db:'🗄️ D
 let currentCat = 'all';
 
 function renderTools(tools) {
-  const grid = document.getElementById('tools-grid');
-  const empty = document.getElementById('empty-state');
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
   const visible = tools.filter(t => currentCat === 'all' || t.cat === currentCat);
   const search = document.getElementById('search').value.toLowerCase();
   const filtered = visible.filter(t =>
@@ -302,7 +302,7 @@ function renderTools(tools) {
   } else {
     empty.style.display = 'none';
     grid.innerHTML = filtered.map(t => `
-      <div class="tool-card">
+      <div class="tool-card ${CAT_COLORS[t.cat]}">
         <div class="tool-num">#${String(t.num).padStart(2,'0')}</div>
         <div class="cat-badge ${CAT_COLORS[t.cat]}">${CAT_LABELS[t.cat]}</div>
         <div class="tool-name">${t.name}</div>
@@ -315,7 +315,7 @@ function renderTools(tools) {
   document.getElementById('tool-count').textContent = TOOLS.length;
 }
 
-function filterCat(cat, btn) {
+function setFilter(cat, btn) {
   currentCat = cat;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');

@@ -59,6 +59,26 @@ def robots():
 def apps():
     return render_template('apps.html')
 
+@app.route('/investors')
+def investors():
+    return render_template('investors.html', config=config)
+
+@app.route('/investor-inquiry', methods=['POST'])
+def investor_inquiry():
+    name    = request.form.get('name', '').strip()
+    email   = request.form.get('email', '').strip()
+    interest = request.form.get('interest', '')
+    message = request.form.get('message', '').strip()
+    # Log to a file so Jay never misses an inquiry
+    import datetime
+    log_path = os.path.join(os.path.dirname(__file__), 'investor_inquiries.log')
+    with open(log_path, 'a') as f:
+        f.write(f"\n{'='*60}\n")
+        f.write(f"Date: {datetime.datetime.now()}\n")
+        f.write(f"Name: {name}\nEmail: {email}\nInterest: {interest}\nMessage: {message}\n")
+    flash(f'Thanks {name}! Jay will get back to you at {email} within 24 hours.', 'success')
+    return redirect(url_for('investors') + '#contact')
+
 @app.route('/tools')
 def tools():
     return render_template('tools.html')

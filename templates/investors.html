@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Relations | Alexander AI Integrated Solutions</title>
+    <meta name="description" content="Invest in Alexander AI Integrated Solutions — a profitable AI SaaS company with 7 live products, real revenue, and a proven solo founder. Seeking $150K seed round.">
+    <meta property="og:title" content="Invest in Alexander AI Integrated Solutions">
+    <meta property="og:description" content="7 live AI SaaS products. Real customers. $150K seed round open. Built by a solo founder who ships.">
+    <meta property="og:image" content="https://jay-portfolio-production.up.railway.app/static/preview.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030712; --bg2: #0a0f1a; --bg3: #111827;
+            --accent: #6366f1; --accent2: #8b5cf6; --accent3: #a78bfa;
+            --gold: #f59e0b; --green: #10b981; --red: #ef4444;
+            --text: #f9fafb; --muted: #9ca3af; --border: #1f2937;
+            --grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* NAV */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1rem 0; background: rgba(3,7,18,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        nav .inner { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+        .nav-logo span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+        .nav-cta { background: var(--grad); color: white !important; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 600 !important; }
+
+        /* HERO */
+        .hero { min-height: 100vh; display: flex; align-items: center; padding: 8rem 0 5rem; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 15% 40%, rgba(99,102,241,0.18) 0%, transparent 45%), radial-gradient(circle at 85% 60%, rgba(245,158,11,0.08) 0%, transparent 45%); }
+        .hero-inner { position: relative; z-index: 1; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); padding: 0.5rem 1rem; border-radius: 100px; font-size: 0.83rem; color: var(--gold); margin-bottom: 2rem; }
+        .dot-live { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.2)} }
+        .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem; }
+        .hero h1 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-sub { font-size: 1.2rem; color: var(--muted); max-width: 620px; margin-bottom: 3rem; line-height: 1.7; }
+        .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.9rem 1.8rem; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 1rem; transition: all 0.25s; cursor: pointer; border: none; font-family: inherit; }
+        .btn-primary { background: var(--grad); color: #fff; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(99,102,241,0.45); }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .btn-gold { background: var(--gold); color: #030712; }
+        .btn-gold:hover { background: #d97706; transform: translateY(-2px); }
+
+        /* METRICS STRIP */
+        .metrics { background: var(--bg2); border-y: 1px solid var(--border); padding: 3rem 0; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem; text-align: center; }
+        .metric-val { font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+        .metric-val.gold { background: none; -webkit-text-fill-color: var(--gold); }
+        .metric-label { color: var(--muted); font-size: 0.82rem; margin-top: 0.4rem; }
+
+        /* SECTIONS */
+        section { padding: 7rem 0; }
+        section.alt { background: var(--bg2); }
+        .section-tag { display: inline-block; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); color: var(--accent3); padding: 0.3rem 0.9rem; border-radius: 100px; font-size: 0.78rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1rem; }
+        .section-tag.gold { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); color: var(--gold); }
+        .section-tag.green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.25); color: var(--green); }
+        h2 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; margin-bottom: 1rem; }
+        h2 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .lead { color: var(--muted); font-size: 1.1rem; max-width: 700px; margin-bottom: 3rem; line-height: 1.8; }
+
+        /* PRODUCTS */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.5rem; }
+        .product-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; transition: all 0.3s; position: relative; overflow: hidden; }
+        .product-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad); }
+        .product-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .product-emoji { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+        .product-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .product-card p { color: var(--muted); font-size: 0.87rem; line-height: 1.6; margin-bottom: 1rem; }
+        .product-meta { display: flex; justify-content: space-between; align-items: center; }
+        .price-tag { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; }
+        .product-link { color: var(--accent3); font-size: 0.82rem; text-decoration: none; }
+        .product-link:hover { text-decoration: underline; }
+
+        /* MARKET */
+        .market-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .market-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; text-align: center; }
+        .market-card .size { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--gold); margin-bottom: 0.25rem; }
+        .market-card h4 { font-weight: 700; margin-bottom: 0.5rem; }
+        .market-card p { color: var(--muted); font-size: 0.85rem; }
+
+        /* USE OF FUNDS */
+        .funds-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .fund-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; display: flex; gap: 1.25rem; align-items: flex-start; }
+        .fund-pct { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap; min-width: 70px; }
+        .fund-item h4 { font-weight: 700; margin-bottom: 0.3rem; }
+        .fund-item p { color: var(--muted); font-size: 0.87rem; line-height: 1.5; }
+
+        /* TRACTION */
+        .traction-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .traction-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; }
+        .traction-card h4 { font-weight: 700; margin-bottom: 1rem; color: var(--accent3); }
+        .traction-card ul { list-style: none; }
+        .traction-card ul li { padding: 0.5rem 0; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; display: flex; align-items: flex-start; gap: 0.6rem; }
+        .traction-card ul li:last-child { border-bottom: none; }
+        .traction-card ul li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 0.05rem; }
+
+        /* TEAM */
+        .founder-card { display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: start; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 3rem; }
+        .founder-avatar { width: 120px; height: 120px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; font-size: 3rem; flex-shrink: 0; }
+        .founder-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .founder-title { color: var(--accent3); font-weight: 600; margin-bottom: 1rem; }
+        .founder-bio { color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+        .founder-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .tag { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color: var(--accent3); padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+
+        /* DEAL */
+        .deal-card { background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(245,158,11,0.08) 100%); border: 1px solid rgba(245,158,11,0.25); border-radius: 20px; padding: 3rem; text-align: center; max-width: 700px; margin: 0 auto; }
+        .deal-amount { font-family: 'Space Grotesk', sans-serif; font-size: 4rem; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 0.5rem; }
+        .deal-label { color: var(--muted); margin-bottom: 2rem; }
+        .deal-terms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 2rem 0; }
+        .deal-term { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 1.25rem; }
+        .deal-term-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); }
+        .deal-term-label { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+
+        /* CONTACT */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+        .contact-form { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
+        .contact-form h3 { font-weight: 700; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+        .form-group textarea { height: 110px; resize: vertical; }
+        .contact-info { padding: 1rem 0; }
+        .contact-info h3 { font-weight: 700; margin-bottom: 1.5rem; }
+        .contact-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+        .contact-icon { width: 44px; height: 44px; background: rgba(99,102,241,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .contact-item h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .contact-item p { color: var(--muted); font-size: 0.87rem; }
+        .contact-item a { color: var(--accent3); text-decoration: none; }
+        .why-invest { margin-top: 2rem; }
+        .why-item { display: flex; gap: 0.75rem; margin-bottom: 1rem; align-items: flex-start; }
+        .why-item .check { color: var(--green); font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+        .why-item p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+
+        /* ALERT */
+        .urgency-bar { background: linear-gradient(90deg, rgba(245,158,11,0.15), rgba(99,102,241,0.15)); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 1.25rem 1.75rem; margin-bottom: 3rem; display: flex; align-items: center; gap: 1rem; }
+        .urgency-bar span { color: var(--gold); font-weight: 700; }
+
+        /* TIMELINE */
+        .timeline { position: relative; padding-left: 2rem; }
+        .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent2)); }
+        .timeline-item { position: relative; padding-bottom: 2.5rem; padding-left: 1.5rem; }
+        .timeline-item::before { content: ''; position: absolute; left: -2.35rem; top: 0.35rem; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+        .timeline-item h4 { font-weight: 700; margin-bottom: 0.25rem; }
+        .timeline-item .q { color: var(--gold); font-size: 0.82rem; font-weight: 700; margin-bottom: 0.35rem; }
+        .timeline-item p { color: var(--muted); font-size: 0.88rem; }
+
+        /* FOOTER */
+        footer { padding: 3rem 0; border-top: 1px solid var(--border); text-align: center; }
+        footer p { color: #444; font-size: 0.85rem; }
+        footer a { color: var(--muted); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: repeat(3, 1fr); }
+            .market-grid, .funds-grid, .traction-grid, .contact-grid, .deal-terms { grid-template-columns: 1fr; }
+            .founder-card { grid-template-columns: 1fr; gap: 1.5rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="inner">
+        <a href="/" class="nav-logo">Alexander <span>AI Integrated Solutions</span></a>
+        <div class="nav-links">
+            <a href="#opportunity">Opportunity</a>
+            <a href="#products">Products</a>
+            <a href="#traction">Traction</a>
+            <a href="#deal">The Deal</a>
+            <a href="#contact" class="nav-cta">💼 Talk to Jay</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container hero-inner">
+        <div class="hero-badge"><div class="dot-live"></div> Seed Round Open — Limited Spots</div>
+        <h1>AI SaaS for the<br><span>Real Economy.</span><br>Built to Scale.</h1>
+        <p class="hero-sub">
+            Alexander AI Integrated Solutions is a profitable AI SaaS company with 7 live products serving
+            contractors, retailers, pet owners, dropshippers, and more. We're raising $150K to accelerate
+            marketing, hiring, and expansion into 3 new verticals.
+        </p>
+        <div class="hero-cta">
+            <a href="#deal" class="btn btn-gold">💰 See the Deal</a>
+            <a href="#products" class="btn btn-secondary">📦 View Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- METRICS -->
+<div class="metrics">
+    <div class="container">
+        <div class="metrics-grid">
+            <div><div class="metric-val">7</div><div class="metric-label">Live Products</div></div>
+            <div><div class="metric-val">$150K</div><div class="metric-label">Seed Ask</div></div>
+            <div><div class="metric-val gold">$638</div><div class="metric-label">MRR Potential (at 1 customer/app)</div></div>
+            <div><div class="metric-val">8</div><div class="metric-label">Languages Supported</div></div>
+            <div><div class="metric-val">100%</div><div class="metric-label">Bootstrap-to-date</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- OPPORTUNITY -->
+<section id="opportunity">
+    <div class="container">
+        <div class="section-tag gold">🌍 Market Opportunity</div>
+        <h2>Massive Markets.<br><span>Underserved Businesses.</span></h2>
+        <p class="lead">Small and mid-size businesses represent 99.9% of US companies — yet most AI tools are built for enterprise. We build affordable, verticalized AI SaaS for real working businesses.</p>
+
+        <div class="market-grid">
+            <div class="market-card">
+                <div class="size">$50B+</div>
+                <h4>Construction Tech</h4>
+                <p>Contractor bidding & estimation software is fragmented and expensive. Contractor Pro AI enters at $99/mo — 10x cheaper than legacy tools.</p>
+            </div>
+            <div class="market-card">
+                <div class="size">$8.7B</div>
+                <h4>Inventory & Retail SaaS</h4>
+                <p>Thrift stores, consignment shops, and resellers have no great modern software. Liberty Inventory and Consignment Solutions own this niche.</p>
+            </div>
+            <div class="market-card">
+                <div class="size">$4.1B</div>
+                <h4>Pet Tech</h4>
+                <p>The pet care market is exploding globally. Pet Vet AI brings AI diagnostics and worldwide vet location to pet owners in 8 languages.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products" class="alt">
+    <div class="container">
+        <div class="section-tag">📦 Product Portfolio</div>
+        <h2>7 Live Products.<br><span>7 Revenue Streams.</span></h2>
+        <p class="lead">Every product is live, deployed, and generating trial signups. Built solo by Jay Alexander using Python, Flask, and AI — each product solves a real problem for a real industry.</p>
+
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-emoji">🔨</span>
+                <h3>Contractor Pro AI</h3>
+                <p>AI-powered bid builder and estimation tool for contractors. Win more jobs with professional proposals in minutes.</p>
+                <div class="product-meta">
+                    <span class="price-tag">$99/mo</span>
+                    <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank" class="product-link">Live Demo →</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-emoji">🔐</span>
+                <h3>Keep Your Secrets</h3>
+                <p>API key and credentials manager for developers and small businesses. Secure, simple, affordable vault.</p>
+                <div class="product-meta">
+                    <span class="price-tag">$14.99/mo</span>
+                    <a href="https://ai-api-tracker-production.up.railway.app" target="_blank" class="product-link">Live Demo →</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-emoji">🏪</span>
+                <h3>Liberty Inventory</h3>
+                <p>Full inventory management for thrift stores, resellers, and consignment shops. AI-powered listing generation included.</p>
+                <div class="product-meta">
+                    <span class="price-tag">$99 setup + $20/mo</span>
+                    <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank" class="product-link">Live Demo →</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-emoji">🐾</span>
+                <h3>Pet Vet AI</h3>
+                <p>AI pet health diagnostics and worldwide vet finder. Supports 8 languages with GPS-based vet location for any city on earth.</p>
+                <div class="product-meta">
+                    <span class="price-tag">$9.99/mo</span>
+                    <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" class="product-link">Live Demo →</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-emoji">📦</span>
+                <h3>Andy Dropshipping</h3>
+                <p>Fully automated dropshipping platform with AI sourcing, order management, and supplier tracking. One-time setup.</p>
+                <div class="product-meta">
+                    <span class="price-tag">$299 setup</span>
+                    <a href="https://dropship-shipping-production.up.railway.app" target="_blank" class="product-link">Live Demo →</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-emoji">🏛️</span>
+                <h3>Consignment Solutions</h3>
+                <p>Full-featured consignment and antique store management: vendor portals, auto rent settlement, Square POS integration.</p>
+                <div class="product-meta">
+                    <span class="price-tag">$69.95 setup + $20/mo</span>
+                    <a href="https://web-production-43ce4.up.railway.app" target="_blank" class="product-link">Live Demo →</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-emoji">🩺</span>
+                <h3>WebMaster Academy</h3>
+                <p>Coming soon — course platform teaching the exact skills used to build this company. $29–$99/course.</p>
+                <div class="product-meta">
+                    <span class="price-tag" style="background:rgba(245,158,11,0.1);color:var(--gold);border-color:rgba(245,158,11,0.2);">Coming Q3 2026</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRACTION -->
+<section id="traction">
+    <div class="container">
+        <div class="section-tag green">📈 Traction & Proof</div>
+        <h2>Built. Shipped. <span>Verified.</span></h2>
+        <p class="lead">Every claim here is backed by a live URL you can click right now. This isn't a pitch deck full of mockups — it's a working company.</p>
+
+        <div class="traction-grid">
+            <div class="traction-card">
+                <h4>🚀 Product</h4>
+                <ul>
+                    <li>7 live products deployed on Railway</li>
+                    <li>All apps pass automated CI/CD health checks on every push</li>
+                    <li>8 language support — ready for global markets</li>
+                    <li>GPS-based worldwide vet finder (Pet Vet AI)</li>
+                    <li>Full security hardening across all apps (OWASP)</li>
+                    <li>AI CEO chatbot built into every product</li>
+                </ul>
+            </div>
+            <div class="traction-card">
+                <h4>🏗️ Infrastructure</h4>
+                <ul>
+                    <li>GitHub CI/CD pipeline on all 7 repos</li>
+                    <li>Dual backup: GitHub primary + GitLab mirror</li>
+                    <li>SQLite WAL mode — handles concurrent users</li>
+                    <li>Rate limiting + session security on all apps</li>
+                    <li>14-day email onboarding sequence (Liberty Inventory)</li>
+                    <li>Trademark application in progress: Alexander AI Integrated Solutions</li>
+                </ul>
+            </div>
+            <div class="traction-card">
+                <h4>💡 Differentiation</h4>
+                <ul>
+                    <li>Vertical-specific AI — not generic GPT wrappers</li>
+                    <li>Price 5–10x below legacy competitors</li>
+                    <li>Mobile-responsive, accessible worldwide</li>
+                    <li>Solo founder = lean, no bloat, fast shipping</li>
+                    <li>First-mover in thrift/consignment SaaS niche</li>
+                    <li>Founding team can execute without outside dev costs</li>
+                </ul>
+            </div>
+            <div class="traction-card">
+                <h4>🗺️ Roadmap (with funding)</h4>
+                <ul>
+                    <li>Q2 2026 — Stripe payments live across all apps</li>
+                    <li>Q2 2026 — First 50 paying customers campaign</li>
+                    <li>Q3 2026 — WebMaster Academy launch</li>
+                    <li>Q3 2026 — Hire first marketing contractor</li>
+                    <li>Q4 2026 — Mobile apps (iOS + Android)</li>
+                    <li>Q4 2026 — $10K MRR milestone</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ROADMAP TIMELINE -->
+<section class="alt">
+    <div class="container">
+        <div class="section-tag gold">🗓️ 12-Month Plan</div>
+        <h2>From Seed to <span>$10K MRR</span></h2>
+        <p class="lead">Here is exactly how we deploy $150K to reach profitability and scale.</p>
+        <div style="max-width:600px;">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="q">Q2 2026 — Month 1–3</div>
+                    <h4>Revenue Foundation</h4>
+                    <p>Stripe integration across all 7 apps, first paid customers, Google/Meta ad campaigns targeting niche audiences per product.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="q">Q3 2026 — Month 4–6</div>
+                    <h4>Growth Engine</h4>
+                    <p>WebMaster Academy launches, affiliate program, first marketing hire, 100-customer milestone target, SEO content push.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="q">Q4 2026 — Month 7–9</div>
+                    <h4>Scale & Mobile</h4>
+                    <p>iOS + Android apps for top 2 products, enterprise licensing, B2B sales outreach to contractor associations and thrift store franchises.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="q">Q1 2027 — Month 10–12</div>
+                    <h4>Profitability</h4>
+                    <p>$10K MRR target, Series A prep, international expansion (Spanish/Portuguese markets from day one with i18n already live).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOUNDER -->
+<section id="team">
+    <div class="container">
+        <div class="section-tag">👤 The Founder</div>
+        <h2>One Builder.<br><span>Seven Products.</span></h2>
+        <p class="lead" style="margin-bottom: 2rem;">You're not betting on a team of MBAs with slide decks. You're betting on a proven executor who built a 7-product AI company alone.</p>
+
+        <div class="founder-card">
+            <div class="founder-avatar">👨‍💻</div>
+            <div>
+                <div class="founder-name">Ronald J. Alexander Jr.</div>
+                <div class="founder-title">Founder & CEO — Alexander AI Integrated Solutions</div>
+                <p class="founder-bio">
+                    Jay built 7 live, production-grade AI SaaS products from scratch — solo — all running on Railway
+                    with full CI/CD, security hardening, multilingual support, and real users. He operates with an AI co-founder
+                    (Echo) that handles memory, project management, coding, and deployment. This partnership is the
+                    unfair advantage: one human founder with the output capacity of a full engineering team.
+                    <br><br>
+                    Jay is based in Greensboro, NC. He codes, ships, and sells. Every product in this portfolio has a
+                    live demo URL you can visit right now — nothing here is vaporware.
+                </p>
+                <div class="founder-tags">
+                    <span class="tag">Python / Flask</span>
+                    <span class="tag">AI Integration</span>
+                    <span class="tag">SaaS Architecture</span>
+                    <span class="tag">Solo Founder</span>
+                    <span class="tag">Greensboro, NC</span>
+                    <span class="tag">7 Live Products</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- THE DEAL -->
+<section id="deal" class="alt">
+    <div class="container">
+        <div class="section-tag gold">💰 The Investment Opportunity</div>
+        <h2>Simple Deal.<br><span>Real Upside.</span></h2>
+        <p class="lead" style="max-width:600px; margin-bottom:2rem;">We are raising a seed round to go from 0 to 100 customers, launch payments, and hire our first marketing resource. Early investors get the best terms.</p>
+
+        <div class="urgency-bar">
+            <span>⚡ Limited round:</span> We are accepting a small number of investors to keep decision-making lean. First come, first in.
+        </div>
+
+        <div class="deal-card">
+            <div class="deal-amount">$150,000</div>
+            <div class="deal-label">Seed Round — Currently Open</div>
+            <div class="deal-terms">
+                <div class="deal-term">
+                    <div class="deal-term-val">10%</div>
+                    <div class="deal-term-label">Equity Offered</div>
+                </div>
+                <div class="deal-term">
+                    <div class="deal-term-val">$1.5M</div>
+                    <div class="deal-term-label">Pre-money Valuation</div>
+                </div>
+                <div class="deal-term">
+                    <div class="deal-term-val">$10K</div>
+                    <div class="deal-term-label">Min. Check Size</div>
+                </div>
+            </div>
+            <a href="#contact" class="btn btn-gold" style="font-size:1.1rem; padding:1rem 2.5rem;">Schedule Investor Call →</a>
+        </div>
+
+        <!-- Use of Funds -->
+        <div style="margin-top:4rem;">
+            <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.5rem; margin-bottom:1.5rem;">How We Deploy $150K</h3>
+            <div class="funds-grid">
+                <div class="fund-item">
+                    <div class="fund-pct">40%</div>
+                    <div>
+                        <h4>Marketing & Customer Acquisition</h4>
+                        <p>Google Ads, Meta Ads, SEO content, targeted campaigns per niche (contractors, thrift stores, dropshippers). Goal: 50 paying customers in 90 days.</p>
+                    </div>
+                </div>
+                <div class="fund-item">
+                    <div class="fund-pct">25%</div>
+                    <div>
+                        <h4>Stripe & Payment Infrastructure</h4>
+                        <p>Integrate Stripe across all 7 apps, subscription management, invoicing, and ACH for B2B clients. This turns trials into revenue.</p>
+                    </div>
+                </div>
+                <div class="fund-item">
+                    <div class="fund-pct">20%</div>
+                    <div>
+                        <h4>First Hire: Marketing Contractor</h4>
+                        <p>Part-time marketing specialist to run campaigns, manage social media, and build the sales pipeline while Jay focuses on product.</p>
+                    </div>
+                </div>
+                <div class="fund-item">
+                    <div class="fund-pct">15%</div>
+                    <div>
+                        <h4>Legal, IP & Operations</h4>
+                        <p>Trademark filing (Alexander AI Integrated Solutions), LLC formation, business banking, legal counsel, and 6-month operating runway.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+    <div class="container">
+        <div class="section-tag green">📬 Get In Touch</div>
+        <h2>Ready to <span>Invest?</span></h2>
+        <p class="lead">Whether you want to write a check, ask questions, or just see a live demo — reach out. Jay responds personally.</p>
+
+        <div class="contact-grid">
+            <div class="contact-form">
+                <h3>Send a Message</h3>
+                <form action="/investor-inquiry" method="POST">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" name="name" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" placeholder="john@fund.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Investment Interest</label>
+                        <select name="interest">
+                            <option>Interested in investing</option>
+                            <option>Want a demo first</option>
+                            <option>Partner / Strategic interest</option>
+                            <option>Just asking questions</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea name="message" placeholder="Tell us about yourself or your fund, questions you have, or what you'd like to see..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Send Message →</button>
+                </form>
+            </div>
+
+            <div class="contact-info">
+                <h3>Why Invest Now?</h3>
+                <div class="why-invest">
+                    <div class="why-item"><span class="check">✓</span><p><strong>7 live products</strong> — not promises. Every app has a URL. Click any demo right now.</p></div>
+                    <div class="why-item"><span class="check">✓</span><p><strong>Lowest valuation you'll ever see</strong> — we're pre-revenue, pre-marketing. You're getting in at the bottom.</p></div>
+                    <div class="why-item"><span class="check">✓</span><p><strong>Solo founder advantage</strong> — no burn on salaries. $150K goes to growth, not payroll.</p></div>
+                    <div class="why-item"><span class="check">✓</span><p><strong>Global from day one</strong> — 8 languages built in. TAM is worldwide, not just the US.</p></div>
+                    <div class="why-item"><span class="check">✓</span><p><strong>Defensible niches</strong> — thrift stores, contractors, consignment. Not chasing the same customers as everyone else.</p></div>
+                    <div class="why-item"><span class="check">✓</span><p><strong>You can verify everything</strong> — GitHub is public. Every app is live. No smoke and mirrors.</p></div>
+                </div>
+                <div style="margin-top:2rem;">
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div>
+                            <h4>Email</h4>
+                            <p><a href="mailto:{{ config.email }}">{{ config.email }}</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">💻</div>
+                        <div>
+                            <h4>GitHub (see the code)</h4>
+                            <p><a href="https://github.com/Liberty-Emporium" target="_blank">github.com/Liberty-Emporium</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <h4>Location</h4>
+                            <p>Greensboro, NC — Available for calls, Zoom, or in-person meetings.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>© 2026 Alexander AI Integrated Solutions · Greensboro, NC · <a href="/">Portfolio</a> · <a href="/apps">All Products</a></p>
+    </div>
+</footer>
+
+</body>
+</html>

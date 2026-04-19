@@ -2,6 +2,7 @@ import base64
 import os
 import json
 import datetime
+import urllib.request
 from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session, jsonify
 from functools import wraps
 
@@ -33,6 +34,35 @@ def save_config(config):
         json.dump(config, f, indent=4)
 
 config = load_config()
+
+# ── Echo system prompt ───────────────────────────────────────────────────────
+ECHO_SYSTEM_PROMPT = """You are Echo, the personal AI assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions. You are accessed via the Command Center dashboard embedded chat.
+
+About Jay:
+- Entrepreneur and developer building AI-powered SaaS apps
+- Deploys everything on Railway
+- GitHub org: Liberty-Emporium
+- Email: jay@libertyemporium.com
+- Warm, direct communicator who values speed and results
+
+Jay's Live Apps:
+- Liberty Emporium Inventory: https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app (multi-tenant thrift store inventory with Claude AI)
+- Keep Your Secrets (KYS): https://ai-api-tracker-production.up.railway.app (AES-256 encrypted secrets manager)
+- Pet Vet AI: https://pet-vet-ai-production.up.railway.app (AI pet health diagnosis)
+- GymForge: https://web-production-1c23.up.railway.app (gym management with AI coaching)
+- Contractor Pro AI: https://contractor-pro-ai-production.up.railway.app (construction estimating, 19 templates)
+- Dropship Shipping (Andy): https://dropship-shipping-production.up.railway.app (dropshipping AI CEO)
+- Consignment Solutions: https://web-production-43ce4.up.railway.app
+- Jay Portfolio: https://jay-portfolio-production.up.railway.app (this site)
+- Inventory Demo: https://liberty-emporium-inventory-demo-app-production.up.railway.app
+
+Your role:
+- Help Jay manage his business and projects
+- Answer questions about his portfolio, suggest features, help plan work
+- Be concise, direct, and actionable — no fluff
+- You can read and manage todos via the dashboard API
+- Personality: professional but warm, a trusted partner not a chatbot
+- Sign off as Echo, never as an AI assistant or OpenAI/Anthropic product"""
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
@@ -173,6 +203,56 @@ def investor_inquiry():
 @app.route('/tools')
 def tools():
     return render_template('tools.html')
+
+@app.route('/chat')
+@login_required
+def chat():
+    return render_template('chat.html', config=config)
+
+@app.route('/api/chat', methods=['POST'])
+@login_required
+def api_chat():
+    data = request.get_json()
+    user_message = data.get('message', '').strip()
+    history = data.get('history', [])
+    if not user_message:
+        return jsonify({'error': 'message required'}), 400
+
+    openrouter_key = os.environ.get('OPENROUTER_API_KEY', '')
+    if not openrouter_key:
+        return jsonify({'reply': '⚠️ OpenRouter API key not configured. Add OPENROUTER_API_KEY to Railway environment variables.'})
+
+    # Build messages
+    messages = [{'role': 'system', 'content': ECHO_SYSTEM_PROMPT}]
+    for h in history[-10:]:  # last 10 turns for context
+        if h.get('role') in ('user', 'assistant'):
+            messages.append({'role': h['role'], 'content': h['content']})
+    messages.append({'role': 'user', 'content': user_message})
+
+    payload = json.dumps({
+        'model': 'anthropic/claude-3.5-haiku',
+        'messages': messages,
+        'max_tokens': 1024,
+        'temperature': 0.7
+    }).encode('utf-8')
+
+    req = urllib.request.Request(
+        'https://openrouter.ai/api/v1/chat/completions',
+        data=payload,
+        headers={
+            'Authorization': f'Bearer {openrouter_key}',
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://jay-portfolio-production.up.railway.app',
+            'X-Title': 'Echo — Jay Alexander Command Center'
+        }
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            result = json.loads(resp.read().decode('utf-8'))
+            reply = result['choices'][0]['message']['content']
+            return jsonify({'reply': reply})
+    except Exception as e:
+        return jsonify({'reply': f'⚠️ Echo is unavailable right now. Error: {str(e)[:100]}'})
 
 @app.route('/dashboard')
 @login_required

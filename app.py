@@ -1,7 +1,8 @@
 import base64
 import os
 import json
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'portfolio-secret-2026')
@@ -83,7 +84,37 @@ def investor_inquiry():
 def tools():
     return render_template('tools.html')
 
+# ── Auth ─────────────────────────────────────────────────
+DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not flask_session.get('dashboard_auth'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        pw = request.form.get('password', '')
+        if pw == DASHBOARD_PASSWORD:
+            flask_session['dashboard_auth'] = True
+            flask_session.permanent = True
+            return redirect(url_for('dashboard'))
+        else:
+            error = 'Wrong password. Try again.'
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    flask_session.pop('dashboard_auth', None)
+    return redirect(url_for('index'))
+
 @app.route('/dashboard')
+@login_required
 def dashboard():
     return render_template('dashboard.html', config=config)
 

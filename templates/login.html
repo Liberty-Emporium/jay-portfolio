@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Memory — Jay Alexander</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030712; --bg2: #0a0f1a; --card: #111827;
+      --border: #1f2937; --accent: #6366f1; --accent2: #8b5cf6;
+      --accent3: #a78bfa; --text: #f9fafb; --muted: #9ca3af;
+      --red: #ef4444;
+      --grad: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    /* Ambient glow background */
+    body::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 25% 35%, rgba(99,102,241,.18) 0%, transparent 45%),
+        radial-gradient(circle at 75% 65%, rgba(139,92,246,.12) 0%, transparent 45%);
+      pointer-events: none;
+    }
+
+    .login-wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 400px;
+      padding: 20px;
+    }
+
+    .login-logo {
+      text-align: center; margin-bottom: 32px;
+    }
+    .brain-icon {
+      font-size: 3rem; display: block; margin-bottom: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .login-logo h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem; font-weight: 700;
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .login-logo p { font-size: 0.85rem; color: var(--muted); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: .04em; text-transform: uppercase; }
+    input[type="password"] {
+      width: 100%;
+      background: #0a0f1a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color .2s;
+      letter-spacing: .15em;
+    }
+    input[type="password"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: var(--grad);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all .2s;
+      margin-top: 6px;
+    }
+    .btn-login:hover { opacity: .9; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,.35); }
+    .btn-login:active { transform: translateY(0); }
+
+    .error-msg {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.25);
+      color: #f87171;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .back-link {
+      text-align: center; margin-top: 20px;
+    }
+    .back-link a {
+      font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color .2s;
+    }
+    .back-link a:hover { color: var(--text); }
+
+    .security-note {
+      text-align: center; margin-top: 28px;
+      font-size: 0.75rem; color: #374151;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-logo">
+      <span class="brain-icon">🧠</span>
+      <h1>AI Memory</h1>
+      <p>Jay Alexander · Command Center</p>
+    </div>
+
+    <div class="card">
+      {% if error %}
+      <div class="error-msg">🔒 {{ error }}</div>
+      {% endif %}
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="error-msg">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="POST" action="/login">
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="••••••••••••" autofocus autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-login">🔓 Enter Command Center</button>
+      </form>
+    </div>
+
+    <div class="back-link">
+      <a href="/">← Back to Portfolio</a>
+    </div>
+
+    <div class="security-note">
+      🔒 Private access only
+    </div>
+  </div>
+</body>
+</html>

@@ -136,6 +136,7 @@
     <button class="snav-item active" onclick="showTab('profile')">👤 Profile</button>
     <button class="snav-item" onclick="showTab('ai')">🤖 AI Behavior</button>
     <button class="snav-item" onclick="showTab('apikeys')">🔑 API Keys</button>
+    <button class="snav-item" onclick="showTab('brain')">🧠 Echo's Brain</button>
     <button class="snav-item" onclick="showTab('network')">🌐 App Network</button>
   </div>
 
@@ -387,6 +388,43 @@ Always refer to yourself as Echo. Never mention OpenAI, Anthropic, or any underl
     </div>
   </div>
 
+  <!-- ── ECHO'S BRAIN ── -->
+  <div class="stab" id="tab-brain">
+    <div class="card highlight" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="font-size:2.5rem">🧠</div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Echo's Persistent Brain</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:2px">These files define who Echo is, what she remembers, and how she behaves. Changes take effect on the next chat message.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:.78rem">
+        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🎭 SOUL.md</div><div style="color:var(--muted)">Personality, values, how Echo thinks and talks</div></div>
+        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🪪 IDENTITY.md</div><div style="color:var(--muted)">Who Echo is, what she knows, how she speaks</div></div>
+        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">💾 MEMORY.md</div><div style="color:var(--muted)">Long-term memory: projects, goals, history</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header" style="margin-bottom:12px"><div class="card-title">🎭 SOUL.md</div><span id="soul-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span></div>
+      <textarea class="notes-area" id="soul-editor" rows="12" placeholder="Loading..."></textarea>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('SOUL.md','soul-editor','soul-status')">💾 Save SOUL.md</button>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header" style="margin-bottom:12px"><div class="card-title">🪪 IDENTITY.md</div><span id="identity-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span></div>
+      <textarea class="notes-area" id="identity-editor" rows="10" placeholder="Loading..."></textarea>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('IDENTITY.md','identity-editor','identity-status')">💾 Save IDENTITY.md</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="margin-bottom:12px"><div class="card-title">💾 MEMORY.md</div><span id="memory-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span></div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">💡 Echo reads this every single conversation. Add new facts, decisions, projects, goals here.</div>
+      <textarea class="notes-area" id="memory-editor" rows="20" placeholder="Loading..."></textarea>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('MEMORY.md','memory-editor','memory-status')">💾 Save MEMORY.md</button>
+    </div>
+  </div>
+
   <!-- ── APP NETWORK ── -->
   <div class="stab" id="tab-network">
 
@@ -538,6 +576,32 @@ function saveAISettings() {
   setTimeout(() => btn.textContent = '💾 Save AI Settings', 2000);
 }
 
+
+async function loadBrainFiles() {
+  for (const [file, editorId] of [['SOUL.md','soul-editor'],['IDENTITY.md','identity-editor'],['MEMORY.md','memory-editor']]) {
+    try {
+      const r = await fetch('/api/brain/' + file);
+      const d = await r.json();
+      const el = document.getElementById(editorId);
+      if (el) el.value = d.content || '';
+    } catch(e) {}
+  }
+}
+
+async function saveBrain(filename, editorId, statusId) {
+  const content = document.getElementById(editorId).value;
+  try {
+    await fetch('/api/brain/' + filename, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({content})
+    });
+    const badge = document.getElementById(statusId);
+    badge.style.opacity = '1';
+    setTimeout(() => badge.style.opacity = '0', 3000);
+  } catch(e) { alert('Save failed: ' + e); }
+}
+
 // Load active model from server
 window.onload = async () => {
   try {
@@ -558,6 +622,7 @@ window.onload = async () => {
     if (saved) document.getElementById('selected-model-label').textContent = saved;
   }
 };
+  loadBrainFiles();
 </script>
 </body>
 </html>

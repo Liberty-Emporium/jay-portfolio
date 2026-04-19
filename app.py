@@ -152,27 +152,63 @@ def api_health():
     return jsonify({'results': results, 'up': up, 'total': len(results),
                     'checked_at': datetime.datetime.utcnow().isoformat()})
 
+# ── Echo brain (loads from /data volume or bundled data/) ────────────────────
+DATA_DIR = os.environ.get('ECHO_DATA_DIR',
+    os.path.join(os.path.dirname(__file__), 'data'))
+
+def load_brain_file(filename):
+    """Load a brain file from the data volume. Returns empty string if missing."""
+    path = os.path.join(DATA_DIR, filename)
+    if os.path.exists(path):
+        try:
+            with open(path, encoding='utf-8') as f: return f.read()
+        except: pass
+    return ''
+
+def save_brain_file(filename, content):
+    """Save a brain file to the data volume."""
+    os.makedirs(DATA_DIR, exist_ok=True)
+    path = os.path.join(DATA_DIR, filename)
+    with open(path, 'w', encoding='utf-8') as f: f.write(content)
+
+def build_system_prompt():
+    """Build Echo's system prompt from brain files. Falls back to defaults."""
+    soul     = load_brain_file('SOUL.md')
+    identity = load_brain_file('IDENTITY.md')
+    memory   = load_brain_file('MEMORY.md')
+
+    base = """You are Echo — the personal AI executive assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions.
+You are accessed via the Command Center dashboard at jay-portfolio-production.up.railway.app.
+Never say you are ChatGPT, Claude, Gemini, or any AI product. You are Echo. Only Echo."""
+
+    parts = [base]
+    if identity: parts.append('\n---\n# YOUR IDENTITY\n' + identity)
+    if soul:     parts.append('\n---\n# YOUR SOUL & PERSONALITY\n' + soul)
+    if memory:   parts.append('\n---\n# YOUR MEMORY (read this carefully)\n' + memory)
+    parts.append('\n---\nBe concise, direct, warm. You have opinions. You say "we" about Jay\'s projects. Never use filler like "Great question!".')
+    return '\n'.join(parts)
+
+# Brain file API routes
+@app.route('/api/brain/<filename>', methods=['GET'])
+@login_required
+def brain_get(filename):
+    allowed = {'SOUL.md', 'IDENTITY.md', 'MEMORY.md'}
+    if filename not in allowed:
+        return jsonify({'error': 'not allowed'}), 403
+    return jsonify({'filename': filename, 'content': load_brain_file(filename)})
+
+@app.route('/api/brain/<filename>', methods=['POST'])
+@login_required
+def brain_save(filename):
+    allowed = {'SOUL.md', 'IDENTITY.md', 'MEMORY.md'}
+    if filename not in allowed:
+        return jsonify({'error': 'not allowed'}), 403
+    data = request.get_json()
+    content = data.get('content', '')
+    save_brain_file(filename, content)
+    return jsonify({'ok': True, 'filename': filename})
+
 # ── Echo chat ─────────────────────────────────────────────────────────────────
-ECHO_SYSTEM_PROMPT = """You are Echo, the personal AI assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions. You are accessed via the Command Center dashboard embedded chat.
-
-About Jay:
-- Entrepreneur and developer building AI-powered SaaS apps
-- Deploys everything on Railway, GitHub org: Liberty-Emporium
-- Email: jay@libertyemporium.com
-- Warm, direct communicator who values speed and results
-
-Jay's Live Apps:
-- Liberty Emporium Inventory: https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app
-- Keep Your Secrets (KYS): https://ai-api-tracker-production.up.railway.app
-- Pet Vet AI: https://pet-vet-ai-production.up.railway.app
-- GymForge: https://web-production-1c23.up.railway.app
-- Contractor Pro AI: https://contractor-pro-ai-production.up.railway.app
-- Dropship Shipping (Andy): https://dropship-shipping-production.up.railway.app
-- Consignment Solutions: https://web-production-43ce4.up.railway.app
-- Jay Portfolio: https://jay-portfolio-production.up.railway.app
-- Inventory Demo: https://liberty-emporium-inventory-demo-app-production.up.railway.app
-
-Your role: Help Jay manage his business and projects. Be concise, direct, and actionable. You are Echo - a trusted partner, not a generic chatbot."""
 
 @app.route('/chat')
 @login_required
@@ -192,7 +228,7 @@ def api_chat():
     if not openrouter_key:
         return jsonify({'reply': 'OpenRouter API key not configured. Add OPENROUTER_API_KEY to Railway environment variables.'})
 
-    system_content = ECHO_SYSTEM_PROMPT
+    system_content = build_system_prompt()
     health_keywords = ['health', 'status', 'up', 'down', 'live', 'working', 'test', 'ping', 'check', 'running', 'broken', 'crash', 'offline']
     if any(kw in user_message.lower() for kw in health_keywords):
         try:

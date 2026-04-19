@@ -589,16 +589,19 @@ async function loadBrainFiles() {
 }
 
 async function saveBrain(filename, editorId, statusId) {
-  const content = document.getElementById(editorId).value;
+  const el = document.getElementById(editorId);
+  if (!el) return;
+  const content = el.value;
   try {
     await fetch('/api/brain/' + filename, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({content})
     });
-    const badge = document.getElementById(statusId);
-    badge.style.opacity = '1';
-    setTimeout(() => badge.style.opacity = '0', 3000);
+    if (statusId) {
+      const badge = document.getElementById(statusId);
+      if (badge) { badge.style.opacity = '1'; setTimeout(() => badge.style.opacity = '0', 3000); }
+    }
   } catch(e) { alert('Save failed: ' + e); }
 }
 
@@ -622,7 +625,12 @@ window.onload = async () => {
     if (saved) document.getElementById('selected-model-label').textContent = saved;
   }
 };
-  loadBrainFiles();
+  loadBrainFiles().then(() => {
+    // Also populate the AI Behavior system prompt from IDENTITY.md
+    const mem = document.getElementById('identity-editor');
+    const sp = document.getElementById('system-prompt');
+    if (mem && sp && mem.value) sp.value = mem.value;
+  });
 </script>
 </body>
 </html>

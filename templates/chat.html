@@ -146,6 +146,7 @@
   </div>
   <div class="topbar-right">
     <button class="btn-sm btn-ghost" id="health-btn" onclick="runHealthCheck()">🟢 Test All Apps</button>
+      <button class="btn-sm" id="echo-btn" onclick="sendToEcho()" style="background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:var(--accent3)">⚡ Send to Echo</button>
       <button class="btn-sm btn-ghost" onclick="clearChat()">Clear Chat</button>
     <a href="/dashboard" class="btn-sm btn-ghost">← Dashboard</a>
   </div>
@@ -360,6 +361,43 @@ async function runHealthCheck() {
   }
 
   btn.textContent = '🟢 Test All Apps';
+  btn.disabled = false;
+}
+
+
+async function sendToEcho() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text) {
+    alert('Type a task first, then click "Send to Echo"\n\nExample: "Fix the crash on Pet Vet AI" or "Add a dark mode toggle to the inventory app"');
+    return;
+  }
+  const btn = document.getElementById('echo-btn');
+  btn.textContent = '⏳ Sending...';
+  btn.disabled = true;
+
+  // Add user message to chat
+  addMessage('jay', '⚡ [Sending to Echo] ' + text);
+  chatHistory.push({role:'user', content: text});
+  input.value = '';
+
+  try {
+    const r = await fetch('/api/echo-bridge', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({task: text})
+    });
+    const d = await r.json();
+    const msg = d.status === 'sent'
+      ? '✅ Task sent to Echo! She\'ll execute it and report back.\n\n**Task ID:** #' + d.id
+      : '📥 Task queued for Echo.\n\n' + (d.response || 'Echo will pick this up on next check-in.') + '\n\n**Task ID:** #' + d.id + '\n\n💡 To connect Echo, set `ECHO_WEBHOOK_URL` in Railway env vars.';
+    addMessage('echo', msg);
+    chatHistory.push({role:'assistant', content: msg});
+  } catch(e) {
+    addMessage('echo', '⚠️ Could not queue task. Try again.');
+  }
+
+  btn.textContent = '⚡ Send to Echo';
   btn.disabled = false;
 }
 

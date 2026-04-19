@@ -80,13 +80,66 @@ def save_app_settings(s):
 # ── Auth (MUST come before any route that uses @login_required) ───────────────
 DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
 
+import hashlib
+import secrets as _secrets
+
+API_TOKENS_FILE = os.path.join(os.path.dirname(__file__), 'api_tokens.json')
+
+def load_api_tokens():
+    if os.path.exists(API_TOKENS_FILE):
+        try:
+            with open(API_TOKENS_FILE) as f: return json.load(f)
+        except: pass
+    return []
+
+def save_api_tokens(tokens):
+    with open(API_TOKENS_FILE, 'w') as f: json.dump(tokens, f, indent=2)
+
+def check_bearer_token():
+    """Check Authorization: Bearer <token> header. Returns True if valid."""
+    auth = request.headers.get('Authorization', '')
+    if not auth.startswith('Bearer '): return False
+    raw = auth[7:].strip()
+    token_hash = hashlib.sha256(raw.encode()).hexdigest()
+    tokens = load_api_tokens()
+    now = datetime.datetime.utcnow().isoformat()
+    return any(t.get('token_hash') == token_hash and
+               (not t.get('expires_at') or t['expires_at'] > now)
+               for t in tokens)
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        # Accept bearer token OR session cookie
+        if check_bearer_token():
+            return f(*args, **kwargs)
         if not flask_session.get('dashboard_auth'):
+            if request.is_json or request.path.startswith('/api/'):
+                return jsonify({'error': 'unauthorized'}), 401
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated
+
+@app.route('/api/token', methods=['POST'])
+def api_create_token():
+    """Create a bearer token. Requires dashboard password."""
+    data = request.get_json() or {}
+    pw = data.get('password', '')
+    if pw != DASHBOARD_PASSWORD:
+        return jsonify({'error': 'wrong password'}), 401
+    raw = _secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(raw.encode()).hexdigest()
+    label = data.get('label', 'api')[:64]
+    expires_days = int(data.get('expires_days', 365))
+    expires_at = (datetime.datetime.utcnow() + datetime.timedelta(days=expires_days)).isoformat()
+    tokens = load_api_tokens()
+    # Remove old token with same label
+    tokens = [t for t in tokens if t.get('label') != label]
+    tokens.append({'token_hash': token_hash, 'label': label,
+                   'created': datetime.datetime.utcnow().isoformat(),
+                   'expires_at': expires_at})
+    save_api_tokens(tokens)
+    return jsonify({'token': raw, 'label': label, 'expires_at': expires_at}), 201
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

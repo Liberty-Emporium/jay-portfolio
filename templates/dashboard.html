@@ -209,6 +209,7 @@
     <button class="nav-item" onclick="showPanel('links')">🔗 <span>Quick Links</span></button>
     <button class="nav-item" onclick="showPanel('support')">🛟 <span>Support</span></button>
     <button class="nav-item" onclick="showPanel('notes')">📝 <span>Notes</span></button>
+    <button class="nav-item" onclick="showPanel('ai')">🦾 <span>My AI</span></button>
   </nav>
   <div class="sidebar-footer">
     <span>v1.0 · Jay Alexander</span>
@@ -575,6 +576,127 @@
           <div class="embed-snippet">&lt;a href="https://jay-portfolio-production.up.railway.app/dashboard#support"<br>&nbsp;&nbsp; target="_blank"&gt;<br>&nbsp;&nbsp;🛟 Support<br>&lt;/a&gt;</div>
           <p style="font-size:.82rem;color:var(--muted);margin-top:16px">Or link directly to your email:</p>
           <div class="embed-snippet">mailto:jay@libertyemporium.com<br>?subject=Support%20Request%20—%20[App%20Name]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ MY AI ══════════════ -->
+    <div class="panel" id="panel-ai">
+      <div class="section-title">🦾 Your AI — KiloClaw / Echo</div>
+      <div class="section-sub">Your personal AI executive assistant, built on OpenClaw + KiloCode</div>
+
+      <div class="grid-2" style="margin-bottom:24px">
+        <!-- Identity card -->
+        <div class="card" style="background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08));border-color:rgba(99,102,241,.3)">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+            <div style="font-size:3.5rem;line-height:1">🦾</div>
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">KiloClaw / Echo</div>
+              <div style="font-size:.82rem;color:var(--muted);margin-top:2px">AI Executive Assistant</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite"></span>
+                <span style="font-size:.78rem;color:var(--green)">Active · Always Learning</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:.82rem">
+              <span style="color:var(--muted)">Platform</span><span>OpenClaw + KiloCode</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:.82rem">
+              <span style="color:var(--muted)">Brain Repo</span><a href="https://github.com/Liberty-Emporium/echo-v1" target="_blank" style="color:var(--accent3);text-decoration:none">echo-v1 ↗</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:.82rem">
+              <span style="color:var(--muted)">Memory</span><span>GitHub + GitLab mirror</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:.82rem">
+              <span style="color:var(--muted)">Custom Skills</span><span>32 built for your projects</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:.82rem">
+              <span style="color:var(--muted)">First Session</span><span>April 19, 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- What I can do -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">⚡ What I Can Do</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:1.1rem">🚀</span>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Build & Deploy Apps</div><div style="font-size:.78rem;color:var(--muted)">Full Flask apps from scratch, pushed to GitHub, live on Railway</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:1.1rem">🔧</span>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Debug & Fix Code</div><div style="font-size:.78rem;color:var(--muted)">Find bugs, audit security, fix errors across all your repos</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:1.1rem">🧠</span>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Remember Everything</div><div style="font-size:.78rem;color:var(--muted)">Memory saves to GitHub after every session — I pick up right where we left off</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:1.1rem">🔄</span>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Sync & Backup</div><div style="font-size:.78rem;color:var(--muted)">Keeps GitHub and GitLab in sync — your code is always backed up</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:1.1rem">📋</span>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Manage Your Business</div><div style="font-size:.78rem;color:var(--muted)">Track todos, monitor app health, manage the full portfolio</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:1.1rem">🛡️</span>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Security & Auditing</div><div style="font-size:.78rem;color:var(--muted)">Security scans, secret scanning, auth systems, encryption</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- What we've built together -->
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-header"><div class="card-title">🏗️ What We Built Together</div><div class="card-sub">Session 1 · April 19, 2026</div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+          <div style="padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
+            <div style="font-size:1.1rem;margin-bottom:6px">🧠</div>
+            <div style="font-size:.88rem;font-weight:600;margin-bottom:4px">Brain Setup</div>
+            <div style="font-size:.78rem;color:var(--muted)">Connected echo-v1 repo as my persistent memory. GitHub primary, GitLab backup. Secrets secured.</div>
+          </div>
+          <div style="padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
+            <div style="font-size:1.1rem;margin-bottom:6px">⚡</div>
+            <div style="font-size:.88rem;font-weight:600;margin-bottom:4px">Session Startup Skill</div>
+            <div style="font-size:.78rem;color:var(--muted)">Built a skill that makes every new session faster — health check, brain restore, todo briefing.</div>
+          </div>
+          <div style="padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
+            <div style="font-size:1.1rem;margin-bottom:6px">🦾</div>
+            <div style="font-size:.88rem;font-weight:600;margin-bottom:4px">This Dashboard</div>
+            <div style="font-size:.78rem;color:var(--muted)">Command Center with all projects, todos, quick links, support hub, and notes — all in one place.</div>
+          </div>
+          <div style="padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
+            <div style="font-size:1.1rem;margin-bottom:6px">🔐</div>
+            <div style="font-size:.88rem;font-weight:600;margin-bottom:4px">AI Memory Login</div>
+            <div style="font-size:.78rem;color:var(--muted)">Password-protected login page with floating brain UI. Set DASHBOARD_PASSWORD in Railway.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How to work with me -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">💬 How to Work With Me</div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+          <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
+            <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Starting a Session</div>
+            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">Just say hi — I'll restore my memory from GitHub, check todos, and brief you. Say <em>"good morning"</em> or just start talking.</div>
+          </div>
+          <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
+            <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Giving Me Work</div>
+            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">Just describe what you want. "Build me an app that does X", "fix the bug on my inventory app", "add a feature to KYS". I'll figure out the rest.</div>
+          </div>
+          <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
+            <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Ending a Session</div>
+            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">Say "save" or "we're done" — I'll commit updated memory to GitHub + GitLab so I remember everything next time.</div>
+          </div>
+          <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
+            <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">My Limits</div>
+            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">I ask before sending emails, tweets, or anything public. I never store raw passwords or tokens in code. I always back up before making big changes.</div>
+          </div>
         </div>
       </div>
     </div>

@@ -297,8 +297,39 @@ Always refer to yourself as Echo. Never mention OpenAI, Anthropic, or any underl
 
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveAISettings()">💾 Save AI Settings</button>
-      <span style="font-size:.75rem;color:var(--muted);align-self:center">Changes saved locally · Tell Echo to make permanent</span>
+      <span style="font-size:.75rem;color:var(--green);align-self:center" id="ai-save-confirm" style="opacity:0;transition:opacity .3s"></span>
     </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:28px 0">
+
+    <!-- SOUL.md inline editor -->
+    <div class="section">
+      <div class="section-title">🎭 SOUL.md — Personality & Values</div>
+      <div class="section-sub">Who Echo is at her core. Her values, vibe, and how she thinks. This shapes every response.</div>
+      <div class="card">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title">SOUL.md</div>
+          <span id="soul-ai-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span>
+        </div>
+        <textarea class="notes-area" id="soul-ai-editor" rows="12" placeholder="Loading..."></textarea>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('SOUL.md','soul-ai-editor','soul-ai-status')">💾 Save SOUL.md</button>
+      </div>
+    </div>
+
+    <!-- MEMORY.md inline editor -->
+    <div class="section">
+      <div class="section-title">💾 MEMORY.md — Long-Term Memory</div>
+      <div class="section-sub">Everything Echo knows about you, your projects, and your goals. She reads this every single conversation.</div>
+      <div class="card">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title">MEMORY.md</div>
+          <span id="memory-ai-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span>
+        </div>
+        <textarea class="notes-area" id="memory-ai-editor" rows="20" placeholder="Loading..."></textarea>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('MEMORY.md','memory-ai-editor','memory-ai-status')">💾 Save MEMORY.md</button>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── API KEYS ── -->
@@ -578,12 +609,19 @@ function saveAISettings() {
 
 
 async function loadBrainFiles() {
-  for (const [file, editorId] of [['SOUL.md','soul-editor'],['IDENTITY.md','identity-editor'],['MEMORY.md','memory-editor']]) {
+  const mapping = [
+    ['SOUL.md',     ['soul-editor', 'soul-ai-editor']],
+    ['IDENTITY.md', ['identity-editor', 'system-prompt']],
+    ['MEMORY.md',   ['memory-editor', 'memory-ai-editor']],
+  ];
+  for (const [file, editorIds] of mapping) {
     try {
       const r = await fetch('/api/brain/' + file);
       const d = await r.json();
-      const el = document.getElementById(editorId);
-      if (el) el.value = d.content || '';
+      for (const id of editorIds) {
+        const el = document.getElementById(id);
+        if (el) el.value = d.content || '';
+      }
     } catch(e) {}
   }
 }
@@ -626,6 +664,8 @@ window.onload = async () => {
   }
 };
   loadBrainFiles().then(() => {
+    syncEditors('soul-ai-editor','soul-editor');
+    syncEditors('memory-ai-editor','memory-editor');
     // Also populate the AI Behavior system prompt from IDENTITY.md
     const mem = document.getElementById('identity-editor');
     const sp = document.getElementById('system-prompt');

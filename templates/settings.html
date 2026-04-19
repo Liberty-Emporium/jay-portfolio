@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Jay Alexander Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#030712;--bg2:#0a0f1a;--card:#111827;--card2:#161f2e;
+      --border:#1f2937;--accent:#6366f1;--accent2:#8b5cf6;--accent3:#a78bfa;
+      --green:#10b981;--yellow:#f59e0b;--red:#ef4444;--text:#f9fafb;--muted:#9ca3af;
+      --grad:linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .topbar-left{display:flex;align-items:center;gap:12px;}
+    .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;}
+    .back-btn{color:var(--muted);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .2s;}
+    .back-btn:hover{color:var(--text);}
+
+    .content{max-width:900px;margin:0 auto;padding:32px;}
+    .page-title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;margin-bottom:6px;}
+    .page-sub{color:var(--muted);font-size:.88rem;margin-bottom:32px;}
+
+    .settings-nav{display:flex;gap:4px;margin-bottom:32px;border-bottom:1px solid var(--border);padding-bottom:0;}
+    .snav-item{padding:10px 16px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+    .snav-item.active{color:var(--accent3);border-bottom-color:var(--accent);}
+    .snav-item:hover{color:var(--text);}
+
+    .stab{display:none;}.stab.active{display:block;}
+
+    .section{margin-bottom:28px;}
+    .section-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem;margin-bottom:4px;}
+    .section-sub{font-size:.78rem;color:var(--muted);margin-bottom:16px;}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;}
+    .card.highlight{border-color:rgba(99,102,241,.4);background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.05));}
+
+    .form-group{margin-bottom:18px;}
+    label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:7px;}
+    input[type=text],input[type=email],input[type=url],input[type=password],textarea,select{
+      width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;
+      padding:11px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;
+    }
+    input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+    textarea{resize:vertical;min-height:100px;line-height:1.6;}
+    select option{background:var(--card2);}
+
+    .input-group{display:flex;gap:10px;}
+    .input-group input{flex:1;}
+
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+    .toggle-row:last-child{border-bottom:none;}
+    .toggle-info .toggle-label{font-size:.88rem;font-weight:500;}
+    .toggle-info .toggle-desc{font-size:.75rem;color:var(--muted);margin-top:2px;}
+    .toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:#374151;border-radius:24px;cursor:pointer;transition:.3s;}
+    .toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:.3s;}
+    .toggle input:checked + .toggle-slider{background:var(--accent);}
+    .toggle input:checked + .toggle-slider::before{transform:translateX(20px);}
+
+    .model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+    .model-card{padding:12px 14px;background:var(--card2);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;}
+    .model-card:hover{border-color:var(--accent);}
+    .model-card.selected{border-color:var(--accent);background:rgba(99,102,241,.1);}
+    .model-name{font-size:.85rem;font-weight:600;}
+    .model-desc{font-size:.72rem;color:var(--muted);margin-top:3px;}
+
+    .api-row{display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;}
+    .api-icon{font-size:1.3rem;flex-shrink:0;}
+    .api-info{flex:1;min-width:0;}
+    .api-name{font-size:.88rem;font-weight:600;}
+    .api-desc{font-size:.75rem;color:var(--muted);}
+    .api-status{font-size:.72rem;padding:3px 10px;border-radius:20px;font-weight:600;flex-shrink:0;}
+    .api-status.set{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2);}
+    .api-status.unset{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+    .api-btn{padding:7px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
+    .api-btn:hover{border-color:var(--accent);color:var(--text);}
+
+    .vision-card{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08));border:1px solid rgba(99,102,241,.3);border-radius:14px;padding:24px;margin-bottom:20px;}
+    .vision-title{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:8px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .vision-body{font-size:.85rem;color:var(--muted);line-height:1.8;}
+    .phase{margin-top:12px;}
+    .phase-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+    .phase-item:last-child{border:none;}
+    .phase-num{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;font-size:.85rem;flex-shrink:0;width:60px;}
+    .phase-text{font-size:.82rem;color:var(--text);}
+    .phase-sub{font-size:.75rem;color:var(--muted);}
+
+    .btn{padding:10px 20px;border-radius:10px;font-weight:600;font-size:.88rem;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s;}
+    .btn-primary{background:var(--grad);color:white;}
+    .btn-primary:hover{opacity:.9;transform:translateY(-1px);}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--text);}
+    .btn-row{display:flex;gap:10px;margin-top:20px;}
+
+    .flash-success{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;padding:10px 16px;border-radius:8px;font-size:.85rem;margin-bottom:20px;}
+    .preview-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);}
+    .preview-emoji{font-size:3rem;width:80px;height:80px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:50%;border:2px solid var(--border);}
+
+    .kys-banner{display:flex;align-items:center;gap:14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:16px 20px;margin-bottom:20px;}
+    .kys-banner-icon{font-size:1.5rem;}
+    .kys-banner-text .title{font-size:.88rem;font-weight:700;color:#fbbf24;}
+    .kys-banner-text .sub{font-size:.78rem;color:var(--muted);margin-top:2px;}
+    .kys-banner a{margin-left:auto;padding:8px 14px;border-radius:8px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#fbbf24;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;flex-shrink:0;}
+    .kys-banner a:hover{background:rgba(245,158,11,.25);}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="/dashboard" class="back-btn">← Dashboard</a>
+    <span style="color:var(--border)">|</span>
+    <div class="topbar-title">⚙️ Settings</div>
+  </div>
+  <a href="/" style="font-size:.78rem;color:var(--muted);text-decoration:none;">View Site ↗</a>
+</div>
+
+<div class="content">
+  <div class="page-title">Settings</div>
+  <div class="page-sub">Manage your profile, AI behavior, API keys, and app network</div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat,msg in messages %}
+      <div class="flash-success">✅ {{ msg }}</div>
+    {% endfor %}{% endif %}
+  {% endwith %}
+
+  <!-- Nav tabs -->
+  <div class="settings-nav">
+    <button class="snav-item active" onclick="showTab('profile')">👤 Profile</button>
+    <button class="snav-item" onclick="showTab('ai')">🤖 AI Behavior</button>
+    <button class="snav-item" onclick="showTab('apikeys')">🔑 API Keys</button>
+    <button class="snav-item" onclick="showTab('network')">🌐 App Network</button>
+  </div>
+
+  <!-- ── PROFILE ── -->
+  <div class="stab active" id="tab-profile">
+    <form method="POST" action="/admin">
+      <div class="card">
+        <div class="section-title">Identity</div>
+        <div class="section-sub">How you appear on your portfolio and to visitors</div>
+
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;padding:16px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
+          <div>
+            {% if config.photo_url %}
+              <img src="{{ config.photo_url }}" class="preview-avatar" id="avatar-preview" alt="Jay">
+            {% else %}
+              <div class="preview-emoji" id="avatar-preview">{{ config.photo }}</div>
+            {% endif %}
+          </div>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">{{ config.name }}</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-top:4px;">{{ config.tagline }}</div>
+            <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">{{ config.email }}</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Display Name</label>
+          <input type="text" name="name" value="{{ config.name }}">
+        </div>
+        <div class="form-group">
+          <label>Tagline</label>
+          <input type="text" name="tagline" value="{{ config.tagline }}" placeholder="Building the Future with AI & Code">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" value="{{ config.email }}">
+        </div>
+        <div class="form-group">
+          <label>Photo URL</label>
+          <input type="text" name="photo_url" value="{{ config.photo_url }}" placeholder="/static/uploads/jay.jpg or https://...">
+        </div>
+        <div class="form-group">
+          <label>Emoji Fallback (shown if no photo URL)</label>
+          <input type="text" name="photo" value="{{ config.photo }}" placeholder="👨‍💻">
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">💾 Save Profile</button>
+          <a href="/" class="btn btn-ghost">👁 View Site</a>
+        </div>
+      </div>
+    </form>
+
+    <div class="card">
+      <div class="section-title">Security</div>
+      <div class="section-sub">Dashboard access password</div>
+      <div class="form-group">
+        <label>Dashboard Password</label>
+        <input type="password" placeholder="Set via Railway env var: DASHBOARD_PASSWORD" disabled>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:-10px">
+        To change: go to Railway → jay-portfolio → Variables → set <code style="background:var(--card2);padding:2px 6px;border-radius:4px">DASHBOARD_PASSWORD</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AI BEHAVIOR ── -->
+  <div class="stab" id="tab-ai">
+    <div class="card">
+      <div class="section-title">Echo Identity</div>
+      <div class="section-sub">How Echo introduces and behaves in your dashboard chat</div>
+      <div class="form-group">
+        <label>Agent Name</label>
+        <input type="text" value="Echo" id="agent-name">
+      </div>
+      <div class="form-group">
+        <label>Agent Tagline</label>
+        <input type="text" value="Your AI Executive Assistant — Alexander AI Integrated Solutions" id="agent-tagline">
+      </div>
+      <div class="form-group">
+        <label>System Prompt (Echo's Personality & Instructions)</label>
+        <textarea id="system-prompt" rows="8">You are Echo, the personal AI assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions. You are accessed via the Command Center dashboard.
+
+Your role: Help Jay manage his business and projects. Be concise, direct, and actionable. You are a trusted partner, not a generic chatbot.
+
+Always refer to yourself as Echo. Never mention OpenAI, Anthropic, or any underlying AI provider.</textarea>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:16px">💡 Changes here take effect on next chat session. To make permanent, tell Echo to update the system prompt in app.py.</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">AI Model</div>
+      <div class="section-sub">Which model powers Echo's chat responses</div>
+      <div class="model-grid">
+        <div class="model-card selected" onclick="selectModel(this,'anthropic/claude-3.5-haiku')">
+          <div class="model-name">Claude 3.5 Haiku</div>
+          <div class="model-desc">Fast & smart. Current default.</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'anthropic/claude-sonnet-4-5')">
+          <div class="model-name">Claude Sonnet 4.5</div>
+          <div class="model-desc">Most capable Anthropic model.</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'openai/gpt-4o-mini')">
+          <div class="model-name">GPT-4o Mini</div>
+          <div class="model-desc">Fast & affordable OpenAI.</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'openai/gpt-4o')">
+          <div class="model-name">GPT-4o</div>
+          <div class="model-desc">Most capable OpenAI model.</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'google/gemini-2.0-flash')">
+          <div class="model-name">Gemini 2.0 Flash</div>
+          <div class="model-desc">Fast Google model.</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'meta-llama/llama-3.3-70b-instruct')">
+          <div class="model-name">Llama 3.3 70B</div>
+          <div class="model-desc">Powerful open source.</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:.75rem;color:var(--muted)">Selected: <span id="selected-model-label" style="color:var(--accent3)">anthropic/claude-3.5-haiku</span></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Behavior Settings</div>
+      <div class="section-sub">Fine-tune how Echo responds</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Live health checks</div>
+          <div class="toggle-desc">Automatically ping apps when health-related questions are asked</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Include todos in context</div>
+          <div class="toggle-desc">Echo can see your open todos when answering planning questions</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Proactive suggestions</div>
+          <div class="toggle-desc">Echo offers ideas and next steps without being asked</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Concise mode</div>
+          <div class="toggle-desc">Shorter, more direct responses (disable for detailed explanations)</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveAISettings()">💾 Save AI Settings</button>
+      <span style="font-size:.75rem;color:var(--muted);align-self:center">Changes saved locally · Tell Echo to make permanent</span>
+    </div>
+  </div>
+
+  <!-- ── API KEYS ── -->
+  <div class="stab" id="tab-apikeys">
+
+    <div class="kys-banner">
+      <div class="kys-banner-icon">🛡️</div>
+      <div class="kys-banner-text">
+        <div class="title">Powered by Keep Your Secrets (KYS)</div>
+        <div class="sub">All API keys are managed and stored encrypted in your KYS app. This dashboard reads from KYS — never stores keys locally.</div>
+      </div>
+      <a href="https://ai-api-tracker-production.up.railway.app" target="_blank">Open KYS →</a>
+    </div>
+
+    <div class="card">
+      <div class="section-title">AI Provider Keys</div>
+      <div class="section-sub">Keys used by Echo and your apps for AI features</div>
+
+      <div class="api-row">
+        <div class="api-icon">🔀</div>
+        <div class="api-info">
+          <div class="api-name">OpenRouter API Key</div>
+          <div class="api-desc">Powers Echo chat + all AI features across apps · <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--accent3)">openrouter.ai/keys</a></div>
+        </div>
+        <span class="api-status set">✓ Set</span>
+        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app','_blank')">Manage in KYS</button>
+      </div>
+
+      <div class="api-row">
+        <div class="api-icon">🤖</div>
+        <div class="api-info">
+          <div class="api-name">Anthropic API Key</div>
+          <div class="api-desc">Direct Claude access (optional if using OpenRouter)</div>
+        </div>
+        <span class="api-status unset">Not set</span>
+        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app','_blank')">Add in KYS</button>
+      </div>
+
+      <div class="api-row">
+        <div class="api-icon">🌿</div>
+        <div class="api-info">
+          <div class="api-name">Groq API Key</div>
+          <div class="api-desc">Powers Pet Vet AI · Ultra-fast inference</div>
+        </div>
+        <span class="api-status unset">Not set</span>
+        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app','_blank')">Add in KYS</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Service Keys</div>
+      <div class="section-sub">Keys for payments, email, and other services</div>
+
+      <div class="api-row">
+        <div class="api-icon">💳</div>
+        <div class="api-info">
+          <div class="api-name">Stripe Secret Key</div>
+          <div class="api-desc">For accepting payments in your apps</div>
+        </div>
+        <span class="api-status unset">Not set</span>
+        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app','_blank')">Add in KYS</button>
+      </div>
+
+      <div class="api-row">
+        <div class="api-icon">📧</div>
+        <div class="api-info">
+          <div class="api-name">SendGrid API Key</div>
+          <div class="api-desc">For sending emails from your apps</div>
+        </div>
+        <span class="api-status unset">Not set</span>
+        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app','_blank')">Add in KYS</button>
+      </div>
+
+      <div class="api-row">
+        <div class="api-icon">🐙</div>
+        <div class="api-info">
+          <div class="api-name">GitHub Token</div>
+          <div class="api-desc">Liberty-Emporium org access · Used by Echo for deployments</div>
+        </div>
+        <span class="api-status set">✓ Set</span>
+        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app','_blank')">Manage in KYS</button>
+      </div>
+    </div>
+
+    <div style="font-size:.78rem;color:var(--muted);padding:12px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
+      💡 <strong style="color:var(--text)">Goal:</strong> Each app will fetch its own API keys from KYS at runtime — rotate once, updates everywhere automatically. This is Phase 2 of the App Network vision.
+    </div>
+  </div>
+
+  <!-- ── APP NETWORK ── -->
+  <div class="stab" id="tab-network">
+
+    <div class="vision-card">
+      <div class="vision-title">🌐 The App Network Vision</div>
+      <div class="vision-body">
+        All Liberty-Emporium apps communicating and working together — a self-managing, interconnected ecosystem where rotating one API key updates every app, and apps can call each other's capabilities.
+      </div>
+      <div class="phase">
+        <div class="phase-item">
+          <div class="phase-num">Phase 1 <span style="color:var(--green);font-size:.7rem">✓ NOW</span></div>
+          <div>
+            <div class="phase-text">Unified Command Center + KYS as credential hub</div>
+            <div class="phase-sub">Dashboard controls all apps, KYS stores all API keys</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 2</div>
+          <div>
+            <div class="phase-text">Apps fetch API keys from KYS at runtime</div>
+            <div class="phase-sub">No more hardcoded env vars — rotate once in KYS, all apps update automatically</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 3</div>
+          <div>
+            <div class="phase-text">Apps expose and call each other's APIs</div>
+            <div class="phase-sub">Example: Inventory app calls Pet Vet AI for photo analysis. Contractor Pro calls Dropship for supplier lookup.</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 4</div>
+          <div>
+            <div class="phase-text">Echo orchestrates tasks across the entire network</div>
+            <div class="phase-sub">Example: "Sync all new inventory photos through AI analysis" — Echo coordinates across 3 apps automatically</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">App Registry</div>
+      <div class="section-sub">All Liberty-Emporium apps and their connection status</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        {% set apps = [
+          ('🏪','Liberty Inventory','liberty-emporium-and-thrift-inventory-app-production.up.railway.app','live'),
+          ('🛡️','Keep Your Secrets','ai-api-tracker-production.up.railway.app','live'),
+          ('🐕','Pet Vet AI','pet-vet-ai-production.up.railway.app','live'),
+          ('🏋️','GymForge','web-production-1c23.up.railway.app','live'),
+          ('🏗️','Contractor Pro AI','contractor-pro-ai-production.up.railway.app','live'),
+          ('📦','Dropship Shipping','dropship-shipping-production.up.railway.app','live'),
+          ('🏪','Consignment Solutions','web-production-43ce4.up.railway.app','in-progress'),
+          ('🌐','Jay Portfolio','jay-portfolio-production.up.railway.app','live'),
+        ] %}
+        {% for icon,name,url,status in apps %}
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
+          <span style="font-size:1.2rem">{{ icon }}</span>
+          <div style="flex:1">
+            <div style="font-size:.88rem;font-weight:600">{{ name }}</div>
+            <div style="font-size:.72rem;color:var(--muted)">{{ url }}</div>
+          </div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;font-weight:600;{% if status=='live' %}background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2){% else %}background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2){% endif %}">{{ status }}</span>
+          <a href="https://{{ url }}" target="_blank" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Open ↗</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Echo's Network Access</div>
+      <div class="section-sub">What Echo can currently do across your apps</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Read app health status</div>
+          <div class="toggle-desc">Echo can ping all apps and report their status</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Read & write todos</div>
+          <div class="toggle-desc">Echo can view and update your command center todo list</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Push code to GitHub (via OpenClaw)</div>
+          <div class="toggle-desc">Echo can deploy updates to any app directly</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Fetch API keys from KYS (Phase 2)</div>
+          <div class="toggle-desc">Coming soon — apps will call KYS for credentials at runtime</div>
+        </div>
+        <label class="toggle"><input type="checkbox" disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Cross-app API calls (Phase 3)</div>
+          <div class="toggle-desc">Coming soon — apps calling each other's capabilities</div>
+        </div>
+        <label class="toggle"><input type="checkbox" disabled><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.snav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function selectModel(el, modelId) {
+  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('selected-model-label').textContent = modelId;
+  localStorage.setItem('echo_model', modelId);
+}
+
+function saveAISettings() {
+  const name = document.getElementById('agent-name').value;
+  const tagline = document.getElementById('agent-tagline').value;
+  const prompt = document.getElementById('system-prompt').value;
+  const model = document.getElementById('selected-model-label').textContent;
+  localStorage.setItem('echo_agent_name', name);
+  localStorage.setItem('echo_agent_tagline', tagline);
+  localStorage.setItem('echo_system_prompt', prompt);
+  localStorage.setItem('echo_model', model);
+  const btn = event.currentTarget;
+  btn.textContent = '✅ Saved!';
+  setTimeout(() => btn.textContent = '💾 Save AI Settings', 2000);
+}
+
+// Load saved model selection
+window.onload = () => {
+  const saved = localStorage.getItem('echo_model');
+  if (saved) {
+    document.querySelectorAll('.model-card').forEach(c => {
+      if (c.onclick && c.onclick.toString().includes(saved)) {
+        c.classList.add('selected');
+        document.getElementById('selected-model-label').textContent = saved;
+      }
+    });
+  }
+};
+</script>
+</body>
+</html>

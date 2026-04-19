@@ -286,6 +286,21 @@ def tools():
 def dashboard():
     return render_template('dashboard.html', config=config)
 
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    global config
+    if request.method == 'POST':
+        config['name'] = request.form.get('name', '').strip()
+        config['tagline'] = request.form.get('tagline', '').strip()
+        config['email'] = request.form.get('email', '').strip()
+        config['photo_url'] = request.form.get('photo_url', '').strip()
+        config['photo'] = request.form.get('photo', '👨‍💻').strip()
+        save_config(config)
+        flash('Settings saved!', 'success')
+        return redirect(url_for('settings'))
+    return render_template('settings.html', config=config)
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     global config

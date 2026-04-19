@@ -145,7 +145,8 @@
     </div>
   </div>
   <div class="topbar-right">
-    <button class="btn-sm btn-ghost" onclick="clearChat()">Clear Chat</button>
+    <button class="btn-sm btn-ghost" id="health-btn" onclick="runHealthCheck()">🟢 Test All Apps</button>
+      <button class="btn-sm btn-ghost" onclick="clearChat()">Clear Chat</button>
     <a href="/dashboard" class="btn-sm btn-ghost">← Dashboard</a>
   </div>
 </div>
@@ -314,6 +315,52 @@ function clearChat() {
         <div class="quick-prompt" onclick="sendQuick('How are all my Railway apps doing?')">🚂 App health</div>
       </div>
     </div>`;
+}
+
+
+async function runHealthCheck() {
+  const btn = document.getElementById('health-btn');
+  btn.textContent = '⏳ Checking...';
+  btn.disabled = true;
+
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.remove();
+
+  // Show a system message
+  const msgs = document.getElementById('messages');
+  const sysMsg = document.createElement('div');
+  sysMsg.style.cssText = 'text-align:center;color:var(--muted);font-size:.78rem;padding:8px;';
+  sysMsg.textContent = '🔍 Running health check on all apps...';
+  msgs.appendChild(sysMsg);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const r = await fetch('/api/health');
+    const data = await r.json();
+    sysMsg.remove();
+
+    let report = `**Live App Health Check** — ${data.up}/${data.total} apps online\n\n`;
+    for (const app of data.results) {
+      const icon = app.ok ? '✅' : '❌';
+      const ms = app.ms ? ` (${app.ms}ms)` : '';
+      report += `${icon} **${app.name}**${ms}\n`;
+    }
+    if (data.up < data.total) {
+      const down = data.results.filter(r => !r.ok).map(r => r.name).join(', ');
+      report += `\n⚠️ Down: ${down}`;
+    } else {
+      report += `\n🎉 All systems go!`;
+    }
+
+    addMessage('echo', report);
+    chatHistory.push({role: 'assistant', content: report});
+  } catch(e) {
+    sysMsg.remove();
+    addMessage('echo', '⚠️ Could not run health check. Try asking me: "test my apps"');
+  }
+
+  btn.textContent = '🟢 Test All Apps';
+  btn.disabled = false;
 }
 
 // Focus input on load

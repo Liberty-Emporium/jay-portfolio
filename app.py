@@ -3,6 +3,9 @@ import os
 import json
 import datetime
 import urllib.request
+import urllib.error
+import time
+import threading
 from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session, jsonify
 from functools import wraps
 
@@ -34,6 +37,49 @@ def save_config(config):
         json.dump(config, f, indent=4)
 
 config = load_config()
+
+# ── App health checker ───────────────────────────────────────────────
+APPS_REGISTRY = [
+    {'name': 'Jay Portfolio',        'url': 'https://jay-portfolio-production.up.railway.app'},
+    {'name': 'Liberty Inventory',    'url': 'https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app'},
+    {'name': 'Inventory Demo',       'url': 'https://liberty-emporium-inventory-demo-app-production.up.railway.app'},
+    {'name': 'Keep Your Secrets',    'url': 'https://ai-api-tracker-production.up.railway.app'},
+    {'name': 'Pet Vet AI',           'url': 'https://pet-vet-ai-production.up.railway.app'},
+    {'name': 'GymForge',             'url': 'https://web-production-1c23.up.railway.app'},
+    {'name': 'Contractor Pro AI',    'url': 'https://contractor-pro-ai-production.up.railway.app'},
+    {'name': 'Dropship Shipping',    'url': 'https://dropship-shipping-production.up.railway.app'},
+    {'name': 'Consignment Solutions','url': 'https://web-production-43ce4.up.railway.app'},
+]
+
+def ping_app(app, results):
+    url = app['url']
+    start = time.time()
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'EchoHealthCheck/1.0'})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            ms = int((time.time() - start) * 1000)
+            results.append({'name': app['name'], 'url': url, 'status': r.status, 'ms': ms, 'ok': r.status < 400})
+    except urllib.error.HTTPError as e:
+        ms = int((time.time() - start) * 1000)
+        results.append({'name': app['name'], 'url': url, 'status': e.code, 'ms': ms, 'ok': e.code < 400})
+    except Exception as e:
+        ms = int((time.time() - start) * 1000)
+        results.append({'name': app['name'], 'url': url, 'status': 0, 'ms': ms, 'ok': False, 'error': str(e)[:60]})
+
+def check_all_apps():
+    results = []
+    threads = [threading.Thread(target=ping_app, args=(app, results)) for app in APPS_REGISTRY]
+    for t in threads: t.start()
+    for t in threads: t.join(timeout=10)
+    results.sort(key=lambda x: APPS_REGISTRY.index(next(a for a in APPS_REGISTRY if a['name']==x['name'])))
+    return results
+
+@app.route('/api/health', methods=['GET'])
+@login_required
+def api_health():
+    results = check_all_apps()
+    up = sum(1 for r in results if r['ok'])
+    return jsonify({'results': results, 'up': up, 'total': len(results), 'checked_at': datetime.datetime.utcnow().isoformat()})
 
 # ── Echo system prompt ───────────────────────────────────────────────────────
 ECHO_SYSTEM_PROMPT = """You are Echo, the personal AI assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions. You are accessed via the Command Center dashboard embedded chat.
@@ -222,8 +268,24 @@ def api_chat():
     if not openrouter_key:
         return jsonify({'reply': '⚠️ OpenRouter API key not configured. Add OPENROUTER_API_KEY to Railway environment variables.'})
 
+    # Inject live health data if question is health-related
+    health_keywords = ['health', 'status', 'up', 'down', 'live', 'working', 'test', 'ping', 'check', 'running', 'broken', 'crash', 'offline']
+    system_content = ECHO_SYSTEM_PROMPT
+    if any(kw in user_message.lower() for kw in health_keywords):
+        try:
+            health = check_all_apps()
+            lines = ['\n\nLIVE APP HEALTH (just checked right now):']
+            for r in health:
+                icon = 'UP' if r['ok'] else 'DOWN'
+                lines.append(f"- {r['name']}: {icon} (HTTP {r['status']}, {r['ms']}ms) - {r['url']}")
+            up = sum(1 for r in health if r['ok'])
+            lines.append(f"\nSummary: {up}/{len(health)} apps are up.")
+            system_content = ECHO_SYSTEM_PROMPT + '\n'.join(lines)
+        except Exception:
+            pass
+
     # Build messages
-    messages = [{'role': 'system', 'content': ECHO_SYSTEM_PROMPT}]
+    messages = [{'role': 'system', 'content': system_content}]
     for h in history[-10:]:  # last 10 turns for context
         if h.get('role') in ('user', 'assistant'):
             messages.append({'role': h['role'], 'content': h['content']})

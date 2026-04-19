@@ -32,60 +32,38 @@ def save_config(config):
     with open(CONFIG_FILE, 'w') as f:
         json.dump(config, f, indent=4)
 
-# Load config at startup
 config = load_config()
 
-@app.route('/')
-def index():
-    return render_template('index.html', config=config)
+# ── Auth ──────────────────────────────────────────────────────────────────────
+DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
 
-@app.route('/court/qr')
-def court_qr():
-    return render_template('court_qr.html')
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not flask_session.get('dashboard_auth'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated
 
-@app.route('/flyer')
-def flyer():
-    return render_template('flyer.html')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        pw = request.form.get('password', '')
+        if pw == DASHBOARD_PASSWORD:
+            flask_session['dashboard_auth'] = True
+            flask_session.permanent = True
+            return redirect(url_for('dashboard'))
+        else:
+            error = 'Wrong password. Try again.'
+    return render_template('login.html', error=error)
 
-@app.route('/court')
-def court():
-    return render_template('court.html')
+@app.route('/logout')
+def logout():
+    flask_session.pop('dashboard_auth', None)
+    return redirect(url_for('index'))
 
-@app.route('/robots.txt')
-def robots():
-    return app.response_class(
-        "User-agent: *\nAllow: /\nAllow: /apps\nDisallow: /tools\nDisallow: /admin\nDisallow: /court\nDisallow: /flyer\n",
-        mimetype="text/plain")
-
-@app.route('/apps')
-def apps():
-    return render_template('apps.html')
-
-@app.route('/investors')
-def investors():
-    return render_template('investors.html', config=config)
-
-@app.route('/investor-inquiry', methods=['POST'])
-def investor_inquiry():
-    name    = request.form.get('name', '').strip()
-    email   = request.form.get('email', '').strip()
-    interest = request.form.get('interest', '')
-    message = request.form.get('message', '').strip()
-    # Log to a file so Jay never misses an inquiry
-    import datetime
-    log_path = os.path.join(os.path.dirname(__file__), 'investor_inquiries.log')
-    with open(log_path, 'a') as f:
-        f.write(f"\n{'='*60}\n")
-        f.write(f"Date: {datetime.datetime.now()}\n")
-        f.write(f"Name: {name}\nEmail: {email}\nInterest: {interest}\nMessage: {message}\n")
-    flash(f'Thanks {name}! Jay will get back to you at {email} within 24 hours.', 'success')
-    return redirect(url_for('investors') + '#contact')
-
-@app.route('/tools')
-def tools():
-    return render_template('tools.html')
-
-# ── Todos ────────────────────────────────────────────
+# ── Todos API ─────────────────────────────────────────────────────────────────
 TODOS_FILE = os.path.join(os.path.dirname(__file__), 'todos.json')
 
 def load_todos():
@@ -147,34 +125,54 @@ def api_todos_delete(todo_id):
     save_todos(todos)
     return jsonify({'ok': True})
 
-# ── Auth ─────────────────────────────────────────────────
-DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
+# ── Public routes ─────────────────────────────────────────────────────────────
+@app.route('/')
+def index():
+    return render_template('index.html', config=config)
 
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not flask_session.get('dashboard_auth'):
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated
+@app.route('/court/qr')
+def court_qr():
+    return render_template('court_qr.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        pw = request.form.get('password', '')
-        if pw == DASHBOARD_PASSWORD:
-            flask_session['dashboard_auth'] = True
-            flask_session.permanent = True
-            return redirect(url_for('dashboard'))
-        else:
-            error = 'Wrong password. Try again.'
-    return render_template('login.html', error=error)
+@app.route('/flyer')
+def flyer():
+    return render_template('flyer.html')
 
-@app.route('/logout')
-def logout():
-    flask_session.pop('dashboard_auth', None)
-    return redirect(url_for('index'))
+@app.route('/court')
+def court():
+    return render_template('court.html')
+
+@app.route('/robots.txt')
+def robots():
+    return app.response_class(
+        "User-agent: *\nAllow: /\nAllow: /apps\nDisallow: /tools\nDisallow: /admin\nDisallow: /court\nDisallow: /flyer\n",
+        mimetype="text/plain")
+
+@app.route('/apps')
+def apps():
+    return render_template('apps.html')
+
+@app.route('/investors')
+def investors():
+    return render_template('investors.html', config=config)
+
+@app.route('/investor-inquiry', methods=['POST'])
+def investor_inquiry():
+    name     = request.form.get('name', '').strip()
+    email    = request.form.get('email', '').strip()
+    interest = request.form.get('interest', '')
+    message  = request.form.get('message', '').strip()
+    log_path = os.path.join(os.path.dirname(__file__), 'investor_inquiries.log')
+    with open(log_path, 'a') as f:
+        f.write(f"\n{'='*60}\n")
+        f.write(f"Date: {datetime.datetime.now()}\n")
+        f.write(f"Name: {name}\nEmail: {email}\nInterest: {interest}\nMessage: {message}\n")
+    flash(f'Thanks {name}! Jay will get back to you at {email} within 24 hours.', 'success')
+    return redirect(url_for('investors') + '#contact')
+
+@app.route('/tools')
+def tools():
+    return render_template('tools.html')
 
 @app.route('/dashboard')
 @login_required
@@ -196,8 +194,6 @@ def admin():
 
 @app.route('/card')
 def business_card():
-    # Jay's photo - base64 embedded
-    import os
     photo_b64 = ''
     photo_path = os.path.join(os.path.dirname(__file__), 'static', 'jay_photo.jpg')
     if os.path.exists(photo_path):

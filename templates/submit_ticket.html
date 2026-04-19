@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support — {{ app_name }}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',system-ui,sans-serif;background:#030712;color:#f9fafb;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:32px;width:100%;max-width:480px;}
+    h1{font-size:1.3rem;font-weight:700;margin-bottom:6px;}
+    .sub{font-size:.85rem;color:#9ca3af;margin-bottom:24px;}
+    label{display:block;font-size:.78rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+    input,textarea,select{width:100%;background:#161f2e;border:1px solid #1f2937;border-radius:9px;padding:10px 14px;color:#f9fafb;font-family:inherit;font-size:.88rem;outline:none;margin-bottom:16px;}
+    input:focus,textarea:focus{border-color:#6366f1;}
+    textarea{resize:vertical;min-height:120px;}
+    button{width:100%;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:9px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;}
+    .badge{display:inline-block;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#a78bfa;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;margin-bottom:20px;}
+  </style>
+</head>
+<body>
+<div class="card">
+  <span class="badge">🎫 {{ app_name }} Support</span>
+  <h1>Get Help</h1>
+  <p class="sub">Submit a support request and we'll get back to you fast.</p>
+  <form method="POST">
+    <input type="hidden" name="app" value="{{ app_name }}">
+    <label>Your Name</label>
+    <input type="text" name="name" placeholder="Optional">
+    <label>Your Email</label>
+    <input type="email" name="email" placeholder="So we can reply">
+    <label>Subject</label>
+    <input type="text" name="subject" placeholder="Brief description" required>
+    <label>Message</label>
+    <textarea name="message" placeholder="Describe the issue in detail..." required></textarea>
+    <button type="submit">🎫 Submit Ticket</button>
+  </form>
+</div>
+</body>
+</html>

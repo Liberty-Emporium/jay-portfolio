@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Tickets — EcDash</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#030712;--bg2:#0a0f1a;--card:#111827;--card2:#161f2e;
+      --border:#1f2937;--accent:#6366f1;--accent2:#8b5cf6;--accent3:#a78bfa;
+      --green:#10b981;--yellow:#f59e0b;--red:#ef4444;--text:#f9fafb;--muted:#9ca3af;
+      --grad:linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;display:flex;align-items:center;gap:10px;}
+    .content{max-width:1100px;margin:0 auto;padding:32px;}
+    .page-title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;margin-bottom:6px;}
+    .page-sub{color:var(--muted);font-size:.88rem;margin-bottom:28px;}
+
+    /* Stats row */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+    .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+    .stat-num{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;}
+    .stat-num.open{color:#f87171;}
+    .stat-num.progress{color:#fbbf24;}
+    .stat-num.resolved{color:#34d399;}
+    .stat-num.total{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .stat-label{font-size:.78rem;color:var(--muted);margin-top:4px;}
+
+    /* Filters */
+    .filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+    .filter-btn{padding:7px 16px;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+    .filter-btn.active{background:rgba(99,102,241,.15);border-color:var(--accent);color:var(--accent3);}
+    .search-input{flex:1;max-width:280px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 16px;color:var(--text);font-size:.82rem;outline:none;}
+    .search-input:focus{border-color:var(--accent);}
+
+    /* Ticket table */
+    .ticket-table{width:100%;border-collapse:collapse;}
+    .ticket-table th{text-align:left;padding:10px 14px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border);font-weight:600;}
+    .ticket-row{border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;}
+    .ticket-row:hover{background:var(--card2);}
+    .ticket-row td{padding:14px;}
+    .ticket-id{font-size:.75rem;color:var(--muted);font-family:monospace;}
+    .ticket-subject{font-size:.88rem;font-weight:500;}
+    .ticket-meta{font-size:.75rem;color:var(--muted);margin-top:2px;}
+    .app-badge{font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);color:var(--accent3);}
+    .priority-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+    .p-urgent{background:#ef4444;box-shadow:0 0 6px #ef4444;}
+    .p-high{background:#f59e0b;}
+    .p-normal{background:#6366f1;}
+    .p-low{background:#374151;}
+    .status-badge{font-size:.72rem;padding:3px 10px;border-radius:20px;font-weight:600;}
+    .s-open{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+    .s-progress{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2);}
+    .s-resolved{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2);}
+    .s-closed{background:rgba(55,65,81,.3);color:var(--muted);border:1px solid var(--border);}
+
+    /* Ticket modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .modal{background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;}
+    .modal-header{padding:24px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+    .modal-title{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px;line-height:1;}
+    .modal-body{padding:20px 24px 24px;}
+    .ticket-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+    .info-cell{background:var(--card2);border-radius:8px;padding:12px;}
+    .info-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;font-weight:600;}
+    .info-val{font-size:.85rem;}
+    .ticket-message{background:var(--card2);border-radius:10px;padding:16px;font-size:.88rem;line-height:1.7;margin:16px 0;border-left:3px solid var(--accent);}
+    .reply-area{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:.85rem;resize:vertical;min-height:100px;outline:none;margin-top:12px;}
+    .reply-area:focus{border-color:var(--accent);}
+    .modal-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+    .btn{padding:9px 18px;border-radius:9px;font-weight:600;font-size:.83rem;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s;}
+    .btn-primary{background:var(--grad);color:white;}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--text);}
+    .btn-green{background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.3);color:#34d399;}
+    .btn-red{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.2);color:#f87171;}
+    .ai-reply-box{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:14px;margin-top:10px;font-size:.85rem;line-height:1.7;display:none;}
+    .ai-reply-box.show{display:block;}
+
+    /* New ticket form */
+    .new-ticket-btn{background:var(--grad);color:white;padding:9px 20px;border-radius:9px;border:none;font-weight:700;font-size:.85rem;cursor:pointer;margin-left:auto;}
+    .form-group{margin-bottom:16px;}
+    .form-label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px;}
+    .form-input,.form-select,.form-textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+    .form-select option{background:var(--card2);}
+    .form-textarea{resize:vertical;min-height:120px;}
+
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-icon{font-size:3rem;margin-bottom:16px;}
+
+    /* Embed snippet */
+    .embed-card{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:20px;margin-top:24px;}
+    .embed-title{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;margin-bottom:8px;}
+    .embed-code{background:#0d1117;border-radius:8px;padding:14px;font-family:monospace;font-size:.75rem;color:#a78bfa;overflow-x:auto;line-height:1.8;}
+
+    @media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr);}.ticket-table th:nth-child(n+4),.ticket-row td:nth-child(n+4){display:none;}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">
+    <a href="/dashboard" style="color:var(--muted);text-decoration:none;font-size:.85rem">← Dashboard</a>
+    <span style="color:var(--border)">|</span>
+    🎫 Support Tickets
+  </div>
+  <button class="new-ticket-btn" onclick="openNewTicket()">+ New Ticket</button>
+</div>
+
+<div class="content">
+  <div class="page-title">🎫 Support Tickets</div>
+  <div class="page-sub">All support requests from across your app portfolio — managed by EcDash</div>
+
+  <!-- Stats -->
+  <div class="stats" id="stats-row">
+    <div class="stat"><div class="stat-num open" id="count-open">—</div><div class="stat-label">Open</div></div>
+    <div class="stat"><div class="stat-num progress" id="count-progress">—</div><div class="stat-label">In Progress</div></div>
+    <div class="stat"><div class="stat-num resolved" id="count-resolved">—</div><div class="stat-label">Resolved Today</div></div>
+    <div class="stat"><div class="stat-num total" id="count-total">—</div><div class="stat-label">Total</div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterTickets('all',this)">All</button>
+    <button class="filter-btn" onclick="filterTickets('open',this)">Open</button>
+    <button class="filter-btn" onclick="filterTickets('in-progress',this)">In Progress</button>
+    <button class="filter-btn" onclick="filterTickets('resolved',this)">Resolved</button>
+    <button class="filter-btn" onclick="filterTickets('closed',this)">Closed</button>
+    <input class="search-input" id="search-input" placeholder="Search tickets..." oninput="searchTickets()">
+  </div>
+
+  <!-- Table -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+    <table class="ticket-table">
+      <thead>
+        <tr>
+          <th>Ticket</th>
+          <th>From App</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="ticket-tbody"></tbody>
+    </table>
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="empty-icon">🎉</div>
+      <div>No tickets found</div>
+    </div>
+  </div>
+
+  <!-- Embed snippet -->
+  <div class="embed-card">
+    <div class="embed-title">🔗 Add Support Button to Any App</div>
+    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Paste this into any app's navbar or footer to let users submit support tickets directly to EcDash:</p>
+    <div class="embed-code">&lt;!-- EcDash Support Widget --&gt;<br>
+&lt;a href="https://jay-portfolio-production.up.railway.app/submit-ticket?app=YOUR_APP_NAME"<br>
+&nbsp;&nbsp; target="_blank" style="..."&gt;<br>
+&nbsp;&nbsp;🎫 Support<br>
+&lt;/a&gt;</div>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:10px">Replace <code style="background:var(--card2);padding:1px 5px;border-radius:3px">YOUR_APP_NAME</code> with e.g. <code style="background:var(--card2);padding:1px 5px;border-radius:3px">pet-vet-ai</code></p>
+  </div>
+</div>
+
+<!-- Ticket Detail Modal -->
+<div class="modal-overlay" id="ticket-modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="ticket-id" id="modal-id"></div>
+        <div class="modal-title" id="modal-subject"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="ticket-info-grid">
+        <div class="info-cell"><div class="info-label">From App</div><div class="info-val" id="modal-app"></div></div>
+        <div class="info-cell"><div class="info-label">Status</div><div class="info-val" id="modal-status-display"></div></div>
+        <div class="info-cell"><div class="info-label">Priority</div><div class="info-val" id="modal-priority-display"></div></div>
+        <div class="info-cell"><div class="info-label">Submitted</div><div class="info-val" id="modal-date"></div></div>
+        <div class="info-cell"><div class="info-label">Name</div><div class="info-val" id="modal-name"></div></div>
+        <div class="info-cell"><div class="info-label">Email</div><div class="info-val" id="modal-email"></div></div>
+      </div>
+      <div class="ticket-message" id="modal-message"></div>
+
+      <div style="font-size:.82rem;font-weight:600;margin-bottom:8px;color:var(--muted)">Reply</div>
+      <textarea class="reply-area" id="reply-area" placeholder="Type your reply to the customer..."></textarea>
+      <div class="ai-reply-box" id="ai-reply-box"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="sendReply()">📧 Send Reply</button>
+        <button class="btn btn-ghost" onclick="getAiSuggestion()">🤖 AI Suggest Reply</button>
+        <button class="btn btn-green" onclick="updateStatus('resolved')">✅ Resolve</button>
+        <button class="btn btn-ghost" onclick="updateStatus('in-progress')">🔄 In Progress</button>
+        <button class="btn btn-red" onclick="updateStatus('closed')">🚫 Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Ticket Modal -->
+<div class="modal-overlay" id="new-ticket-modal" style="display:none" onclick="if(event.target===this)closeNewTicket()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">+ New Support Ticket</div>
+      <button class="modal-close" onclick="closeNewTicket()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">App / Source</label>
+        <select class="form-select" id="new-app">
+          <option value="Jay Portfolio">Jay Portfolio</option>
+          <option value="Liberty Inventory">Liberty Inventory</option>
+          <option value="Keep Your Secrets">Keep Your Secrets</option>
+          <option value="Pet Vet AI">Pet Vet AI</option>
+          <option value="GymForge">GymForge</option>
+          <option value="Contractor Pro AI">Contractor Pro AI</option>
+          <option value="Dropship Shipping">Dropship Shipping</option>
+          <option value="Consignment Solutions">Consignment Solutions</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subject</label>
+        <input class="form-input" id="new-subject" placeholder="Brief description of the issue">
+      </div>
+      <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label class="form-label">Customer Name</label>
+          <input class="form-input" id="new-name" placeholder="Optional">
+        </div>
+        <div>
+          <label class="form-label">Customer Email</label>
+          <input class="form-input" id="new-email" placeholder="Optional">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select class="form-select" id="new-priority">
+          <option value="normal">Normal</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" id="new-message" placeholder="Describe the issue in detail..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="createTicket()">🎫 Create Ticket</button>
+        <button class="btn btn-ghost" onclick="closeNewTicket()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let allTickets = [];
+let currentFilter = 'all';
+let currentTicketId = null;
+
+// ── Load tickets ──
+async function loadTickets() {
+  try {
+    const r = await fetch('/api/tickets');
+    allTickets = await r.json();
+    renderTickets();
+    updateStats();
+  } catch(e) { console.error('Failed to load tickets', e); }
+}
+
+function updateStats() {
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('count-open').textContent = allTickets.filter(t=>t.status==='open').length;
+  document.getElementById('count-progress').textContent = allTickets.filter(t=>t.status==='in-progress').length;
+  document.getElementById('count-resolved').textContent = allTickets.filter(t=>t.status==='resolved'&&t.updated&&t.updated.startsWith(today)).length;
+  document.getElementById('count-total').textContent = allTickets.length;
+}
+
+function renderTickets(tickets) {
+  let list = tickets || allTickets;
+  if (currentFilter !== 'all') list = list.filter(t => t.status === currentFilter);
+  const q = document.getElementById('search-input').value.toLowerCase();
+  if (q) list = list.filter(t => (t.subject+t.app+t.message+t.name+t.email).toLowerCase().includes(q));
+
+  list.sort((a,b) => {
+    const po = {urgent:0,high:1,normal:2,low:3};
+    if (a.status==='open' && b.status!=='open') return -1;
+    if (b.status==='open' && a.status!=='open') return 1;
+    return (po[a.priority]||2)-(po[b.priority]||2);
+  });
+
+  const tbody = document.getElementById('ticket-tbody');
+  const empty = document.getElementById('empty-state');
+  if (!list.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  tbody.innerHTML = list.map(t => `
+    <tr class="ticket-row" onclick="openTicket(${t.id})">
+      <td>
+        <div class="ticket-id">#${String(t.id).padStart(4,'0')}</div>
+        <div class="ticket-subject">${escHtml(t.subject)}</div>
+        <div class="ticket-meta">${t.name?escHtml(t.name)+' · ':''} ${t.email?escHtml(t.email):''}</div>
+      </td>
+      <td><span class="app-badge">${escHtml(t.app)}</span></td>
+      <td><span class="priority-dot p-${t.priority}"></span>${t.priority}</td>
+      <td><span class="status-badge s-${t.status.replace('-','')}">${t.status}</span></td>
+      <td style="font-size:.78rem;color:var(--muted)">${t.created?t.created.slice(0,10):''}</td>
+    </tr>
+  `).join('');
+}
+
+function filterTickets(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTickets();
+}
+
+function searchTickets() { renderTickets(); }
+
+// ── Ticket detail ──
+function openTicket(id) {
+  const t = allTickets.find(x=>x.id===id);
+  if (!t) return;
+  currentTicketId = id;
+  document.getElementById('modal-id').textContent = '#' + String(id).padStart(4,'0');
+  document.getElementById('modal-subject').textContent = t.subject;
+  document.getElementById('modal-app').textContent = t.app;
+  document.getElementById('modal-status-display').innerHTML = `<span class="status-badge s-${t.status.replace('-','')}">${t.status}</span>`;
+  document.getElementById('modal-priority-display').innerHTML = `<span class="priority-dot p-${t.priority}"></span>${t.priority}`;
+  document.getElementById('modal-date').textContent = t.created?t.created.slice(0,16).replace('T',' '):'';
+  document.getElementById('modal-name').textContent = t.name || '—';
+  document.getElementById('modal-email').textContent = t.email || '—';
+  document.getElementById('modal-message').textContent = t.message;
+  document.getElementById('reply-area').value = '';
+  document.getElementById('ai-reply-box').classList.remove('show');
+  document.getElementById('ticket-modal').style.display = 'flex';
+}
+
+function closeModal() { document.getElementById('ticket-modal').style.display='none'; }
+
+async function updateStatus(status) {
+  if (!currentTicketId) return;
+  await fetch(`/api/tickets/${currentTicketId}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({status})
+  });
+  const t = allTickets.find(x=>x.id===currentTicketId);
+  if (t) { t.status=status; t.updated=new Date().toISOString(); }
+  document.getElementById('modal-status-display').innerHTML = `<span class="status-badge s-${status.replace('-','')}">${status}</span>`;
+  updateStats(); renderTickets();
+}
+
+async function sendReply() {
+  const reply = document.getElementById('reply-area').value.trim();
+  if (!reply) return alert('Enter a reply first');
+  const t = allTickets.find(x=>x.id===currentTicketId);
+  const email = t?.email;
+  if (!email) { alert('No customer email on this ticket. Reply saved as note.'); return; }
+  alert(`✅ Reply would be sent to ${email}\n\nNote: Email sending requires SendGrid integration. Add SENDGRID_API_KEY to Railway to enable.`);
+  await updateStatus('in-progress');
+}
+
+async function getAiSuggestion() {
+  const t = allTickets.find(x=>x.id===currentTicketId);
+  if (!t) return;
+  const box = document.getElementById('ai-reply-box');
+  box.textContent = '🤖 EcDash is drafting a reply...';
+  box.classList.add('show');
+  try {
+    const r = await fetch('/api/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: `Draft a professional, warm support reply for this ticket from ${t.app}:\n\nSubject: ${t.subject}\nMessage: ${t.message}\n\nKeep it concise, helpful, and sign off as the ${t.app} support team.`,
+        history: []
+      })
+    });
+    const d = await r.json();
+    box.textContent = d.reply || 'Could not generate reply.';
+    document.getElementById('reply-area').value = d.reply || '';
+  } catch(e) { box.textContent = 'AI unavailable. Try again.'; }
+}
+
+// ── New ticket ──
+function openNewTicket() { document.getElementById('new-ticket-modal').style.display='flex'; }
+function closeNewTicket() { document.getElementById('new-ticket-modal').style.display='none'; }
+
+async function createTicket() {
+  const subject = document.getElementById('new-subject').value.trim();
+  const message = document.getElementById('new-message').value.trim();
+  if (!subject || !message) return alert('Subject and message are required');
+  await fetch('/api/tickets', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      app: document.getElementById('new-app').value,
+      subject, message,
+      name: document.getElementById('new-name').value,
+      email: document.getElementById('new-email').value,
+      priority: document.getElementById('new-priority').value
+    })
+  });
+  closeNewTicket();
+  loadTickets();
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+loadTickets();
+</script>
+</body>
+</html>

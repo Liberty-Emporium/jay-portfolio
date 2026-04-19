@@ -13,7 +13,18 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'portfolio-secret-2026')
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'config.json')
-TODOS_FILE  = os.path.join(os.path.dirname(__file__), 'todos.json')
+TODOS_FILE   = os.path.join(os.path.dirname(__file__), 'todos.json')
+TICKETS_FILE = os.path.join(os.path.dirname(__file__), 'tickets.json')
+
+def load_tickets():
+    if os.path.exists(TICKETS_FILE):
+        try:
+            with open(TICKETS_FILE) as f: return json.load(f)
+        except: pass
+    return []
+
+def save_tickets(tickets):
+    with open(TICKETS_FILE, 'w') as f: json.dump(tickets, f, indent=2)
 
 DEFAULT_CONFIG = {
     "photo": "👨‍💻", "name": "Jay Alexander",
@@ -306,6 +317,78 @@ def api_todos_delete(todo_id):
     todos = [t for t in load_todos() if t['id'] != todo_id]
     save_todos(todos)
     return jsonify({'ok': True})
+
+# ── Tickets ───────────────────────────────────────────────────────────────
+@app.route('/tickets')
+@login_required
+def tickets():
+    return render_template('tickets.html', config=config)
+
+@app.route('/api/tickets', methods=['GET'])
+@login_required
+def api_tickets_get():
+    return jsonify(load_tickets())
+
+@app.route('/api/tickets', methods=['POST'])
+@login_required
+def api_tickets_add():
+    data = request.get_json()
+    tickets = load_tickets()
+    ticket = {
+        'id': int(datetime.datetime.utcnow().timestamp() * 1000) % 100000,
+        'app': data.get('app', 'Unknown').strip(),
+        'subject': data.get('subject', '').strip(),
+        'message': data.get('message', '').strip(),
+        'name': data.get('name', '').strip(),
+        'email': data.get('email', '').strip(),
+        'priority': data.get('priority', 'normal'),
+        'status': 'open',
+        'created': datetime.datetime.utcnow().isoformat(),
+        'updated': datetime.datetime.utcnow().isoformat()
+    }
+    if not ticket['subject'] or not ticket['message']:
+        return jsonify({'error': 'subject and message required'}), 400
+    tickets.insert(0, ticket)
+    save_tickets(tickets)
+    return jsonify(ticket), 201
+
+@app.route('/api/tickets/<int:ticket_id>', methods=['PATCH'])
+@login_required
+def api_tickets_update(ticket_id):
+    data = request.get_json()
+    tickets = load_tickets()
+    for t in tickets:
+        if t['id'] == ticket_id:
+            if 'status' in data: t['status'] = data['status']
+            if 'priority' in data: t['priority'] = data['priority']
+            t['updated'] = datetime.datetime.utcnow().isoformat()
+            save_tickets(tickets)
+            return jsonify(t)
+    return jsonify({'error': 'not found'}), 404
+
+# Public ticket submission (no login required — for embedding in other apps)
+@app.route('/submit-ticket', methods=['GET', 'POST'])
+def submit_ticket():
+    app_name = request.args.get('app', request.form.get('app', 'Unknown'))
+    if request.method == 'POST':
+        tickets = load_tickets()
+        ticket = {
+            'id': int(datetime.datetime.utcnow().timestamp() * 1000) % 100000,
+            'app': request.form.get('app', app_name).strip(),
+            'subject': request.form.get('subject', '').strip(),
+            'message': request.form.get('message', '').strip(),
+            'name': request.form.get('name', '').strip(),
+            'email': request.form.get('email', '').strip(),
+            'priority': 'normal',
+            'status': 'open',
+            'created': datetime.datetime.utcnow().isoformat(),
+            'updated': datetime.datetime.utcnow().isoformat()
+        }
+        if ticket['subject'] and ticket['message']:
+            tickets.insert(0, ticket)
+            save_tickets(tickets)
+        return render_template('submit_ticket_success.html', app_name=ticket['app'])
+    return render_template('submit_ticket.html', app_name=app_name)
 
 # ── Public routes ─────────────────────────────────────────────────────────────
 @app.route('/')

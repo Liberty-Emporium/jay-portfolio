@@ -80,6 +80,11 @@ def save_app_settings(s):
 # ── Auth (MUST come before any route that uses @login_required) ───────────────
 DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
 
+def get_dashboard_password():
+    """Return dashboard password — config.json override takes priority over env var."""
+    stored = load_config().get('dashboard_password', '')
+    return stored if stored else DASHBOARD_PASSWORD
+
 import hashlib
 import secrets as _secrets
 
@@ -120,12 +125,44 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+@app.route('/api/change-password', methods=['POST'])
+@login_required
+def api_change_password():
+    """Change dashboard password and/or email from the Overseer."""
+    data = request.get_json() or {}
+    current_pw = data.get('current_password', '')
+    new_pw = data.get('new_password', '').strip()
+    new_email = data.get('email', None)
+
+    if current_pw != get_dashboard_password():
+        return jsonify({'error': 'Current password is incorrect'}), 403
+
+    if new_pw and len(new_pw) < 6:
+        return jsonify({'error': 'New password must be at least 6 characters'}), 400
+
+    global config
+    config = load_config()
+    changed = []
+
+    if new_pw:
+        config['dashboard_password'] = new_pw
+        changed.append('password')
+
+    if new_email is not None:
+        new_email = new_email.strip()
+        if new_email:
+            config['email'] = new_email
+            changed.append('email')
+
+    save_config(config)
+    return jsonify({'ok': True, 'changed': changed})
+
 @app.route('/api/token', methods=['POST'])
 def api_create_token():
     """Create a bearer token. Requires dashboard password."""
     data = request.get_json() or {}
     pw = data.get('password', '')
-    if pw != DASHBOARD_PASSWORD:
+    if pw != get_dashboard_password():
         return jsonify({'error': 'wrong password'}), 401
     raw = _secrets.token_urlsafe(32)
     token_hash = hashlib.sha256(raw.encode()).hexdigest()
@@ -146,7 +183,7 @@ def login():
     error = None
     if request.method == 'POST':
         pw = request.form.get('password', '')
-        if pw == DASHBOARD_PASSWORD:
+        if pw == get_dashboard_password():
             flask_session['dashboard_auth'] = True
             flask_session.permanent = True
             return redirect(url_for('dashboard'))
@@ -625,3 +662,4 @@ if __name__ == '__main__':
     if not os.path.exists(CONFIG_FILE):
         save_config(DEFAULT_CONFIG)
     app.run(host='0.0.0.0', port=5000, debug=True)
+

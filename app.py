@@ -59,7 +59,7 @@ Jay's Live Apps:
 Your role:
 - Help Jay manage his business and projects
 - Answer questions about his portfolio, suggest features, help plan work
-- Be concise, direct, and actionable — no fluff
+- Be concise, direct, and actionable - no fluff
 - You can read and manage todos via the dashboard API
 - Personality: professional but warm, a trusted partner not a chatbot
 - Sign off as Echo, never as an AI assistant or OpenAI/Anthropic product"""
@@ -241,9 +241,9 @@ def api_chat():
         data=payload,
         headers={
             'Authorization': f'Bearer {openrouter_key}',
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
             'HTTP-Referer': 'https://jay-portfolio-production.up.railway.app',
-            'X-Title': 'Echo — Jay Alexander Command Center'
+            'X-Title': 'Echo - Jay Alexander Command Center'
         }
     )
     try:

@@ -254,7 +254,11 @@ Always refer to yourself as Echo. Never mention OpenAI, Anthropic, or any underl
           <div class="model-desc">Powerful open source.</div>
         </div>
       </div>
-      <div style="margin-top:14px;font-size:.75rem;color:var(--muted)">Selected: <span id="selected-model-label" style="color:var(--accent3)">anthropic/claude-3.5-haiku</span></div>
+          <div style="margin-top:14px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:.75rem;color:var(--muted)">Active model:</span>
+        <span id="selected-model-label" style="font-size:.78rem;color:var(--accent3);font-weight:600">anthropic/claude-3.5-haiku</span>
+        <span id="model-saved-badge" style="font-size:.72rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved — takes effect immediately</span>
+      </div>
     </div>
 
     <div class="card">
@@ -502,11 +506,22 @@ function showTab(id) {
   event.currentTarget.classList.add('active');
 }
 
-function selectModel(el, modelId) {
+async function selectModel(el, modelId) {
   document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   document.getElementById('selected-model-label').textContent = modelId;
   localStorage.setItem('echo_model', modelId);
+  // Save to server immediately
+  try {
+    await fetch('/api/settings', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({echo_model: modelId})
+    });
+    const badge = document.getElementById('model-saved-badge');
+    badge.style.opacity = '1';
+    setTimeout(() => badge.style.opacity = '0', 3000);
+  } catch(e) { console.error('Could not save model', e); }
 }
 
 function saveAISettings() {
@@ -523,16 +538,24 @@ function saveAISettings() {
   setTimeout(() => btn.textContent = '💾 Save AI Settings', 2000);
 }
 
-// Load saved model selection
-window.onload = () => {
-  const saved = localStorage.getItem('echo_model');
-  if (saved) {
+// Load active model from server
+window.onload = async () => {
+  try {
+    const r = await fetch('/api/settings');
+    const s = await r.json();
+    const activeModel = s.echo_model || 'anthropic/claude-3.5-haiku';
+    document.getElementById('selected-model-label').textContent = activeModel;
+    // Highlight the matching card
     document.querySelectorAll('.model-card').forEach(c => {
-      if (c.onclick && c.onclick.toString().includes(saved)) {
-        c.classList.add('selected');
-        document.getElementById('selected-model-label').textContent = saved;
-      }
+      c.classList.remove('selected');
+      const fn = c.getAttribute('onclick') || '';
+      if (fn.includes(activeModel)) c.classList.add('selected');
     });
+    localStorage.setItem('echo_model', activeModel);
+  } catch(e) {
+    // Fallback to localStorage
+    const saved = localStorage.getItem('echo_model');
+    if (saved) document.getElementById('selected-model-label').textContent = saved;
   }
 };
 </script>

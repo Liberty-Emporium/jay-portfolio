@@ -43,6 +43,41 @@ def save_todos(todos):
 
 config = load_config()
 
+# ── App settings (model, behavior) ───────────────────────────────────────────
+APP_SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'app_settings.json')
+
+DEFAULT_APP_SETTINGS = {
+    'echo_model': 'anthropic/claude-3.5-haiku',
+    'echo_max_tokens': 1024,
+    'echo_temperature': 0.7,
+}
+
+def load_app_settings():
+    if os.path.exists(APP_SETTINGS_FILE):
+        try:
+            with open(APP_SETTINGS_FILE) as f: return {**DEFAULT_APP_SETTINGS, **json.load(f)}
+        except: pass
+    return DEFAULT_APP_SETTINGS.copy()
+
+def save_app_settings(s):
+    with open(APP_SETTINGS_FILE, 'w') as f: json.dump(s, f, indent=2)
+
+@app.route('/api/settings', methods=['GET'])
+@login_required
+def api_settings_get():
+    return jsonify(load_app_settings())
+
+@app.route('/api/settings', methods=['POST'])
+@login_required
+def api_settings_save():
+    data = request.get_json()
+    s = load_app_settings()
+    allowed = {'echo_model', 'echo_max_tokens', 'echo_temperature'}
+    for k, v in data.items():
+        if k in allowed: s[k] = v
+    save_app_settings(s)
+    return jsonify({'ok': True, 'settings': s})
+
 # ── Auth (MUST come before any route that uses @login_required) ───────────────
 DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
 
@@ -177,8 +212,9 @@ def api_chat():
             messages.append({'role': h['role'], 'content': h['content']})
     messages.append({'role': 'user', 'content': user_message})
 
-    payload = json.dumps({'model': 'anthropic/claude-3.5-haiku', 'messages': messages,
-                          'max_tokens': 1024, 'temperature': 0.7}).encode('utf-8')
+    s = load_app_settings()
+    payload = json.dumps({'model': s['echo_model'], 'messages': messages,
+                          'max_tokens': s['echo_max_tokens'], 'temperature': s['echo_temperature']}).encode('utf-8')
     req = urllib.request.Request(
         'https://openrouter.ai/api/v1/chat/completions', data=payload,
         headers={'Authorization': f'Bearer {openrouter_key}',

@@ -1,7 +1,8 @@
 import base64
 import os
 import json
-from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session
+import datetime
+from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session, jsonify
 from functools import wraps
 
 app = Flask(__name__)
@@ -83,6 +84,68 @@ def investor_inquiry():
 @app.route('/tools')
 def tools():
     return render_template('tools.html')
+
+# ── Todos ────────────────────────────────────────────
+TODOS_FILE = os.path.join(os.path.dirname(__file__), 'todos.json')
+
+def load_todos():
+    if os.path.exists(TODOS_FILE):
+        try:
+            with open(TODOS_FILE) as f:
+                return json.load(f)
+        except:
+            pass
+    return []
+
+def save_todos(todos):
+    with open(TODOS_FILE, 'w') as f:
+        json.dump(todos, f, indent=2)
+
+@app.route('/api/todos', methods=['GET'])
+@login_required
+def api_todos_get():
+    return jsonify(load_todos())
+
+@app.route('/api/todos', methods=['POST'])
+@login_required
+def api_todos_add():
+    data = request.get_json()
+    todos = load_todos()
+    todo = {
+        'id': int(datetime.datetime.utcnow().timestamp() * 1000),
+        'text': data.get('text', '').strip(),
+        'priority': data.get('priority', 'medium'),
+        'done': False,
+        'created': datetime.datetime.utcnow().isoformat()
+    }
+    if not todo['text']:
+        return jsonify({'error': 'text required'}), 400
+    todos.insert(0, todo)
+    save_todos(todos)
+    return jsonify(todo), 201
+
+@app.route('/api/todos/<int:todo_id>', methods=['PATCH'])
+@login_required
+def api_todos_update(todo_id):
+    data = request.get_json()
+    todos = load_todos()
+    for t in todos:
+        if t['id'] == todo_id:
+            if 'done' in data: t['done'] = data['done']
+            if 'text' in data: t['text'] = data['text']
+            if 'priority' in data: t['priority'] = data['priority']
+            t['updated'] = datetime.datetime.utcnow().isoformat()
+            save_todos(todos)
+            return jsonify(t)
+    return jsonify({'error': 'not found'}), 404
+
+@app.route('/api/todos/<int:todo_id>', methods=['DELETE'])
+@login_required
+def api_todos_delete(todo_id):
+    todos = load_todos()
+    todos = [t for t in todos if t['id'] != todo_id]
+    save_todos(todos)
+    return jsonify({'ok': True})
 
 # ── Auth ─────────────────────────────────────────────────
 DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')

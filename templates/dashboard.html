@@ -734,61 +734,81 @@ function showPanel(id) {
   if (id === 'todos') renderTodos();
 }
 
-// ── TODO system (localStorage) ──
-function getTodos() {
-  try { return JSON.parse(localStorage.getItem('jay_todos') || '[]'); } catch(e) { return []; }
-}
-function saveTodos(todos) {
-  localStorage.setItem('jay_todos', JSON.stringify(todos));
-  updateOverviewTodos();
-}
-
+// ── TODO system (server API) ──
+let _todos = [];
 let todoFilter = 'all';
 
-function addTodo() {
+async function fetchTodos() {
+  try {
+    const r = await fetch('/api/todos');
+    _todos = await r.json();
+    updateOverviewTodos();
+    renderTodos();
+  } catch(e) { console.error('Failed to fetch todos', e); }
+}
+
+async function addTodo() {
   const input = document.getElementById('todo-input');
   const priority = document.getElementById('todo-priority').value;
   const text = input.value.trim();
   if (!text) return;
-  const todos = getTodos();
-  todos.unshift({ id: Date.now(), text, priority, done: false, created: new Date().toISOString() });
-  saveTodos(todos);
   input.value = '';
-  renderTodos();
+  try {
+    const r = await fetch('/api/todos', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({text, priority})
+    });
+    const todo = await r.json();
+    _todos.unshift(todo);
+    updateOverviewTodos();
+    renderTodos();
+  } catch(e) { alert('Could not save todo'); }
 }
 
-function toggleTodo(id) {
-  const todos = getTodos();
-  const t = todos.find(t => t.id === id);
-  if (t) t.done = !t.done;
-  saveTodos(todos);
+async function toggleTodo(id) {
+  const t = _todos.find(t => t.id === id);
+  if (!t) return;
+  t.done = !t.done;
   renderTodos();
+  updateOverviewTodos();
+  await fetch(`/api/todos/${id}`, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({done: t.done})
+  });
 }
 
-function deleteTodo(id) {
-  saveTodos(getTodos().filter(t => t.id !== id));
+async function deleteTodo(id) {
+  _todos = _todos.filter(t => t.id !== id);
   renderTodos();
+  updateOverviewTodos();
+  await fetch(`/api/todos/${id}`, {method: 'DELETE'});
 }
 
-function clearDone() {
-  saveTodos(getTodos().filter(t => !t.done));
+async function clearDone() {
+  const done = _todos.filter(t => t.done);
+  _todos = _todos.filter(t => !t.done);
   renderTodos();
+  updateOverviewTodos();
+  for (const t of done) {
+    await fetch(`/api/todos/${t.id}`, {method: 'DELETE'});
+  }
 }
 
 function filterTodos(f) { todoFilter = f; renderTodos(); }
 
 function renderTodos() {
-  let todos = getTodos();
+  let todos = [..._todos];
   if (todoFilter === 'open') todos = todos.filter(t => !t.done);
   if (todoFilter === 'done') todos = todos.filter(t => t.done);
-
-  const priOrder = { high: 0, medium: 1, low: 2 };
-  todos.sort((a, b) => {
+  const priOrder = {high:0, medium:1, low:2};
+  todos.sort((a,b) => {
     if (a.done !== b.done) return a.done ? 1 : -1;
-    return priOrder[a.priority] - priOrder[b.priority];
+    return (priOrder[a.priority]||1) - (priOrder[b.priority]||1);
   });
-
   const list = document.getElementById('todo-list');
+  if (!list) return;
   if (!todos.length) {
     list.innerHTML = '<div style="color:var(--muted);font-size:.85rem;text-align:center;padding:24px">No tasks here 🎉</div>';
     return;
@@ -806,19 +826,17 @@ function renderTodos() {
 }
 
 function updateOverviewTodos() {
-  const todos = getTodos().filter(t => !t.done);
+  const todos = _todos.filter(t => !t.done);
   const countEl = document.getElementById('overview-todo-count');
   if (countEl) countEl.textContent = todos.length;
-
   const container = document.getElementById('overview-todos');
   if (!container) return;
-  const top = todos.slice(0, 5);
+  const priOrder = {high:0, medium:1, low:2};
+  const top = [...todos].sort((a,b) => (priOrder[a.priority]||1)-(priOrder[b.priority]||1)).slice(0,5);
   if (!top.length) {
     container.innerHTML = '<div style="color:var(--green);font-size:.85rem">All clear — no open tasks 🎉</div>';
     return;
   }
-  const priOrder = { high: 0, medium: 1, low: 2 };
-  top.sort((a, b) => priOrder[a.priority] - priOrder[b.priority]);
   container.innerHTML = top.map(t => `
     <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px">
       <span class="todo-priority p-${t.priority}">${t.priority}</span>
@@ -846,8 +864,7 @@ notesArea.addEventListener('input', () => {
 });
 
 // ── Init ──
-updateOverviewTodos();
-renderTodos();
+fetchTodos();
 </script>
 </body>
 </html>

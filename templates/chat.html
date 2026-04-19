@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat with Echo — Jay Alexander</title>
+  <title>Chat with EcDash — Jay Alexander</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -146,7 +146,7 @@
   </div>
   <div class="topbar-right">
     <button class="btn-sm btn-ghost" id="health-btn" onclick="runHealthCheck()">🟢 Test All Apps</button>
-      <button class="btn-sm" id="echo-btn" onclick="sendToEcho()" style="background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:var(--accent3)">⚡ Send to Echo</button>
+      <button class="btn-sm" id="echo-btn" onclick="sendToEcho()" style="background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:var(--accent3)">⚡ Send to EcDash</button>
       <button class="btn-sm btn-ghost" onclick="clearChat()">Clear Chat</button>
     <a href="/dashboard" class="btn-sm btn-ghost">← Dashboard</a>
   </div>
@@ -156,7 +156,7 @@
 <div class="messages" id="messages">
   <div class="welcome" id="welcome">
     <div class="welcome-icon">🦾</div>
-    <h2>Hey Jay, I'm Echo</h2>
+    <h2>Hey Jay, I'm EcDash</h2>
     <p>Your AI assistant for Alexander AI Integrated Solutions. Ask me anything about your projects, todos, or what to build next.</p>
     <div class="quick-prompts">
       <div class="quick-prompt" onclick="sendQuick('Give me a status briefing on all my live apps')">📊 Portfolio status</div>
@@ -211,7 +211,7 @@ function addMessage(role, content, typing=false) {
   div.id = typing ? 'typing-msg' : '';
 
   const avatar = role === 'echo' ? '🦾' : '👤';
-  const name = role === 'echo' ? 'Echo' : 'Jay';
+  const name = role === 'echo' ? 'EcDash' : 'Jay';
 
   if (typing) {
     div.innerHTML = `
@@ -291,7 +291,7 @@ async function sendMessage() {
     }
   } catch(e) {
     typingEl.remove();
-    addMessage('echo', '⚠️ Could not reach Echo. Check your connection.');
+    addMessage('echo', '⚠️ Could not reach EcDash. Check your connection.');
   }
 
   isThinking = false;
@@ -305,7 +305,7 @@ function clearChat() {
   msgs.innerHTML = `
     <div class="welcome" id="welcome">
       <div class="welcome-icon">🦾</div>
-      <h2>Hey Jay, I'm Echo</h2>
+      <h2>Hey Jay, I'm EcDash</h2>
       <p>Your AI assistant for Alexander AI Integrated Solutions. Ask me anything about your projects, todos, or what to build next.</p>
       <div class="quick-prompts">
         <div class="quick-prompt" onclick="sendQuick('Give me a status briefing on all my live apps')">📊 Portfolio status</div>
@@ -377,7 +377,7 @@ async function sendToEcho() {
   btn.disabled = true;
 
   // Add user message to chat
-  addMessage('jay', '⚡ [Sending to Echo] ' + text);
+  addMessage('jay', '⚡ [Sending to EcDash] ' + text);
   chatHistory.push({role:'user', content: text});
   input.value = '';
 
@@ -389,15 +389,15 @@ async function sendToEcho() {
     });
     const d = await r.json();
     const msg = d.status === 'sent'
-      ? '✅ Task sent to Echo! She\'ll execute it and report back.\n\n**Task ID:** #' + d.id
-      : '📥 Task queued for Echo.\n\n' + (d.response || 'Echo will pick this up on next check-in.') + '\n\n**Task ID:** #' + d.id + '\n\n💡 To connect Echo, set `ECHO_WEBHOOK_URL` in Railway env vars.';
+      ? '✅ Task sent to EcDash! She\'ll execute it and report back.\n\n**Task ID:** #' + d.id
+      : '📥 Task queued for Echo.\n\n' + (d.response || 'EcDash will pick this up on next check-in.') + '\n\n**Task ID:** #' + d.id + '\n\n💡 To connect Echo, set `ECHO_WEBHOOK_URL` in Railway env vars.';
     addMessage('echo', msg);
     chatHistory.push({role:'assistant', content: msg});
   } catch(e) {
     addMessage('echo', '⚠️ Could not queue task. Try again.');
   }
 
-  btn.textContent = '⚡ Send to Echo';
+  btn.textContent = '⚡ Send to EcDash';
   btn.disabled = false;
 }
 

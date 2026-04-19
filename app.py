@@ -62,21 +62,6 @@ def load_app_settings():
 def save_app_settings(s):
     with open(APP_SETTINGS_FILE, 'w') as f: json.dump(s, f, indent=2)
 
-@app.route('/api/settings', methods=['GET'])
-@login_required
-def api_settings_get():
-    return jsonify(load_app_settings())
-
-@app.route('/api/settings', methods=['POST'])
-@login_required
-def api_settings_save():
-    data = request.get_json()
-    s = load_app_settings()
-    allowed = {'echo_model', 'echo_max_tokens', 'echo_temperature'}
-    for k, v in data.items():
-        if k in allowed: s[k] = v
-    save_app_settings(s)
-    return jsonify({'ok': True, 'settings': s})
 
 # ── Auth (MUST come before any route that uses @login_required) ───────────────
 DASHBOARD_PASSWORD = os.environ.get('DASHBOARD_PASSWORD', 'liberty2026')
@@ -105,6 +90,22 @@ def login():
 def logout():
     flask_session.pop('dashboard_auth', None)
     return redirect(url_for('index'))
+
+@app.route('/api/settings', methods=['GET'])
+@login_required
+def api_settings_get():
+    return jsonify(load_app_settings())
+
+@app.route('/api/settings', methods=['POST'])
+@login_required
+def api_settings_save():
+    data = request.get_json()
+    s = load_app_settings()
+    allowed = {'echo_model', 'echo_max_tokens', 'echo_temperature'}
+    for k, v in data.items():
+        if k in allowed: s[k] = v
+    save_app_settings(s)
+    return jsonify({'ok': True, 'settings': s})
 
 # ── App health checker ────────────────────────────────────────────────────────
 APPS_REGISTRY = [

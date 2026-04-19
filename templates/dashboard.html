@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Center — Jay Alexander</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #030712;
+      --bg2:       #0a0f1a;
+      --card:      #111827;
+      --card2:     #161f2e;
+      --border:    #1f2937;
+      --accent:    #6366f1;
+      --accent2:   #8b5cf6;
+      --accent3:   #a78bfa;
+      --green:     #10b981;
+      --yellow:    #f59e0b;
+      --red:       #ef4444;
+      --text:      #f9fafb;
+      --muted:     #9ca3af;
+      --grad:      linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 220px;
+      background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 24px 0; z-index: 100;
+    }
+    .sidebar-logo {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem;
+      padding: 0 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo-dot { width: 10px; height: 10px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .sidebar-nav { flex: 1; padding: 16px 0; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; color: var(--muted); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500; transition: all .2s;
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item:hover, .nav-item.active { color: var(--text); background: rgba(99,102,241,.1); }
+    .nav-item.active { color: var(--accent3); border-right: 2px solid var(--accent); }
+    .nav-section { padding: 16px 20px 6px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: .1em; color: #374151; font-weight: 600; }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--muted); }
+
+    /* ── Main ── */
+    .main { margin-left: 220px; min-height: 100vh; }
+    .topbar {
+      background: rgba(3,7,18,.9); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 60px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .status-badge { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--green); }
+    .content { padding: 32px; }
+
+    /* ── Panels (tab sections) ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+    }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .card-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; }
+    .card-sub { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── Grid layouts ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+    /* ── Stat tiles ── */
+    .stat-tile { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { color: var(--muted); font-size: 0.82rem; margin-top: 4px; }
+
+    /* ── Project cards ── */
+    .proj-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px; transition: all .25s; position: relative; overflow: hidden;
+    }
+    .proj-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+    .proj-icon { font-size: 1.75rem; margin-bottom: 10px; }
+    .proj-name { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .proj-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+    .proj-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+    .tag { font-size: 0.7rem; background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.2); color: var(--accent3); padding: 2px 8px; border-radius: 20px; }
+    .proj-status { position: absolute; top: 14px; right: 14px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+    .dot-red { background: var(--red); }
+    .proj-links { display: flex; gap: 10px; }
+    .proj-links a { font-size: 0.78rem; font-weight: 600; color: var(--accent3); text-decoration: none; transition: color .2s; }
+    .proj-links a:hover { color: white; }
+    .proj-category { font-size: 0.68rem; text-transform: uppercase; letter-spacing: .08em; color: #374151; font-weight: 600; margin-bottom: 6px; }
+
+    /* ── TODO ── */
+    .todo-form { display: flex; gap: 10px; margin-bottom: 20px; }
+    .todo-input {
+      flex: 1; background: var(--card2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 0.88rem;
+      font-family: 'Inter', sans-serif; outline: none;
+    }
+    .todo-input:focus { border-color: var(--accent); }
+    .todo-select {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 10px; color: var(--text); font-size: 0.82rem;
+      font-family: 'Inter', sans-serif; outline: none; cursor: pointer;
+    }
+    .btn { padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: all .2s; font-family: 'Inter', sans-serif; }
+    .btn-primary { background: var(--grad); color: white; }
+    .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+    .todo-list { display: flex; flex-direction: column; gap: 8px; }
+    .todo-item {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; transition: all .2s;
+    }
+    .todo-item.done { opacity: .5; }
+    .todo-item.done .todo-text { text-decoration: line-through; }
+    .todo-check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .todo-check.checked { background: var(--green); border-color: var(--green); }
+    .todo-text { flex: 1; font-size: 0.88rem; }
+    .todo-priority { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .p-high { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.2); }
+    .p-medium { background: rgba(245,158,11,.15); color: #fbbf24; border: 1px solid rgba(245,158,11,.2); }
+    .p-low { background: rgba(16,185,129,.15); color: #34d399; border: 1px solid rgba(16,185,129,.2); }
+    .todo-del { color: var(--muted); cursor: pointer; font-size: 1rem; opacity: 0; transition: opacity .2s; padding: 2px 6px; border-radius: 4px; background: none; border: none; }
+    .todo-item:hover .todo-del { opacity: 1; }
+
+    /* ── Support card ── */
+    .support-card { background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(139,92,246,.1)); border: 1px solid rgba(99,102,241,.3); border-radius: 16px; padding: 32px; text-align: center; }
+    .support-icon { font-size: 3rem; margin-bottom: 16px; }
+    .support-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 8px; }
+    .support-card p { color: var(--muted); font-size: 0.92rem; margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .support-links { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .support-link { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; text-decoration: none; color: var(--text); font-size: 0.85rem; font-weight: 500; transition: all .2s; }
+    .support-link:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .support-embed { margin-top: 32px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .support-embed h3 { font-family: 'Space Grotesk', sans-serif; margin-bottom: 12px; font-size: 0.95rem; }
+    .embed-snippet { background: #0d1117; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 0.78rem; color: #a78bfa; text-align: left; overflow-x: auto; line-height: 1.8; }
+
+    /* ── Notes ── */
+    .notes-area { width: 100%; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.7; resize: vertical; min-height: 200px; outline: none; }
+    .notes-area:focus { border-color: var(--accent); }
+    .notes-saved { font-size: 0.75rem; color: var(--green); opacity: 0; transition: opacity .3s; }
+    .notes-saved.show { opacity: 1; }
+
+    /* ── Section headers ── */
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    .section-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+    /* ── Links table ── */
+    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .link-chip { display: flex; align-items: center; gap: 10px; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--text); transition: all .2s; }
+    .link-chip:hover { border-color: var(--accent); background: var(--card); }
+    .link-chip-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .link-chip-info { flex: 1; min-width: 0; }
+    .link-chip-name { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-chip-url { font-size: 0.72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-chip-arrow { color: var(--muted); font-size: 0.8rem; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .sidebar { width: 60px; }
+      .sidebar-logo span, .nav-item span, .nav-section, .sidebar-footer { display: none; }
+      .nav-item { justify-content: center; padding: 14px; }
+      .main { margin-left: 60px; }
+      .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .grid-3, .grid-4, .grid-auto { grid-template-columns: 1fr; }
+      .content { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-dot"></span>
+    <span>Jay's Hub</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Menu</div>
+    <button class="nav-item active" onclick="showPanel('overview')">🏠 <span>Overview</span></button>
+    <button class="nav-item" onclick="showPanel('projects')">🚀 <span>Projects</span></button>
+    <button class="nav-item" onclick="showPanel('todos')">✅ <span>To-Do List</span></button>
+    <button class="nav-item" onclick="showPanel('links')">🔗 <span>Quick Links</span></button>
+    <button class="nav-item" onclick="showPanel('support')">🛟 <span>Support</span></button>
+    <button class="nav-item" onclick="showPanel('notes')">📝 <span>Notes</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <span>v1.0 · Jay Alexander</span>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">🦾 Command Center</div>
+    <div class="topbar-right">
+      <div class="status-badge"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite"></span> All Systems Online</div>
+      <span style="font-size:.8rem;color:var(--muted)" id="clock"></span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════ OVERVIEW ══════════════ -->
+    <div class="panel active" id="panel-overview">
+      <div class="section-title">Good to see you, Jay 👋</div>
+      <div class="section-sub">Alexander AI Integrated Solutions — Command Center</div>
+
+      <div class="grid-4" style="margin-bottom:24px">
+        <div class="stat-tile"><div class="stat-num">11</div><div class="stat-label">Total Projects</div></div>
+        <div class="stat-tile"><div class="stat-num">8</div><div class="stat-label">Live Apps</div></div>
+        <div class="stat-tile"><div class="stat-num">3</div><div class="stat-label">Demos</div></div>
+        <div class="stat-tile"><div class="stat-num" id="overview-todo-count">—</div><div class="stat-label">Open To-Dos</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">⚡ Quick Access</div></div>
+          <div class="links-grid">
+            <a href="https://jay-portfolio-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🌐</span><div class="link-chip-info"><div class="link-chip-name">Portfolio</div><div class="link-chip-url">jay-portfolio-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Liberty Inventory</div><div class="link-chip-url">Railway</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://ai-api-tracker-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🔑</span><div class="link-chip-info"><div class="link-chip-name">Keep Your Secrets</div><div class="link-chip-url">Railway</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🐕</span><div class="link-chip-info"><div class="link-chip-name">Pet Vet AI</div><div class="link-chip-url">Railway</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://github.com/Liberty-Emporium" target="_blank" class="link-chip"><span class="link-chip-icon">🐙</span><div class="link-chip-info"><div class="link-chip-name">GitHub Org</div><div class="link-chip-url">Liberty-Emporium</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🚂</span><div class="link-chip-info"><div class="link-chip-name">Railway Dashboard</div><div class="link-chip-url">railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">✅ Top Priorities</div><button class="btn btn-sm btn-ghost" onclick="showPanel('todos')">View All</button></div>
+          <div id="overview-todos" style="display:flex;flex-direction:column;gap:8px">
+            <div style="color:var(--muted);font-size:.85rem">Loading todos...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ PROJECTS ══════════════ -->
+    <div class="panel" id="panel-projects">
+      <div class="section-title">🚀 All Projects</div>
+      <div class="section-sub">Every app, demo, and tool we've built — click to open</div>
+
+      <div class="nav-section" style="padding:0 0 12px;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em">Live Apps</div>
+      <div class="grid-auto" style="margin-bottom:32px">
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏪</div>
+          <div class="proj-category">Inventory · SaaS</div>
+          <div class="proj-name">Liberty Emporium Inventory</div>
+          <div class="proj-desc">Multi-tenant inventory management for thrift stores with AI photo analysis and smart categorization.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Claude AI</span><span class="tag">Multi-tenant</span></div>
+          <div class="proj-links">
+            <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Liberty-Emporium-Inventory-App" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🛡️</div>
+          <div class="proj-category">Security · SaaS</div>
+          <div class="proj-name">Keep Your Secrets (KYS)</div>
+          <div class="proj-desc">Secure API key & secrets management with AES-256 encryption. Manages all your credentials in one place.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AES-256</span><span class="tag">SaaS</span></div>
+          <div class="proj-links">
+            <a href="https://ai-api-tracker-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/jays-keep-your-secrets" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🐕</div>
+          <div class="proj-category">AI · Health</div>
+          <div class="proj-name">Pet Vet AI</div>
+          <div class="proj-desc">AI-powered pet health diagnosis. Upload a photo, get instant AI analysis and care recommendations.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Groq AI</span><span class="tag">Image AI</span></div>
+          <div class="proj-links">
+            <a href="https://pet-vet-ai-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/pet-vet-ai" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏋️</div>
+          <div class="proj-category">Fitness · SaaS</div>
+          <div class="proj-name">GymForge</div>
+          <div class="proj-desc">All-in-one gym management platform with AI coaching, class scheduling, and 8 role-based portals.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span><span class="tag">Multi-role</span></div>
+          <div class="proj-links">
+            <a href="https://web-production-1c23.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/GymForge" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏗️</div>
+          <div class="proj-category">Construction · AI</div>
+          <div class="proj-name">Contractor Pro AI</div>
+          <div class="proj-desc">AI-powered construction estimating with 19 templates. Generates quotes, scope of work, and client proposals.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span><span class="tag">Estimating</span></div>
+          <div class="proj-links">
+            <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Contractor-Pro-AI" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">📦</div>
+          <div class="proj-category">E-commerce · AI</div>
+          <div class="proj-name">Dropship Shipping (Andy)</div>
+          <div class="proj-desc">Dropshipping business management with AI CEO assistant Andy. Tracks orders, suppliers, and margins.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI CEO</span><span class="tag">E-commerce</span></div>
+          <div class="proj-links">
+            <a href="https://dropship-shipping-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Dropship-Shipping" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏛️</div>
+          <div class="proj-category">Legal · Personal</div>
+          <div class="proj-name">Court — Statement of Good Faith</div>
+          <div class="proj-desc">Ronald J. Alexander Jr.'s formal statement of good faith and legal documentation. QR code accessible.</div>
+          <div class="proj-tags"><span class="tag">Legal</span><span class="tag">Personal</span></div>
+          <div class="proj-links">
+            <a href="/court" target="_blank">View Doc ↗</a>
+            <a href="/court/qr" target="_blank">QR Code ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🌐</div>
+          <div class="proj-category">Portfolio · Personal</div>
+          <div class="proj-name">Jay's Portfolio</div>
+          <div class="proj-desc">This site — developer portfolio, investor deck, business card, tools library, and command center.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Portfolio</span></div>
+          <div class="proj-links">
+            <a href="https://jay-portfolio-production.up.railway.app" target="_blank">Live Site ↗</a>
+            <a href="https://github.com/Liberty-Emporium/jay-portfolio" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="nav-section" style="padding:0 0 12px;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em">Demos</div>
+      <div class="grid-auto" style="margin-bottom:32px">
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏪</div>
+          <div class="proj-category">Demo</div>
+          <div class="proj-name">Inventory Demo App</div>
+          <div class="proj-desc">Public demo of Liberty Inventory with test credentials. Shows prospects the full feature set without a signup.</div>
+          <div class="proj-tags"><span class="tag">Demo</span><span class="tag">Flask</span></div>
+          <div class="proj-links">
+            <a href="https://liberty-emporium-inventory-demo-app-production.up.railway.app" target="_blank">Live Demo ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏠</div>
+          <div class="proj-category">Demo · Real Estate</div>
+          <div class="proj-name">Luxury Rentals Demo</div>
+          <div class="proj-desc">AI-powered luxury property rental demo showcasing smart search, recommendations, and booking flow.</div>
+          <div class="proj-tags"><span class="tag">Demo</span><span class="tag">AI</span><span class="tag">Real Estate</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Liberty-Emporium/luxury-rentals-demo" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-yellow" title="In Progress"></span></div>
+          <div class="proj-icon">🏪</div>
+          <div class="proj-category">Demo · E-commerce</div>
+          <div class="proj-name">Consignment Solutions</div>
+          <div class="proj-desc">Consignment store management system with AI pricing and automated listing syndication.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span></div>
+          <div class="proj-links">
+            <a href="https://web-production-43ce4.up.railway.app" target="_blank">Live ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Consignment-Solutions" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="nav-section" style="padding:0 0 12px;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em">Tools & Infrastructure</div>
+      <div class="grid-auto">
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🤖</div>
+          <div class="proj-category">AI Widget</div>
+          <div class="proj-name">AI Agent Widget</div>
+          <div class="proj-desc">Embeddable AI chat widget for any site. Drop in one script tag and you have a live AI assistant.</div>
+          <div class="proj-tags"><span class="tag">JS Widget</span><span class="tag">AI</span><span class="tag">Embeddable</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Liberty-Emporium/AI-Agent-Widget" target="_blank">GitHub ↗</a>
+            <a href="https://github.com/Liberty-Emporium/ai-widget-test-site" target="_blank">Test Site ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🧠</div>
+          <div class="proj-category">AI Infrastructure</div>
+          <div class="proj-name">echo-v1 (Brain Repo)</div>
+          <div class="proj-desc">My persistent memory and SaaS toolkit. Contains 32 custom skills, tools, scripts, and my long-term memory.</div>
+          <div class="proj-tags"><span class="tag">KiloClaw</span><span class="tag">AI Memory</span><span class="tag">SaaS Kit</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Liberty-Emporium/echo-v1" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════ TODOS ══════════════ -->
+    <div class="panel" id="panel-todos">
+      <div class="section-title">✅ To-Do List</div>
+      <div class="section-sub">Your running task list — saved in your browser</div>
+
+      <div class="card" style="max-width:720px">
+        <div class="todo-form">
+          <input class="todo-input" id="todo-input" placeholder="Add a new task..." onkeydown="if(event.key==='Enter')addTodo()">
+          <select class="todo-select" id="todo-priority">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+          <button class="btn btn-primary" onclick="addTodo()">Add</button>
+        </div>
+        <div class="todo-list" id="todo-list"></div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-ghost" onclick="filterTodos('all')">All</button>
+          <button class="btn btn-sm btn-ghost" onclick="filterTodos('open')">Open</button>
+          <button class="btn btn-sm btn-ghost" onclick="filterTodos('done')">Done</button>
+          <button class="btn btn-sm btn-ghost" style="margin-left:auto;color:var(--red);border-color:rgba(239,68,68,.3)" onclick="clearDone()">Clear Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ QUICK LINKS ══════════════ -->
+    <div class="panel" id="panel-links">
+      <div class="section-title">🔗 Quick Links</div>
+      <div class="section-sub">All the important places — one click away</div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">🚀 Live Apps</div></div>
+        <div class="links-grid">
+          <a href="https://jay-portfolio-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🌐</span><div class="link-chip-info"><div class="link-chip-name">Jay's Portfolio</div><div class="link-chip-url">jay-portfolio-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Liberty Inventory</div><div class="link-chip-url">liberty-emporium-inventory...railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://liberty-emporium-inventory-demo-app-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Inventory Demo</div><div class="link-chip-url">liberty-emporium-inventory-demo...railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://ai-api-tracker-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🛡️</span><div class="link-chip-info"><div class="link-chip-name">Keep Your Secrets</div><div class="link-chip-url">ai-api-tracker-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🐕</span><div class="link-chip-info"><div class="link-chip-name">Pet Vet AI</div><div class="link-chip-url">pet-vet-ai-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://web-production-1c23.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏋️</span><div class="link-chip-info"><div class="link-chip-name">GymForge</div><div class="link-chip-url">web-production-1c23.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏗️</span><div class="link-chip-info"><div class="link-chip-name">Contractor Pro AI</div><div class="link-chip-url">contractor-pro-ai-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://dropship-shipping-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">📦</span><div class="link-chip-info"><div class="link-chip-name">Dropship Shipping</div><div class="link-chip-url">dropship-shipping-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://web-production-43ce4.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Consignment Solutions</div><div class="link-chip-url">web-production-43ce4.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">📄 Pages on This Site</div></div>
+        <div class="links-grid">
+          <a href="/" class="link-chip"><span class="link-chip-icon">🏠</span><div class="link-chip-info"><div class="link-chip-name">Home / Portfolio</div><div class="link-chip-url">/</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/apps" class="link-chip"><span class="link-chip-icon">📱</span><div class="link-chip-info"><div class="link-chip-name">Apps</div><div class="link-chip-url">/apps</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/investors" class="link-chip"><span class="link-chip-icon">💰</span><div class="link-chip-info"><div class="link-chip-name">Investor Page</div><div class="link-chip-url">/investors</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/tools" class="link-chip"><span class="link-chip-icon">🛠️</span><div class="link-chip-info"><div class="link-chip-name">Tools Library</div><div class="link-chip-url">/tools</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/court" class="link-chip"><span class="link-chip-icon">🏛️</span><div class="link-chip-info"><div class="link-chip-name">Court Document</div><div class="link-chip-url">/court</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/card" class="link-chip"><span class="link-chip-icon">💼</span><div class="link-chip-info"><div class="link-chip-name">Business Card</div><div class="link-chip-url">/card</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/admin" class="link-chip"><span class="link-chip-icon">⚙️</span><div class="link-chip-info"><div class="link-chip-name">Admin / Settings</div><div class="link-chip-url">/admin</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/dashboard" class="link-chip"><span class="link-chip-icon">🦾</span><div class="link-chip-info"><div class="link-chip-name">This Dashboard</div><div class="link-chip-url">/dashboard</div></div><span class="link-chip-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">🐙 GitHub Repos</div></div>
+        <div class="links-grid">
+          <a href="https://github.com/Liberty-Emporium" target="_blank" class="link-chip"><span class="link-chip-icon">🏢</span><div class="link-chip-info"><div class="link-chip-name">Liberty-Emporium Org</div><div class="link-chip-url">github.com/Liberty-Emporium</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/echo-v1" target="_blank" class="link-chip"><span class="link-chip-icon">🧠</span><div class="link-chip-info"><div class="link-chip-name">echo-v1 (Brain)</div><div class="link-chip-url">Liberty-Emporium/echo-v1</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Liberty-Emporium-Inventory-App" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Inventory App</div><div class="link-chip-url">Liberty-Emporium-Inventory-App</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/pet-vet-ai" target="_blank" class="link-chip"><span class="link-chip-icon">🐕</span><div class="link-chip-info"><div class="link-chip-name">Pet Vet AI</div><div class="link-chip-url">pet-vet-ai</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/jays-keep-your-secrets" target="_blank" class="link-chip"><span class="link-chip-icon">🛡️</span><div class="link-chip-info"><div class="link-chip-name">Keep Your Secrets</div><div class="link-chip-url">jays-keep-your-secrets</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Contractor-Pro-AI" target="_blank" class="link-chip"><span class="link-chip-icon">🏗️</span><div class="link-chip-info"><div class="link-chip-name">Contractor Pro AI</div><div class="link-chip-url">Contractor-Pro-AI</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Dropship-Shipping" target="_blank" class="link-chip"><span class="link-chip-icon">📦</span><div class="link-chip-info"><div class="link-chip-name">Dropship Shipping</div><div class="link-chip-url">Dropship-Shipping</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/jay-portfolio" target="_blank" class="link-chip"><span class="link-chip-icon">🌐</span><div class="link-chip-info"><div class="link-chip-name">Jay Portfolio</div><div class="link-chip-url">jay-portfolio</div></div><span class="link-chip-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ SUPPORT ══════════════ -->
+    <div class="panel" id="panel-support">
+      <div class="section-title">🛟 Support Center</div>
+      <div class="section-sub">Central support hub — link your apps here so customers always know where to go</div>
+
+      <div class="support-card" style="margin-bottom:24px">
+        <div class="support-icon">🦾</div>
+        <h2>Jay Alexander Support</h2>
+        <p>Need help with one of our apps? You're in the right place. Reach out and we'll get you sorted fast.</p>
+        <div class="support-links">
+          <a href="mailto:jay@libertyemporium.com" class="support-link">📧 <span>jay@libertyemporium.com</span></a>
+          <a href="https://jay-portfolio-production.up.railway.app" target="_blank" class="support-link">🌐 <span>Portfolio</span></a>
+          <a href="https://github.com/Liberty-Emporium" target="_blank" class="support-link">🐙 <span>GitHub</span></a>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">📋 App Support Directory</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:10px"><span>🏪</span><span style="font-size:.85rem;font-weight:500">Liberty Inventory</span></div>
+              <a href="mailto:jay@libertyemporium.com?subject=Liberty Inventory Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:10px"><span>🛡️</span><span style="font-size:.85rem;font-weight:500">Keep Your Secrets</span></div>
+              <a href="mailto:jay@libertyemporium.com?subject=KYS Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:10px"><span>🐕</span><span style="font-size:.85rem;font-weight:500">Pet Vet AI</span></div>
+              <a href="mailto:jay@libertyemporium.com?subject=Pet Vet AI Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:10px"><span>🏋️</span><span style="font-size:.85rem;font-weight:500">GymForge</span></div>
+              <a href="mailto:jay@libertyemporium.com?subject=GymForge Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:10px"><span>🏗️</span><span style="font-size:.85rem;font-weight:500">Contractor Pro AI</span></div>
+              <a href="mailto:jay@libertyemporium.com?subject=Contractor Pro Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:10px"><span>📦</span><span style="font-size:.85rem;font-weight:500">Dropship Shipping</span></div>
+              <a href="mailto:jay@libertyemporium.com?subject=Dropship Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="support-embed">
+          <h3>🔗 Add a "Support" Link to Any App</h3>
+          <p style="font-size:.82rem;color:var(--muted);margin:8px 0 16px">Paste this into any app's navbar or footer to route users here:</p>
+          <div class="embed-snippet">&lt;a href="https://jay-portfolio-production.up.railway.app/dashboard#support"<br>&nbsp;&nbsp; target="_blank"&gt;<br>&nbsp;&nbsp;🛟 Support<br>&lt;/a&gt;</div>
+          <p style="font-size:.82rem;color:var(--muted);margin-top:16px">Or link directly to your email:</p>
+          <div class="embed-snippet">mailto:jay@libertyemporium.com<br>?subject=Support%20Request%20—%20[App%20Name]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ NOTES ══════════════ -->
+    <div class="panel" id="panel-notes">
+      <div class="section-title">📝 Notes</div>
+      <div class="section-sub">Your scratch pad — auto-saved in your browser</div>
+      <div class="card" style="max-width:800px">
+        <div class="card-header">
+          <div class="card-title">Scratch Pad</div>
+          <span class="notes-saved" id="notes-saved">✅ Saved</span>
+        </div>
+        <textarea class="notes-area" id="notes-area" placeholder="Jot anything down here — ideas, URLs, quick reminders...&#10;&#10;Auto-saves as you type."></textarea>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+// ── Clock ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// ── Tab navigation ──
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'todos') renderTodos();
+}
+
+// ── TODO system (localStorage) ──
+function getTodos() {
+  try { return JSON.parse(localStorage.getItem('jay_todos') || '[]'); } catch(e) { return []; }
+}
+function saveTodos(todos) {
+  localStorage.setItem('jay_todos', JSON.stringify(todos));
+  updateOverviewTodos();
+}
+
+let todoFilter = 'all';
+
+function addTodo() {
+  const input = document.getElementById('todo-input');
+  const priority = document.getElementById('todo-priority').value;
+  const text = input.value.trim();
+  if (!text) return;
+  const todos = getTodos();
+  todos.unshift({ id: Date.now(), text, priority, done: false, created: new Date().toISOString() });
+  saveTodos(todos);
+  input.value = '';
+  renderTodos();
+}
+
+function toggleTodo(id) {
+  const todos = getTodos();
+  const t = todos.find(t => t.id === id);
+  if (t) t.done = !t.done;
+  saveTodos(todos);
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  saveTodos(getTodos().filter(t => t.id !== id));
+  renderTodos();
+}
+
+function clearDone() {
+  saveTodos(getTodos().filter(t => !t.done));
+  renderTodos();
+}
+
+function filterTodos(f) { todoFilter = f; renderTodos(); }
+
+function renderTodos() {
+  let todos = getTodos();
+  if (todoFilter === 'open') todos = todos.filter(t => !t.done);
+  if (todoFilter === 'done') todos = todos.filter(t => t.done);
+
+  const priOrder = { high: 0, medium: 1, low: 2 };
+  todos.sort((a, b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    return priOrder[a.priority] - priOrder[b.priority];
+  });
+
+  const list = document.getElementById('todo-list');
+  if (!todos.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:.85rem;text-align:center;padding:24px">No tasks here 🎉</div>';
+    return;
+  }
+  list.innerHTML = todos.map(t => `
+    <div class="todo-item ${t.done ? 'done' : ''}">
+      <div class="todo-check ${t.done ? 'checked' : ''}" onclick="toggleTodo(${t.id})">
+        ${t.done ? '<span style="color:white;font-size:.7rem">✓</span>' : ''}
+      </div>
+      <span class="todo-text">${escHtml(t.text)}</span>
+      <span class="todo-priority p-${t.priority}">${t.priority}</span>
+      <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+function updateOverviewTodos() {
+  const todos = getTodos().filter(t => !t.done);
+  const countEl = document.getElementById('overview-todo-count');
+  if (countEl) countEl.textContent = todos.length;
+
+  const container = document.getElementById('overview-todos');
+  if (!container) return;
+  const top = todos.slice(0, 5);
+  if (!top.length) {
+    container.innerHTML = '<div style="color:var(--green);font-size:.85rem">All clear — no open tasks 🎉</div>';
+    return;
+  }
+  const priOrder = { high: 0, medium: 1, low: 2 };
+  top.sort((a, b) => priOrder[a.priority] - priOrder[b.priority]);
+  container.innerHTML = top.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px">
+      <span class="todo-priority p-${t.priority}">${t.priority}</span>
+      <span style="font-size:.84rem;flex:1">${escHtml(t.text)}</span>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Notes (localStorage) ──
+const notesArea = document.getElementById('notes-area');
+const notesSaved = document.getElementById('notes-saved');
+let notesSaveTimer;
+notesArea.value = localStorage.getItem('jay_notes') || '';
+notesArea.addEventListener('input', () => {
+  clearTimeout(notesSaveTimer);
+  notesSaveTimer = setTimeout(() => {
+    localStorage.setItem('jay_notes', notesArea.value);
+    notesSaved.classList.add('show');
+    setTimeout(() => notesSaved.classList.remove('show'), 2000);
+  }, 600);
+});
+
+// ── Init ──
+updateOverviewTodos();
+renderTodos();
+</script>
+</body>
+</html>

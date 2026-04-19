@@ -83,6 +83,10 @@ def investor_inquiry():
 def tools():
     return render_template('tools.html')
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html', config=config)
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     global config

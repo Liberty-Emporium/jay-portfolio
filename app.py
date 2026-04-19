@@ -14,7 +14,94 @@ app.secret_key = os.environ.get('SECRET_KEY', 'portfolio-secret-2026')
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'config.json')
 TODOS_FILE   = os.path.join(os.path.dirname(__file__), 'todos.json')
-TICKETS_FILE = os.path.join(os.path.dirname(__file__), 'tickets.json')
+TICKETS_FILE  = os.path.join(os.path.dirname(__file__), 'tickets.json')
+ECHO_TASKS_FILE = os.path.join(os.path.dirname(__file__), 'echo_tasks.json')
+
+# ── Echo Bridge (EcDash → Echo task queue) ───────────────────────────────────
+def load_echo_tasks():
+    if os.path.exists(ECHO_TASKS_FILE):
+        try:
+            with open(ECHO_TASKS_FILE) as f: return json.load(f)
+        except: pass
+    return []
+
+def save_echo_tasks(tasks):
+    with open(ECHO_TASKS_FILE, 'w') as f: json.dump(tasks, f, indent=2)
+
+@app.route('/api/echo-bridge', methods=['POST'])
+@login_required
+def echo_bridge_send():
+    """EcDash sends a task to Echo (OpenClaw). Requires ECHO_WEBHOOK_SECRET."""
+    data = request.get_json()
+    task_text = data.get('task', '').strip()
+    if not task_text:
+        return jsonify({'error': 'task required'}), 400
+    tasks = load_echo_tasks()
+    task = {
+        'id': int(datetime.datetime.utcnow().timestamp() * 1000),
+        'task': task_text,
+        'status': 'pending',  # pending / sent / done / failed
+        'created': datetime.datetime.utcnow().isoformat(),
+        'response': None
+    }
+    tasks.insert(0, task)
+    save_echo_tasks(tasks)
+
+    # Fire to OpenClaw webhook if configured
+    echo_webhook = os.environ.get('ECHO_WEBHOOK_URL', '')
+    echo_secret  = os.environ.get('ECHO_WEBHOOK_SECRET', '')
+    if echo_webhook:
+        try:
+            payload = json.dumps({
+                'task_id': task['id'],
+                'task': task_text,
+                'from': 'EcDash',
+                'secret': echo_secret
+            }).encode('utf-8')
+            req = urllib.request.Request(
+                echo_webhook, data=payload,
+                headers={'Content-Type': 'application/json; charset=utf-8'},
+                method='POST'
+            )
+            with urllib.request.urlopen(req, timeout=10) as r:
+                result = json.loads(r.read().decode())
+            task['status'] = 'sent'
+            task['response'] = result.get('message', 'Task received by Echo')
+        except Exception as e:
+            task['status'] = 'queued'
+            task['response'] = f'Echo offline - task queued. Will process when Echo is available. ({str(e)[:80]})'
+    else:
+        task['status'] = 'queued'
+        task['response'] = 'ECHO_WEBHOOK_URL not configured. Task saved. Set it in Railway env vars to connect EcDash to Echo.'
+
+    tasks[0] = task
+    save_echo_tasks(tasks)
+    return jsonify(task), 201
+
+@app.route('/api/echo-bridge', methods=['GET'])
+@login_required
+def echo_bridge_tasks():
+    """Get recent Echo tasks and their status."""
+    tasks = load_echo_tasks()
+    return jsonify(tasks[:20])
+
+@app.route('/api/echo-bridge/<int:task_id>', methods=['PATCH'])
+def echo_bridge_update(task_id):
+    """Echo calls this to report back task completion. Authenticated by secret."""
+    echo_secret = os.environ.get('ECHO_WEBHOOK_SECRET', '')
+    incoming = request.headers.get('X-Echo-Secret', '')
+    if echo_secret and incoming != echo_secret:
+        return jsonify({'error': 'unauthorized'}), 401
+    data = request.get_json()
+    tasks = load_echo_tasks()
+    for t in tasks:
+        if t['id'] == task_id:
+            t['status'] = data.get('status', t['status'])
+            t['response'] = data.get('response', t['response'])
+            t['updated'] = datetime.datetime.utcnow().isoformat()
+            save_echo_tasks(tasks)
+            return jsonify(t)
+    return jsonify({'error': 'not found'}), 404
 
 def load_tickets():
     if os.path.exists(TICKETS_FILE):

@@ -6,13 +6,45 @@ import urllib.request
 import urllib.error
 import time
 import threading
+import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session, jsonify
 from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'portfolio-secret-2026')
 
-CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'config.json')
+CONFIG_FILE      = os.path.join(os.path.dirname(__file__), 'config.json')
+CHAT_DB_PATH     = os.path.join(os.path.dirname(__file__), 'chat_history.db')
+
+# ── Chat history DB ───────────────────────────────────────────────────────────
+def get_chat_db():
+    db = sqlite3.connect(CHAT_DB_PATH)
+    db.row_factory = sqlite3.Row
+    db.execute('PRAGMA journal_mode=WAL')
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS conversations (
+            id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            title     TEXT NOT NULL DEFAULT "New Conversation",
+            created   TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated   TEXT DEFAULT CURRENT_TIMESTAMP
+        )''')
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS messages (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            conversation_id INTEGER REFERENCES conversations(id) ON DELETE CASCADE,
+            role            TEXT NOT NULL,
+            content         TEXT NOT NULL,
+            created         TEXT DEFAULT CURRENT_TIMESTAMP
+        )''')
+    db.commit()
+    return db
+
+def auto_title(first_user_msg):
+    """Generate a short title from the first message."""
+    t = first_user_msg.strip()[:60]
+    if len(first_user_msg) > 60: t += '...'
+    return t
+
 TODOS_FILE   = os.path.join(os.path.dirname(__file__), 'todos.json')
 TICKETS_FILE  = os.path.join(os.path.dirname(__file__), 'tickets.json')
 ECHO_TASKS_FILE = os.path.join(os.path.dirname(__file__), 'echo_tasks.json')
@@ -454,6 +486,78 @@ def api_chat():
             return jsonify({'reply': result['choices'][0]['message']['content']})
     except Exception as e:
         return jsonify({'reply': f'Echo is unavailable right now. Error: {str(e)[:100]}'})
+
+
+# ── Chat history API ──────────────────────────────────────────────────────────
+
+@app.route('/api/conversations', methods=['GET'])
+@login_required
+def api_conversations_list():
+    db = get_chat_db()
+    rows = db.execute(
+        'SELECT id, title, created, updated FROM conversations ORDER BY updated DESC LIMIT 100'
+    ).fetchall()
+    db.close()
+    return jsonify([dict(r) for r in rows])
+
+@app.route('/api/conversations', methods=['POST'])
+@login_required
+def api_conversations_new():
+    db = get_chat_db()
+    cur = db.execute("INSERT INTO conversations (title) VALUES ('New Conversation')")
+    db.commit()
+    conv_id = cur.lastrowid
+    db.close()
+    return jsonify({'id': conv_id, 'title': 'New Conversation'})
+
+@app.route('/api/conversations/<int:conv_id>', methods=['GET'])
+@login_required
+def api_conversation_get(conv_id):
+    db = get_chat_db()
+    conv = db.execute('SELECT * FROM conversations WHERE id=?', (conv_id,)).fetchone()
+    if not conv:
+        db.close()
+        return jsonify({'error': 'not found'}), 404
+    msgs = db.execute(
+        'SELECT role, content, created FROM messages WHERE conversation_id=? ORDER BY id',
+        (conv_id,)).fetchall()
+    db.close()
+    return jsonify({'conversation': dict(conv), 'messages': [dict(m) for m in msgs]})
+
+@app.route('/api/conversations/<int:conv_id>', methods=['DELETE'])
+@login_required
+def api_conversation_delete(conv_id):
+    db = get_chat_db()
+    db.execute('DELETE FROM messages WHERE conversation_id=?', (conv_id,))
+    db.execute('DELETE FROM conversations WHERE id=?', (conv_id,))
+    db.commit()
+    db.close()
+    return jsonify({'ok': True})
+
+@app.route('/api/conversations/<int:conv_id>/messages', methods=['POST'])
+@login_required
+def api_conversation_add_message(conv_id):
+    data    = request.get_json()
+    role    = data.get('role', 'user')
+    content = data.get('content', '').strip()
+    if not content:
+        return jsonify({'error': 'content required'}), 400
+    db = get_chat_db()
+    conv = db.execute('SELECT * FROM conversations WHERE id=?', (conv_id,)).fetchone()
+    if not conv:
+        db.close()
+        return jsonify({'error': 'not found'}), 404
+    db.execute('INSERT INTO messages (conversation_id, role, content) VALUES (?,?,?)',
+               (conv_id, role, content))
+    if role == 'user' and conv['title'] == 'New Conversation':
+        title = content.strip()[:60] + ('...' if len(content) > 60 else '')
+        db.execute('UPDATE conversations SET title=?, updated=CURRENT_TIMESTAMP WHERE id=?',
+                   (title, conv_id))
+    else:
+        db.execute('UPDATE conversations SET updated=CURRENT_TIMESTAMP WHERE id=?', (conv_id,))
+    db.commit()
+    db.close()
+    return jsonify({'ok': True})
 
 # ── Todos API ─────────────────────────────────────────────────────────────────
 @app.route('/api/todos', methods=['GET'])

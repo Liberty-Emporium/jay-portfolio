@@ -7,135 +7,140 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #030712; --bg2: #0a0f1a; --card: #111827; --card2: #161f2e;
-      --border: #1f2937; --accent: #6366f1; --accent2: #8b5cf6; --accent3: #a78bfa;
-      --green: #10b981; --text: #f9fafb; --muted: #9ca3af;
-      --grad: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
-      --bubble-echo: #1a1f35; --bubble-jay: #4f46e5;
+      --bg:#030712; --bg2:#0a0f1a; --card:#111827; --card2:#161f2e;
+      --border:#1f2937; --accent:#6366f1; --accent2:#8b5cf6; --accent3:#a78bfa;
+      --green:#10b981; --text:#f9fafb; --muted:#9ca3af;
+      --grad:linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);
+      --bubble-echo:#1a1f35; --bubble-jay:#4f46e5;
+      --sidebar-w:260px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; height: 100dvh; overflow: hidden; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
-      height: 100dvh; display: flex; flex-direction: column; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;height:100dvh;overflow:hidden}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100dvh}
 
     /* ── Top bar ── */
-    .topbar {
-      background: var(--bg2); border-bottom: 1px solid var(--border);
-      padding: 0 14px; height: 54px; display: flex; align-items: center;
-      justify-content: space-between; flex-shrink: 0; flex-wrap: wrap; gap: 4px;
+    .topbar{
+      background:var(--bg2);border-bottom:1px solid var(--border);
+      padding:0 14px;height:54px;display:flex;align-items:center;
+      justify-content:space-between;flex-shrink:0;gap:4px;z-index:20;
     }
-    .topbar-left { display: flex; align-items: center; gap: 12px; }
-    .echo-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--grad); display: flex; align-items: center;
-      justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+    .topbar-left{display:flex;align-items:center;gap:10px}
+    .echo-avatar{width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .echo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.95rem}
+    .echo-status{font-size:.72rem;color:var(--green);display:flex;align-items:center;gap:4px}
+    .status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .topbar-right{display:flex;gap:8px;align-items:center}
+    .btn-sm{padding:5px 12px;border-radius:8px;font-size:.76rem;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+    .btn-primary{background:var(--grad);color:#fff}
+    .btn-primary:hover{opacity:.9}
+
+    /* ── Body layout ── */
+    .body-wrap{flex:1;display:flex;min-height:0;overflow:hidden}
+
+    /* ── History sidebar ── */
+    .history-sidebar{
+      width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);
+      display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
     }
-    .echo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; }
-    .echo-status { font-size: 0.75rem; color: var(--green); display: flex; align-items: center; gap: 5px; }
-    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .topbar-right { display: flex; gap: 10px; align-items: center; }
-    .btn-sm { padding: 6px 14px; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: none; font-family: 'Inter', sans-serif; transition: all .2s; }
-    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
-    .btn-danger { background: transparent; border: 1px solid rgba(239,68,68,.3); color: #f87171; }
-    .btn-danger:hover { background: rgba(239,68,68,.1); }
+    .sidebar-header{
+      padding:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;
+    }
+    .sidebar-title{font-weight:700;font-size:.82rem;color:var(--text);flex:1;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+    .new-chat-btn{
+      padding:5px 10px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);
+      color:var(--accent3);border-radius:7px;font-size:.74rem;font-weight:700;
+      cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'Inter',sans-serif;
+    }
+    .new-chat-btn:hover{background:rgba(99,102,241,.35);color:#fff}
+    .conv-list{flex:1;overflow-y:auto;padding:6px}
+    .conv-list::-webkit-scrollbar{width:3px}
+    .conv-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .conv-item{
+      display:flex;align-items:center;gap:8px;
+      padding:9px 10px;border-radius:8px;cursor:pointer;
+      border:1px solid transparent;transition:all .15s;margin-bottom:2px;
+      position:relative;
+    }
+    .conv-item:hover{background:var(--card);border-color:var(--border)}
+    .conv-item.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.3)}
+    .conv-icon{font-size:.9rem;flex-shrink:0}
+    .conv-info{flex:1;min-width:0}
+    .conv-title{font-size:.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .conv-date{font-size:.68rem;color:var(--muted);margin-top:1px}
+    .conv-del{
+      opacity:0;background:none;border:none;color:#f87171;cursor:pointer;
+      font-size:.85rem;padding:2px 5px;border-radius:4px;flex-shrink:0;
+      transition:opacity .15s;
+    }
+    .conv-item:hover .conv-del{opacity:1}
+    .conv-del:hover{background:rgba(239,68,68,.15)}
+    .sidebar-empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:.8rem;line-height:1.7}
+
+    /* ── Main chat area ── */
+    .chat-main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 
     /* ── Messages ── */
-    .messages {
-      flex: 1; overflow-y: auto; padding: 16px 14px;
-      display: flex; flex-direction: column; gap: 12px;
-      scroll-behavior: smooth; min-height: 0;
+    .messages{
+      flex:1;overflow-y:auto;padding:16px 20px;
+      display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;min-height:0;
     }
-    .messages::-webkit-scrollbar { width: 4px; }
-    .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .messages::-webkit-scrollbar{width:4px}
+    .messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .msg{display:flex;gap:10px;max-width:78%;animation:fadeIn .2s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .msg.jay{align-self:flex-end;flex-direction:row-reverse}
+    .msg.echo{align-self:flex-start}
+    .msg-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;margin-top:2px}
+    .msg.echo .msg-avatar{background:var(--grad)}
+    .msg.jay .msg-avatar{background:#374151}
+    .msg-body{display:flex;flex-direction:column;gap:3px}
+    .msg.jay .msg-body{align-items:flex-end}
+    .msg-name{font-size:.68rem;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+    .msg-bubble{padding:10px 14px;border-radius:16px;font-size:.87rem;line-height:1.6;max-width:100%}
+    .msg.echo .msg-bubble{background:var(--bubble-echo);border:1px solid var(--border);border-radius:16px 16px 16px 4px}
+    .msg.jay .msg-bubble{background:var(--bubble-jay);color:#fff;border-radius:16px 16px 4px 16px}
+    .msg-time{font-size:.66rem;color:#374151}
+    .typing-bubble{display:flex;gap:4px;align-items:center;padding:12px 16px}
+    .typing-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:typing 1.2s infinite}
+    .typing-dot:nth-child(2){animation-delay:.2s}
+    .typing-dot:nth-child(3){animation-delay:.4s}
+    @keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+    .msg-bubble pre{background:#0d1117;border-radius:6px;padding:10px 12px;margin:8px 0;overflow-x:auto;font-size:.76rem;border:1px solid #30363d}
+    .msg-bubble code{font-family:monospace;font-size:.8em;background:rgba(99,102,241,.15);padding:1px 5px;border-radius:3px}
+    .msg-bubble pre code{background:none;padding:0}
+    .msg-bubble strong{color:#fff}
+    .msg-bubble a{color:var(--accent3)}
+    .msg-bubble ul,.msg-bubble ol{padding-left:18px;margin:6px 0}
+    .msg-bubble li{margin:3px 0}
 
-    .msg { display: flex; gap: 10px; max-width: 75%; animation: fadeIn .2s ease; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-    .msg.jay { align-self: flex-end; flex-direction: row-reverse; }
-    .msg.echo { align-self: flex-start; }
+    /* ── Welcome ── */
+    .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center}
+    .welcome-icon{font-size:2.2rem;animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .welcome h2{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .welcome p{color:var(--muted);font-size:.85rem;max-width:340px;line-height:1.7}
+    .quick-prompts{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:6px}
+    .quick-prompt{padding:7px 12px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:.78rem;cursor:pointer;color:var(--text);transition:all .2s}
+    .quick-prompt:hover{border-color:var(--accent);background:var(--card2)}
 
-    .msg-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; margin-top: 2px; }
-    .msg.echo .msg-avatar { background: var(--grad); }
-    .msg.jay .msg-avatar { background: #374151; }
+    /* ── Input ── */
+    .input-area{padding:10px 20px 14px;border-top:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+    .input-wrap{display:flex;gap:8px;align-items:flex-end}
+    .input-box{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;resize:none;outline:none;max-height:130px;transition:border-color .2s;line-height:1.5}
+    .input-box:focus{border-color:var(--accent)}
+    .input-box::placeholder{color:#374151}
+    .send-btn{width:42px;height:42px;border-radius:11px;background:var(--grad);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s;flex-shrink:0}
+    .send-btn:hover{transform:scale(1.05);box-shadow:0 4px 14px rgba(99,102,241,.4)}
+    .send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .input-hint{font-size:.7rem;color:#374151;margin-top:3px}
 
-    .msg-body { display: flex; flex-direction: column; gap: 4px; }
-    .msg.jay .msg-body { align-items: flex-end; }
-    .msg-name { font-size: 0.7rem; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-    .msg-bubble {
-      padding: 10px 14px; border-radius: 16px; font-size: 0.88rem; line-height: 1.6;
-      max-width: 100%;
-    }
-    .msg.echo .msg-bubble { background: var(--bubble-echo); border: 1px solid var(--border); border-radius: 16px 16px 16px 4px; }
-    .msg.jay .msg-bubble { background: var(--bubble-jay); color: white; border-radius: 16px 16px 4px 16px; }
-    .msg-time { font-size: 0.68rem; color: #374151; }
-
-    /* Typing indicator */
-    .typing-bubble { display: flex; gap: 4px; align-items: center; padding: 12px 16px; }
-    .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: typing 1.2s infinite; }
-    .typing-dot:nth-child(2) { animation-delay: .2s; }
-    .typing-dot:nth-child(3) { animation-delay: .4s; }
-    @keyframes typing { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-6px);opacity:1} }
-
-    /* Code blocks in responses */
-    .msg-bubble pre { background: #0d1117; border-radius: 6px; padding: 10px 12px; margin: 8px 0; overflow-x: auto; font-size: .78rem; border: 1px solid #30363d; }
-    .msg-bubble code { font-family: monospace; font-size: .82em; background: rgba(99,102,241,.15); padding: 1px 5px; border-radius: 3px; }
-    .msg-bubble pre code { background: none; padding: 0; }
-    .msg-bubble strong { color: white; }
-    .msg-bubble a { color: var(--accent3); }
-    .msg-bubble ul, .msg-bubble ol { padding-left: 18px; margin: 6px 0; }
-    .msg-bubble li { margin: 3px 0; }
-
-    /* ── Input area ── */
-    .input-area {
-      padding: 10px 14px; border-top: 1px solid var(--border);
-      background: var(--bg2); flex-shrink: 0;
-    }
-    .input-wrap { display: flex; gap: 10px; align-items: flex-end; }
-    .input-box {
-      flex: 1; background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 16px; color: var(--text);
-      font-family: 'Inter', sans-serif; font-size: 0.9rem; resize: none;
-      outline: none; max-height: 140px; transition: border-color .2s; line-height: 1.5;
-    }
-    .input-box:focus { border-color: var(--accent); }
-    .input-box::placeholder { color: #374151; }
-    .send-btn {
-      width: 44px; height: 44px; border-radius: 12px; background: var(--grad);
-      border: none; cursor: pointer; display: flex; align-items: center;
-      justify-content: center; font-size: 1.1rem; transition: all .2s; flex-shrink: 0;
-    }
-    .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(99,102,241,.4); }
-    .send-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    .input-hint { font-size: 0.72rem; color: #374151; margin-top: 4px; line-height: 1; }
-
-    /* ── Welcome state ── */
-    .welcome {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 10px; padding: 20px; text-align: center;
-    }
-    .welcome-icon { font-size: 2.5rem; animation: float 3s ease-in-out infinite; }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    .welcome h2 { font-family: 'Space Grotesk',sans-serif; font-size: 1.5rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .welcome p { color: var(--muted); font-size: 0.88rem; max-width: 360px; line-height: 1.7; }
-    .quick-prompts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
-    .quick-prompt {
-      padding: 8px 14px; background: var(--card); border: 1px solid var(--border);
-      border-radius: 20px; font-size: 0.8rem; cursor: pointer; color: var(--text);
-      transition: all .2s;
-    }
-    .quick-prompt:hover { border-color: var(--accent); background: var(--card2); }
-
-    @media (max-width: 600px) {
-      .msg { max-width: 92%; }
-      .topbar-right { gap: 6px; }
-      .btn-sm { padding: 5px 9px; font-size: .72rem; }
-      .echo-name { font-size: .88rem; }
-      .welcome h2 { font-size: 1.2rem; }
-      .welcome p { font-size: .82rem; }
-      .quick-prompts { gap: 6px; }
-      .quick-prompt { padding: 6px 10px; font-size: .76rem; }
-      .input-hint { display: none; }
+    @media(max-width:700px){
+      .history-sidebar{display:none}
+      .msg{max-width:90%}
+      .topbar-right .btn-sm:not(.always-show){display:none}
     }
   </style>
 </head>
@@ -144,122 +149,230 @@
 <!-- Top bar -->
 <div class="topbar">
   <div class="topbar-left">
-    <a href="/dashboard" style="color:var(--muted);font-size:1.2rem;text-decoration:none;margin-right:4px">←</a>
+    <a href="/dashboard" style="color:var(--muted);font-size:1.1rem;text-decoration:none;margin-right:2px">←</a>
     <div class="echo-avatar">🦾</div>
     <div>
-      <div class="echo-name">Echo</div>
-      <div class="echo-status"><span class="status-dot"></span> Online · Alexander AI</div>
+      <div class="echo-name">EcDash</div>
+      <div class="echo-status"><span class="status-dot"></span>Online · Alexander AI</div>
     </div>
   </div>
   <div class="topbar-right">
-    <button class="btn-sm btn-ghost" id="health-btn" onclick="runHealthCheck()">🟢 Test All Apps</button>
-      <button class="btn-sm" id="echo-btn" onclick="sendToEcho()" style="background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:var(--accent3)">⚡ Send to EcDash</button>
-      <button class="btn-sm btn-ghost" onclick="clearChat()">Clear Chat</button>
-    <a href="/dashboard" class="btn-sm btn-ghost">← Dashboard</a>
+    <button class="btn-sm btn-ghost" id="health-btn" onclick="runHealthCheck()">🟢 Test Apps</button>
+    <button class="btn-sm" id="echo-btn" onclick="sendToEcho()" style="background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:var(--accent3)">⚡ Send to Echo</button>
+    <a href="/dashboard" class="btn-sm btn-ghost always-show">← Dashboard</a>
   </div>
 </div>
 
-<!-- Messages -->
-<div class="messages" id="messages">
-  <div class="welcome" id="welcome">
-    <div class="welcome-icon">🦾</div>
-    <h2>Hey Jay, I'm EcDash</h2>
-    <p>Your AI assistant for Alexander AI Integrated Solutions. Ask me anything about your projects, todos, or what to build next.</p>
-    <div class="quick-prompts">
-      <div class="quick-prompt" onclick="sendQuick('Give me a status briefing on all my live apps')">📊 Portfolio status</div>
-      <div class="quick-prompt" onclick="sendQuick('What should I work on today?')">🎯 What to work on</div>
-      <div class="quick-prompt" onclick="sendQuick('What are my open todos?')">✅ My todos</div>
-      <div class="quick-prompt" onclick="sendQuick('What have we built together?')">🏗️ What we built</div>
-      <div class="quick-prompt" onclick="sendQuick('What new features should I add to my apps?')">💡 New ideas</div>
-      <div class="quick-prompt" onclick="sendQuick('How are all my Railway apps doing?')">🚂 App health</div>
+<!-- Body -->
+<div class="body-wrap">
+
+  <!-- History Sidebar -->
+  <aside class="history-sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">💬 History</span>
+      <button class="new-chat-btn" onclick="newConversation()">+ New Chat</button>
+    </div>
+    <div class="conv-list" id="conv-list">
+      <div class="sidebar-empty">Loading conversations...</div>
+    </div>
+  </aside>
+
+  <!-- Main chat -->
+  <div class="chat-main">
+    <div class="messages" id="messages">
+      <div class="welcome" id="welcome">
+        <div class="welcome-icon">🦾</div>
+        <h2>Hey Jay, I'm EcDash</h2>
+        <p>Your AI assistant for Alexander AI Integrated Solutions. Every conversation is saved — pick up where you left off any time.</p>
+        <div class="quick-prompts">
+          <div class="quick-prompt" onclick="sendQuick('Give me a status briefing on all my live apps')">📊 Portfolio status</div>
+          <div class="quick-prompt" onclick="sendQuick('What should I work on today?')">🎯 What to work on</div>
+          <div class="quick-prompt" onclick="sendQuick('What are my open todos?')">✅ My todos</div>
+          <div class="quick-prompt" onclick="sendQuick('What have we built together?')">🏗️ What we built</div>
+          <div class="quick-prompt" onclick="sendQuick('What new features should I add to my apps?')">💡 New ideas</div>
+          <div class="quick-prompt" onclick="sendQuick('How are all my Railway apps doing?')">🚂 App health</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <textarea class="input-box" id="input" placeholder="Message EcDash..." rows="1"
+          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+      <div class="input-hint">Enter to send · Shift+Enter for new line</div>
     </div>
   </div>
-</div>
 
-<!-- Input -->
-<div class="input-area">
-  <div class="input-wrap">
-    <textarea class="input-box" id="input" placeholder="Message Echo..." rows="1"
-      onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
-  </div>
-  <div class="input-hint">Enter to send · Shift+Enter for new line</div>
-</div>
+</div><!-- /body-wrap -->
 
 <script>
-let chatHistory = [];
-let isThinking = false;
+let currentConvId = null;
+let chatHistory   = [];
+let isThinking    = false;
 
+// ── Utilities ──────────────────────────────────────────────────────────────
 function autoResize(el) {
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+  el.style.height = Math.min(el.scrollHeight, 130) + 'px';
 }
-
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
-
 function sendQuick(text) {
   document.getElementById('input').value = text;
   sendMessage();
 }
-
-function timeStr() {
-  return new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+function timeStr(iso) {
+  if (!iso) return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  return new Date(iso).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+}
+function dateLabel(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = (now - d) / 86400000;
+  if (diff < 1) return 'Today';
+  if (diff < 2) return 'Yesterday';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function formatMessage(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/```(\w*)\n?([\s\S]*?)```/g,'<pre><code>$2</code></pre>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>')
+    .replace(/^- (.+)$/gm,'• $1')
+    .replace(/\n/g,'<br>');
 }
 
-function addMessage(role, content, typing=false) {
+// ── Conversation sidebar ───────────────────────────────────────────────────
+async function loadConversations() {
+  const r = await fetch('/api/conversations');
+  const list = await r.json();
+  renderConvList(list);
+}
+
+function renderConvList(list) {
+  const el = document.getElementById('conv-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="sidebar-empty">No conversations yet.<br>Start chatting to save history.</div>';
+    return;
+  }
+  el.innerHTML = list.map(c => `
+    <div class="conv-item ${c.id === currentConvId ? 'active' : ''}" id="conv-${c.id}" onclick="loadConversation(${c.id})">
+      <span class="conv-icon">💬</span>
+      <div class="conv-info">
+        <div class="conv-title">${escHtml(c.title)}</div>
+        <div class="conv-date">${dateLabel(c.updated)}</div>
+      </div>
+      <button class="conv-del" title="Delete" onclick="deleteConversation(event,${c.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+async function newConversation() {
+  const r = await fetch('/api/conversations', {method:'POST'});
+  const conv = await r.json();
+  currentConvId = conv.id;
+  chatHistory = [];
+  clearMessages();
+  await loadConversations();
+  document.getElementById('input').focus();
+}
+
+async function loadConversation(convId) {
+  const r = await fetch(`/api/conversations/${convId}`);
+  const data = await r.json();
+  if (data.error) return;
+
+  currentConvId = convId;
+  chatHistory = [];
+  clearMessages();
+
+  // Mark active in sidebar
+  document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+  const item = document.getElementById(`conv-${convId}`);
+  if (item) item.classList.add('active');
+
+  // Render all messages
+  for (const msg of data.messages) {
+    const role = msg.role === 'assistant' ? 'echo' : 'jay';
+    addMessage(role, msg.content, false, msg.created);
+    chatHistory.push({role: msg.role, content: msg.content});
+  }
+  document.getElementById('input').focus();
+}
+
+async function deleteConversation(e, convId) {
+  e.stopPropagation();
+  if (!confirm('Delete this conversation?')) return;
+  await fetch(`/api/conversations/${convId}`, {method:'DELETE'});
+  if (currentConvId === convId) {
+    currentConvId = null;
+    chatHistory = [];
+    clearMessages();
+  }
+  loadConversations();
+}
+
+function clearMessages() {
+  document.getElementById('messages').innerHTML = `
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🦾</div>
+      <h2>Hey Jay, I'm EcDash</h2>
+      <p>Every conversation is saved — pick up where you left off any time.</p>
+      <div class="quick-prompts">
+        <div class="quick-prompt" onclick="sendQuick('Give me a status briefing on all my live apps')">📊 Portfolio status</div>
+        <div class="quick-prompt" onclick="sendQuick('What should I work on today?')">🎯 What to work on</div>
+        <div class="quick-prompt" onclick="sendQuick('What are my open todos?')">✅ My todos</div>
+        <div class="quick-prompt" onclick="sendQuick('What have we built together?')">🏗️ What we built</div>
+        <div class="quick-prompt" onclick="sendQuick('What new features should I add to my apps?')">💡 New ideas</div>
+        <div class="quick-prompt" onclick="sendQuick('How are all my Railway apps doing?')">🚂 App health</div>
+      </div>
+    </div>`;
+}
+
+// ── Messaging ──────────────────────────────────────────────────────────────
+function addMessage(role, content, typing=false, iso=null) {
   const welcome = document.getElementById('welcome');
   if (welcome) welcome.remove();
-
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = `msg ${role}`;
-  div.id = typing ? 'typing-msg' : '';
-
-  const avatar = role === 'echo' ? '🦾' : '👤';
-  const name = role === 'echo' ? 'EcDash' : 'Jay';
-
-  if (typing) {
-    div.innerHTML = `
-      <div class="msg-avatar">${avatar}</div>
-      <div class="msg-body">
-        <div class="msg-name">${name}</div>
-        <div class="msg-bubble">
-          <div class="typing-bubble">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-          </div>
-        </div>
-      </div>`;
-  } else {
-    div.innerHTML = `
-      <div class="msg-avatar">${avatar}</div>
-      <div class="msg-body">
-        <div class="msg-name">${name}</div>
-        <div class="msg-bubble" id="bubble-${Date.now()}">${formatMessage(content)}</div>
-        <div class="msg-time">${timeStr()}</div>
-      </div>`;
-  }
-
+  if (typing) div.id = 'typing-msg';
+  const avatar = role==='echo' ? '🦾' : '👤';
+  const name   = role==='echo' ? 'EcDash' : 'Jay';
+  div.innerHTML = typing
+    ? `<div class="msg-avatar">${avatar}</div>
+       <div class="msg-body">
+         <div class="msg-name">${name}</div>
+         <div class="msg-bubble"><div class="typing-bubble">
+           <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+         </div></div>
+       </div>`
+    : `<div class="msg-avatar">${avatar}</div>
+       <div class="msg-body">
+         <div class="msg-name">${name}</div>
+         <div class="msg-bubble">${formatMessage(content)}</div>
+         <div class="msg-time">${timeStr(iso)}</div>
+       </div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   return div;
 }
 
-function formatMessage(text) {
-  // Basic markdown-like formatting
-  return text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/^### (.+)$/gm, '<strong>$1</strong>')
-    .replace(/^## (.+)$/gm, '<strong style="font-size:1rem">$1</strong>')
-    .replace(/^- (.+)$/gm, '• $1')
-    .replace(/\n/g, '<br>');
+async function persistMessage(role, content) {
+  if (!currentConvId) return;
+  await fetch(`/api/conversations/${currentConvId}/messages`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({role, content})
+  });
+  loadConversations(); // refresh sidebar titles/dates
 }
 
 async function sendMessage() {
@@ -267,32 +380,39 @@ async function sendMessage() {
   const input = document.getElementById('input');
   const text = input.value.trim();
   if (!text) return;
-
   input.value = '';
   input.style.height = 'auto';
   isThinking = true;
   document.getElementById('send-btn').disabled = true;
 
-  // Add user message
-  addMessage('jay', text);
-  chatHistory.push({role: 'user', content: text});
+  // Create conversation if none active
+  if (!currentConvId) {
+    const r = await fetch('/api/conversations', {method:'POST'});
+    const conv = await r.json();
+    currentConvId = conv.id;
+    await loadConversations();
+  }
 
-  // Show typing
+  // Show + persist user message
+  addMessage('jay', text);
+  chatHistory.push({role:'user', content:text});
+  await persistMessage('user', text);
+
+  // Typing indicator
   const typingEl = addMessage('echo', '', true);
 
   try {
     const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({message: text, history: chatHistory.slice(-12)})
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({message:text, history:chatHistory.slice(-12)})
     });
-
     const data = await res.json();
     typingEl.remove();
-
     if (data.reply) {
       addMessage('echo', data.reply);
-      chatHistory.push({role: 'assistant', content: data.reply});
+      chatHistory.push({role:'assistant', content:data.reply});
+      await persistMessage('assistant', data.reply);
     } else {
       addMessage('echo', '⚠️ Something went wrong. Try again.');
     }
@@ -306,110 +426,80 @@ async function sendMessage() {
   document.getElementById('input').focus();
 }
 
-function clearChat() {
-  chatHistory = [];
-  const msgs = document.getElementById('messages');
-  msgs.innerHTML = `
-    <div class="welcome" id="welcome">
-      <div class="welcome-icon">🦾</div>
-      <h2>Hey Jay, I'm EcDash</h2>
-      <p>Your AI assistant for Alexander AI Integrated Solutions. Ask me anything about your projects, todos, or what to build next.</p>
-      <div class="quick-prompts">
-        <div class="quick-prompt" onclick="sendQuick('Give me a status briefing on all my live apps')">📊 Portfolio status</div>
-        <div class="quick-prompt" onclick="sendQuick('What should I work on today?')">🎯 What to work on</div>
-        <div class="quick-prompt" onclick="sendQuick('What are my open todos?')">✅ My todos</div>
-        <div class="quick-prompt" onclick="sendQuick('What have we built together?')">🏗️ What we built</div>
-        <div class="quick-prompt" onclick="sendQuick('What new features should I add to my apps?')">💡 New ideas</div>
-        <div class="quick-prompt" onclick="sendQuick('How are all my Railway apps doing?')">🚂 App health</div>
-      </div>
-    </div>`;
-}
-
-
+// ── Health check ───────────────────────────────────────────────────────────
 async function runHealthCheck() {
   const btn = document.getElementById('health-btn');
-  btn.textContent = '⏳ Checking...';
-  btn.disabled = true;
-
+  btn.textContent = '⏳ Checking...'; btn.disabled = true;
   const welcome = document.getElementById('welcome');
   if (welcome) welcome.remove();
-
-  // Show a system message
   const msgs = document.getElementById('messages');
   const sysMsg = document.createElement('div');
-  sysMsg.style.cssText = 'text-align:center;color:var(--muted);font-size:.78rem;padding:8px;';
-  sysMsg.textContent = '🔍 Running health check on all apps...';
-  msgs.appendChild(sysMsg);
-  msgs.scrollTop = msgs.scrollHeight;
-
+  sysMsg.style.cssText = 'text-align:center;color:var(--muted);font-size:.76rem;padding:6px';
+  sysMsg.textContent = '🔍 Running health check...';
+  msgs.appendChild(sysMsg); msgs.scrollTop = msgs.scrollHeight;
   try {
     const r = await fetch('/api/health');
     const data = await r.json();
     sysMsg.remove();
-
     let report = `**Live App Health Check** — ${data.up}/${data.total} apps online\n\n`;
     for (const app of data.results) {
-      const icon = app.ok ? '✅' : '❌';
-      const ms = app.ms ? ` (${app.ms}ms)` : '';
-      report += `${icon} **${app.name}**${ms}\n`;
+      report += `${app.ok?'✅':'❌'} **${app.name}**${app.ms?` (${app.ms}ms)`:''}\n`;
     }
-    if (data.up < data.total) {
-      const down = data.results.filter(r => !r.ok).map(r => r.name).join(', ');
-      report += `\n⚠️ Down: ${down}`;
-    } else {
-      report += `\n🎉 All systems go!`;
-    }
-
+    report += data.up < data.total
+      ? `\n⚠️ Down: ${data.results.filter(r=>!r.ok).map(r=>r.name).join(', ')}`
+      : `\n🎉 All systems go!`;
     addMessage('echo', report);
-    chatHistory.push({role: 'assistant', content: report});
+    chatHistory.push({role:'assistant', content:report});
+    if (currentConvId) await persistMessage('assistant', report);
   } catch(e) {
     sysMsg.remove();
-    addMessage('echo', '⚠️ Could not run health check. Try asking me: "test my apps"');
+    addMessage('echo','⚠️ Could not run health check.');
   }
-
-  btn.textContent = '🟢 Test All Apps';
-  btn.disabled = false;
+  btn.textContent = '🟢 Test Apps'; btn.disabled = false;
 }
 
-
+// ── Send to Echo bridge ────────────────────────────────────────────────────
 async function sendToEcho() {
   const input = document.getElementById('input');
   const text = input.value.trim();
-  if (!text) {
-    alert('Type a task first, then click "Send to Echo"\n\nExample: "Fix the crash on Pet Vet AI" or "Add a dark mode toggle to the inventory app"');
-    return;
-  }
+  if (!text) { alert('Type a task first, then click "Send to Echo"'); return; }
   const btn = document.getElementById('echo-btn');
-  btn.textContent = '⏳ Sending...';
-  btn.disabled = true;
-
-  // Add user message to chat
-  addMessage('jay', '⚡ [Sending to EcDash] ' + text);
-  chatHistory.push({role:'user', content: text});
+  btn.textContent = '⏳ Sending...'; btn.disabled = true;
+  if (!currentConvId) {
+    const r = await fetch('/api/conversations', {method:'POST'});
+    const conv = await r.json();
+    currentConvId = conv.id;
+    await loadConversations();
+  }
+  addMessage('jay', '⚡ [Sending to Echo] ' + text);
+  chatHistory.push({role:'user', content:text});
+  await persistMessage('user', text);
   input.value = '';
-
   try {
     const r = await fetch('/api/echo-bridge', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({task: text})
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({task:text})
     });
     const d = await r.json();
-    const msg = d.status === 'sent'
-      ? '✅ Task sent to EcDash! She\'ll execute it and report back.\n\n**Task ID:** #' + d.id
-      : '📥 Task queued for Echo.\n\n' + (d.response || 'EcDash will pick this up on next check-in.') + '\n\n**Task ID:** #' + d.id + '\n\n💡 To connect Echo, set `ECHO_WEBHOOK_URL` in Railway env vars.';
+    const msg = d.status==='sent'
+      ? `✅ Task sent to Echo! She'll execute it and report back.\n\n**Task ID:** #${d.id}`
+      : `📥 Task queued for Echo.\n\n${d.response||'Echo will pick this up on next check-in.'}\n\n**Task ID:** #${d.id}`;
     addMessage('echo', msg);
-    chatHistory.push({role:'assistant', content: msg});
-  } catch(e) {
-    addMessage('echo', '⚠️ Could not queue task. Try again.');
-  }
-
-  btn.textContent = '⚡ Send to EcDash';
-  btn.disabled = false;
+    chatHistory.push({role:'assistant', content:msg});
+    await persistMessage('assistant', msg);
+  } catch(e) { addMessage('echo','⚠️ Could not queue task. Try again.'); }
+  btn.textContent = '⚡ Send to Echo'; btn.disabled = false;
 }
 
-// Focus input on load
-window.onload = () => document.getElementById('input').focus();
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+window.onload = () => {
+  loadConversations();
+  document.getElementById('input').focus();
+};
 </script>
 </body>
 </html>

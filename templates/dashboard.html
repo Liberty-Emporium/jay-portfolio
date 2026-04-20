@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Command Center — Jay Alexander</title>
+  <title>Command Center - Jay Alexander</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -178,6 +178,23 @@
     .link-chip-url { font-size: 0.72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .link-chip-arrow { color: var(--muted); font-size: 0.8rem; }
 
+    /* ── Password fields ── */
+    .pw-row { display:flex; align-items:center; gap:6px; }
+    .pw-val {
+      font-family: monospace; font-size: 0.85rem;
+      background: rgba(0,0,0,.3); border: 1px solid var(--border);
+      border-radius: 6px; padding: 3px 8px; letter-spacing: .04em;
+      user-select: all; min-width: 0; flex: 1;
+    }
+    .pw-btn {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted); cursor: pointer;
+      font-size: 0.75rem; padding: 4px 8px; white-space: nowrap;
+      transition: all .15s; flex-shrink: 0;
+    }
+    .pw-btn:hover { border-color: var(--accent); color: var(--text); }
+    .pw-btn.copied { border-color: var(--green); color: var(--green); }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .sidebar { width: 60px; }
@@ -238,13 +255,13 @@
     <!-- ══════════════ OVERVIEW ══════════════ -->
     <div class="panel active" id="panel-overview">
       <div class="section-title">Good to see you, Jay 👋</div>
-      <div class="section-sub">Alexander AI Integrated Solutions — Command Center</div>
+      <div class="section-sub">Alexander AI Integrated Solutions - Command Center</div>
 
       <div class="grid-4" style="margin-bottom:24px">
         <div class="stat-tile"><div class="stat-num">11</div><div class="stat-label">Total Projects</div></div>
         <div class="stat-tile"><div class="stat-num">8</div><div class="stat-label">Live Apps</div></div>
         <div class="stat-tile"><div class="stat-num">3</div><div class="stat-label">Demos</div></div>
-        <div class="stat-tile"><div class="stat-num" id="overview-todo-count">—</div><div class="stat-label">Open To-Dos</div></div>
+        <div class="stat-tile"><div class="stat-num" id="overview-todo-count">-</div><div class="stat-label">Open To-Dos</div></div>
       </div>
 
       <div class="grid-2">
@@ -273,7 +290,7 @@
     <!-- ══════════════ PROJECTS ══════════════ -->
     <div class="panel" id="panel-projects">
       <div class="section-title">🚀 All Projects</div>
-      <div class="section-sub">Every app, demo, and tool we've built — click to open</div>
+      <div class="section-sub">Every app, demo, and tool we've built - click to open</div>
 
       <div class="nav-section" style="padding:0 0 12px;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em">Live Apps</div>
       <div class="grid-auto" style="margin-bottom:32px">
@@ -360,7 +377,7 @@
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
           <div class="proj-icon">🏛️</div>
           <div class="proj-category">Legal · Personal</div>
-          <div class="proj-name">Court — Statement of Good Faith</div>
+          <div class="proj-name">Court - Statement of Good Faith</div>
           <div class="proj-desc">Ronald J. Alexander Jr.'s formal statement of good faith and legal documentation. QR code accessible.</div>
           <div class="proj-tags"><span class="tag">Legal</span><span class="tag">Personal</span></div>
           <div class="proj-links">
@@ -374,7 +391,7 @@
           <div class="proj-icon">🌐</div>
           <div class="proj-category">Portfolio · Personal</div>
           <div class="proj-name">Jay's Portfolio</div>
-          <div class="proj-desc">This site — developer portfolio, investor deck, business card, tools library, and command center.</div>
+          <div class="proj-desc">This site - developer portfolio, investor deck, business card, tools library, and command center.</div>
           <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Portfolio</span></div>
           <div class="proj-links">
             <a href="https://jay-portfolio-production.up.railway.app" target="_blank">Live Site ↗</a>
@@ -486,7 +503,7 @@
     <!-- ══════════════ TODOS ══════════════ -->
     <div class="panel" id="panel-todos">
       <div class="section-title">✅ To-Do List</div>
-      <div class="section-sub">Your running task list — saved in your browser</div>
+      <div class="section-sub">Your running task list - saved in your browser</div>
 
       <div class="card" style="max-width:720px">
         <div class="todo-form">
@@ -511,7 +528,7 @@
     <!-- ══════════════ QUICK LINKS ══════════════ -->
     <div class="panel" id="panel-links">
       <div class="section-title">🔗 Quick Links</div>
-      <div class="section-sub">All the important places — one click away</div>
+      <div class="section-sub">All the important places - one click away</div>
 
       <div class="card" style="margin-bottom:20px">
         <div class="card-header"><div class="card-title">🚀 Live Apps</div></div>
@@ -562,7 +579,7 @@
     <!-- ══════════════ SUPPORT ══════════════ -->
     <div class="panel" id="panel-support">
       <div class="section-title">🛟 Support Center</div>
-      <div class="section-sub">Central support hub — link your apps here so customers always know where to go</div>
+      <div class="section-sub">Central support hub - link your apps here so customers always know where to go</div>
 
       <div class="support-card" style="margin-bottom:24px">
         <div class="support-icon">🦾</div>
@@ -611,14 +628,14 @@
           <p style="font-size:.82rem;color:var(--muted);margin:8px 0 16px">Paste this into any app's navbar or footer to route users here:</p>
           <div class="embed-snippet">&lt;a href="https://jay-portfolio-production.up.railway.app/dashboard#support"<br>&nbsp;&nbsp; target="_blank"&gt;<br>&nbsp;&nbsp;🛟 Support<br>&lt;/a&gt;</div>
           <p style="font-size:.82rem;color:var(--muted);margin-top:16px">Or link directly to your email:</p>
-          <div class="embed-snippet">mailto:jay@libertyemporium.com<br>?subject=Support%20Request%20—%20[App%20Name]</div>
+          <div class="embed-snippet">mailto:jay@libertyemporium.com<br>?subject=Support%20Request%20-%20[App%20Name]</div>
         </div>
       </div>
     </div>
 
     <!-- ══════════════ MY AI ══════════════ -->
     <div class="panel" id="panel-ai">
-      <div class="section-title">🦾 Your AI — Echo / Echo</div>
+      <div class="section-title">🦾 Your AI - Echo / Echo</div>
       <div class="section-sub">Your personal AI executive assistant, built on OpenClaw + Alexander AI</div>
 
       <div class="grid-2" style="margin-bottom:24px">
@@ -668,11 +685,11 @@
             </div>
             <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
               <span style="font-size:1.1rem">🧠</span>
-              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Remember Everything</div><div style="font-size:.78rem;color:var(--muted)">Memory saves to GitHub after every session — I pick up right where we left off</div></div>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Remember Everything</div><div style="font-size:.78rem;color:var(--muted)">Memory saves to GitHub after every session - I pick up right where we left off</div></div>
             </div>
             <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
               <span style="font-size:1.1rem">🔄</span>
-              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Sync & Backup</div><div style="font-size:.78rem;color:var(--muted)">Keeps GitHub and GitLab in sync — your code is always backed up</div></div>
+              <div><div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Sync & Backup</div><div style="font-size:.78rem;color:var(--muted)">Keeps GitHub and GitLab in sync - your code is always backed up</div></div>
             </div>
             <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
               <span style="font-size:1.1rem">📋</span>
@@ -698,12 +715,12 @@
           <div style="padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
             <div style="font-size:1.1rem;margin-bottom:6px">⚡</div>
             <div style="font-size:.88rem;font-weight:600;margin-bottom:4px">Session Startup Skill</div>
-            <div style="font-size:.78rem;color:var(--muted)">Built a skill that makes every new session faster — health check, brain restore, todo briefing.</div>
+            <div style="font-size:.78rem;color:var(--muted)">Built a skill that makes every new session faster - health check, brain restore, todo briefing.</div>
           </div>
           <div style="padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
             <div style="font-size:1.1rem;margin-bottom:6px">🦾</div>
             <div style="font-size:.88rem;font-weight:600;margin-bottom:4px">This Dashboard</div>
-            <div style="font-size:.78rem;color:var(--muted)">Command Center with all projects, todos, quick links, support hub, and notes — all in one place.</div>
+            <div style="font-size:.78rem;color:var(--muted)">Command Center with all projects, todos, quick links, support hub, and notes - all in one place.</div>
           </div>
           <div style="padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
             <div style="font-size:1.1rem;margin-bottom:6px">🔐</div>
@@ -719,7 +736,7 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
           <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
             <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Starting a Session</div>
-            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">Just say hi — I'll restore my memory from GitHub, check todos, and brief you. Say <em>"good morning"</em> or just start talking.</div>
+            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">Just say hi - I'll restore my memory from GitHub, check todos, and brief you. Say <em>"good morning"</em> or just start talking.</div>
           </div>
           <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
             <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Giving Me Work</div>
@@ -727,7 +744,7 @@
           </div>
           <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
             <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Ending a Session</div>
-            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">Say "save" or "we're done" — I'll commit updated memory to GitHub + GitLab so I remember everything next time.</div>
+            <div style="font-size:.82rem;color:var(--muted);line-height:1.7">Say "save" or "we're done" - I'll commit updated memory to GitHub + GitLab so I remember everything next time.</div>
           </div>
           <div style="padding:14px;background:var(--card2);border:1px solid rgba(99,102,241,.2);border-radius:10px">
             <div style="font-size:.8rem;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">My Limits</div>
@@ -745,14 +762,14 @@
       <div style="max-width:800px;display:flex;flex-direction:column;gap:1.25rem">
 
         <div class="card" style="border-left:3px solid var(--accent3)">
-          <div class="card-header"><div class="card-title">📆 Mon Apr 20, 2026 — Tonight's Session</div></div>
+          <div class="card-header"><div class="card-title">📆 Mon Apr 20, 2026 - Tonight's Session</div></div>
           <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
-            <li>🔥 Built <strong>Liberty Oil &amp; Propane</strong> website — full modern single-page site, deployed to GitHub Pages</li>
+            <li>🔥 Built <strong>Liberty Oil &amp; Propane</strong> website - full modern single-page site, deployed to GitHub Pages</li>
             <li>📸 Added real truck photo as hero, Google Maps embed, email/phone contact</li>
-            <li>🤖 Wired <strong>AI Agent Widget</strong> to fetch keys from KYS — no more manual key updates</li>
-            <li>🔐 Added <strong>Credentials panel</strong> to dashboard — all app logins in one place</li>
+            <li>🤖 Wired <strong>AI Agent Widget</strong> to fetch keys from KYS - no more manual key updates</li>
+            <li>🔐 Added <strong>Credentials panel</strong> to dashboard - all app logins in one place</li>
             <li>👁️ Added <strong>Reveal + Copy buttons</strong> to KYS dashboard for API keys</li>
-            <li>🌊 Built <strong>FloodClaim Pro</strong> — flood adjuster SaaS with AI photo analysis, team management, damage reports</li>
+            <li>🌊 Built <strong>FloodClaim Pro</strong> - flood adjuster SaaS with AI photo analysis, team management, damage reports</li>
             <li>📦 Pushed all new repos to GitHub: liberty-oil-website, floodclaim-pro</li>
           </ul>
         </div>
@@ -760,7 +777,7 @@
         <div class="card" style="border-left:3px solid #6366f1">
           <div class="card-header"><div class="card-title">📆 Sun Apr 19, 2026</div></div>
           <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
-            <li>🤖 First contact — Jay introduced himself and shared project access</li>
+            <li>🤖 First contact - Jay introduced himself and shared project access</li>
             <li>🧠 Restored brain from echo-v1, loaded full memory + all credentials</li>
             <li>📊 Built <strong>EcDash</strong> command center dashboard with projects, todos, AI panel</li>
             <li>🔗 KYS: Added Command Center link, hardened security, 26/26 tests passed</li>
@@ -770,10 +787,10 @@
         </div>
 
         <div class="card" style="border-left:3px solid #10b981">
-          <div class="card-header"><div class="card-title">📆 Apr 13–18, 2026 — Foundation Week</div></div>
+          <div class="card-header"><div class="card-title">📆 Apr 13-18, 2026 - Foundation Week</div></div>
           <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
-            <li>🎨 Full UI redesign across all 6 apps — Inter font, indigo brand, modern cards</li>
-            <li>🤖 OpenRouter model picker deployed to all apps — 20 AI models available</li>
+            <li>🎨 Full UI redesign across all 6 apps - Inter font, indigo brand, modern cards</li>
+            <li>🤖 OpenRouter model picker deployed to all apps - 20 AI models available</li>
             <li>🔒 Security hardening: bcrypt, headers, rate limiting, audit logs across all apps</li>
             <li>📧 SMTP email (forgot password) added to all apps</li>
             <li>💾 GitLab backup mirror set up for all 8 repos</li>
@@ -787,95 +804,111 @@
     <!-- ══════════════ NOTES ══════════════ -->
     <div class="panel" id="panel-notes">
       <div class="section-title">📝 Notes</div>
-      <div class="section-sub">Your scratch pad — auto-saved in your browser</div>
+      <div class="section-sub">Your scratch pad - auto-saved in your browser</div>
       <div class="card" style="max-width:800px">
         <div class="card-header">
           <div class="card-title">Scratch Pad</div>
           <span class="notes-saved" id="notes-saved">✅ Saved</span>
         </div>
-        <textarea class="notes-area" id="notes-area" placeholder="Jot anything down here — ideas, URLs, quick reminders...&#10;&#10;Auto-saves as you type."></textarea>
+        <textarea class="notes-area" id="notes-area" placeholder="Jot anything down here - ideas, URLs, quick reminders...&#10;&#10;Auto-saves as you type."></textarea>
       </div>
     </div>
 
     <div class="panel" id="panel-credentials">
       <div class="section-title">🔐 App Credentials</div>
-      <div class="section-sub">Login info for all your apps — visible only to you behind this password-protected dashboard</div>
+      <div class="section-sub">Login info for all your apps - visible only to you behind this password-protected dashboard</div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;max-width:1100px">
 
         <div class="card">
           <div class="card-header"><div class="card-title">🛡️ Keep Your Secrets (KYS)</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://ai-api-tracker-production.up.railway.app/dashboard" target="_blank">ai-api-tracker ↗</a></div>
             <div><b>Username:</b> emporiumandthrift@gmail.com</div>
-            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
-            <div style="margin-top:0.5rem"><b>Overseer:</b> <a href="https://ai-api-tracker-production.up.railway.app/overseer" target="_blank">/overseer ↗</a></div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="Treetop121570!">••••••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
+            <div style="margin-top:0.25rem"><b>Overseer:</b> <a href="https://ai-api-tracker-production.up.railway.app/overseer" target="_blank">/overseer ↗</a></div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><div class="card-title">🌐 EcDash (Portfolio Dashboard)</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://jay-portfolio-production.up.railway.app/dashboard" target="_blank">jay-portfolio ↗</a></div>
-            <div><b>Password:</b> <span style="font-family:monospace">liberty2026</span></div>
-            <div style="color:#94a3b8;font-size:0.8rem">(Change in Settings or set DASHBOARD_PASSWORD in Railway)</div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="liberty2026">••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
+            <div style="color:#94a3b8;font-size:0.78rem;margin-top:.25rem">(Change in Settings or set DASHBOARD_PASSWORD in Railway)</div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><div class="card-title">🤖 AI Agent Widget</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://ai-agent-widget-production.up.railway.app/dashboard" target="_blank">Dashboard ↗</a></div>
-            <div><b>Login:</b> <a href="https://ai-agent-widget-production.up.railway.app/login" target="_blank">Login Page ↗</a></div>
-            <div><b>Admin Email:</b> <span style="font-family:monospace">alexanderjay70@gmail.com</span></div>
-            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span> <span style="color:#94a3b8;font-size:0.8rem">(or use Forgot Password)</span></div>
-            <div><b>Stripe Webhook:</b> Stored in KYS</div>
-            <div><b>Stripe Secret Key:</b> Stored in KYS</div>
+            <div><b>Admin Email:</b> alexanderjay70@gmail.com</div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="Treetop121570!">••••••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
+            <div><b>Stripe:</b> Keys stored in KYS</div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><div class="card-title">🐕 Pet Vet AI</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://pet-vet-ai-production.up.railway.app" target="_blank">Live App ↗</a></div>
             <div><b>Email:</b> emporiumandthrift@gmail.com</div>
-            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="Treetop121570!">••••••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><div class="card-title">🚧 Contractor Pro AI</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank">Live App ↗</a></div>
             <div><b>Email:</b> emporiumandthrift@gmail.com</div>
-            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="Treetop121570!">••••••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><div class="card-title">📦 Dropship Shipping</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://dropship-shipping-production.up.railway.app" target="_blank">Live App ↗</a></div>
             <div><b>Email:</b> emporiumandthrift@gmail.com</div>
-            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="Treetop121570!">••••••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><div class="card-title">💼 Consignment Solutions</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://web-production-43ce4.up.railway.app" target="_blank">Live App ↗</a></div>
             <div><b>Email:</b> emporiumandthrift@gmail.com</div>
-            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="Treetop121570!">••••••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><div class="card-title">🏪 Liberty Inventory</div></div>
-          <div style="font-size:0.85rem;line-height:2">
+          <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank">Live App ↗</a></div>
             <div><b>Email:</b> emporiumandthrift@gmail.com</div>
-            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="Treetop121570!">••••••••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🌊 FloodClaim Pro</div></div>
+          <div style="font-size:0.85rem;line-height:2.2">
+            <div><b>URL:</b> <a href="https://billy-floods.up.railway.app" target="_blank">billy-floods ↗</a></div>
+            <div><b>Email:</b> admin@floodclaimpro.com</div>
+            <div><b>Password:</b></div>
+            <div class="pw-row"><span class="pw-val" data-pw="admin1234">••••••••</span><button class="pw-btn" onclick="togglePw(this)">👁 Show</button><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
           </div>
         </div>
 
@@ -892,8 +925,8 @@
         <div class="card" style="border:1px solid #f59e0b22;background:rgba(245,158,11,0.05)">
           <div class="card-header"><div class="card-title">⚠️ Missing / Need to Add</div></div>
           <div style="font-size:0.85rem;line-height:2;color:#94a3b8">
-            <div>Tell Echo any passwords I don’t have and I’ll add them here.</div>
-            <div style="margin-top:0.5rem">Known gaps: Liberty Oil site, Mom’s app, GymForge</div>
+            <div>Tell Echo any passwords I don't have and I'll add them here.</div>
+            <div style="margin-top:0.5rem">Known gaps: Liberty Oil site, Mom's app, GymForge</div>
           </div>
         </div>
 
@@ -1020,7 +1053,7 @@ function updateOverviewTodos() {
   const priOrder = {high:0, medium:1, low:2};
   const top = [...todos].sort((a,b) => (priOrder[a.priority]||1)-(priOrder[b.priority]||1)).slice(0,5);
   if (!top.length) {
-    container.innerHTML = '<div style="color:var(--green);font-size:.85rem">All clear — no open tasks 🎉</div>';
+    container.innerHTML = '<div style="color:var(--green);font-size:.85rem">All clear - no open tasks 🎉</div>';
     return;
   }
   container.innerHTML = top.map(t => `
@@ -1048,6 +1081,34 @@ notesArea.addEventListener('input', () => {
     setTimeout(() => notesSaved.classList.remove('show'), 2000);
   }, 600);
 });
+
+// ── Password show/hide + copy ──
+function togglePw(btn) {
+  const pw = btn.closest('.pw-row').querySelector('.pw-val');
+  const isHidden = pw.textContent.includes('•');
+  pw.textContent = isHidden ? pw.dataset.pw : '•'.repeat(pw.dataset.pw.length);
+  btn.textContent = isHidden ? '🙈 Hide' : '👁 Show';
+}
+
+function copyPw(btn) {
+  const pw = btn.closest('.pw-row').querySelector('.pw-val').dataset.pw;
+  navigator.clipboard.writeText(pw).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = pw; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 1800);
+  });
+}
 
 // ── Init ──
 fetchTodos();

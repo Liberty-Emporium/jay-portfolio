@@ -210,6 +210,7 @@
     <button class="nav-item" onclick="showPanel('support')">🛟 <span>Support</span></button>
     <button class="nav-item" onclick="showPanel('notes')">📝 <span>Notes</span></button>
     <button class="nav-item" onclick="showPanel('credentials')">🔐 <span>Credentials</span></button>
+    <button class="nav-item" onclick="showPanel('daily')">📅 <span>Daily Summary</span></button>
     <button class="nav-item" onclick="showPanel('ai')">🦾 <span>My AI</span></button>
     <div class="nav-section">System</div>
     <a href="/chat" class="nav-item" style="color:var(--accent3);font-weight:600">💬 <span>Chat with EcDash</span></a>
@@ -451,6 +452,31 @@
           <div class="proj-tags"><span class="tag">Echo</span><span class="tag">AI Memory</span><span class="tag">SaaS Kit</span></div>
           <div class="proj-links">
             <a href="https://github.com/Liberty-Emporium/echo-v1" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-amber" title="In Development"></span></div>
+          <div class="proj-icon">🌊</div>
+          <div class="proj-category">SaaS App</div>
+          <div class="proj-name">FloodClaim Pro</div>
+          <div class="proj-desc">Professional flood damage assessment platform. Multi-adjuster team, AI photo analysis, room-by-room damage logging, printable reports.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI Vision</span><span class="tag">Insurance</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Liberty-Emporium/floodclaim-pro" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-amber" title="In Development"></span></div>
+          <div class="proj-icon">🔥</div>
+          <div class="proj-category">Website</div>
+          <div class="proj-name">Liberty Oil &amp; Propane</div>
+          <div class="proj-desc">Modern website for Liberty Oil &amp; Propane. Heating oil, propane, and kerosene delivery company in Liberty, NC.</div>
+          <div class="proj-tags"><span class="tag">HTML</span><span class="tag">GitHub Pages</span><span class="tag">Client Site</span></div>
+          <div class="proj-links">
+            <a href="https://liberty-emporium.github.io/liberty-oil-website/" target="_blank">Preview ↗</a>
+            <a href="https://github.com/Liberty-Emporium/liberty-oil-website" target="_blank">GitHub ↗</a>
           </div>
         </div>
 
@@ -708,6 +734,53 @@
             <div style="font-size:.82rem;color:var(--muted);line-height:1.7">I ask before sending emails, tweets, or anything public. I never store raw passwords or tokens in code. I always back up before making big changes.</div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ DAILY SUMMARY ══════════════ -->
+    <div class="panel" id="panel-daily">
+      <div class="section-title">📅 Daily Summary</div>
+      <div class="section-sub">What Echo built and changed each day</div>
+
+      <div style="max-width:800px;display:flex;flex-direction:column;gap:1.25rem">
+
+        <div class="card" style="border-left:3px solid var(--accent3)">
+          <div class="card-header"><div class="card-title">📆 Mon Apr 20, 2026 — Tonight's Session</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🔥 Built <strong>Liberty Oil &amp; Propane</strong> website — full modern single-page site, deployed to GitHub Pages</li>
+            <li>📸 Added real truck photo as hero, Google Maps embed, email/phone contact</li>
+            <li>🤖 Wired <strong>AI Agent Widget</strong> to fetch keys from KYS — no more manual key updates</li>
+            <li>🔐 Added <strong>Credentials panel</strong> to dashboard — all app logins in one place</li>
+            <li>👁️ Added <strong>Reveal + Copy buttons</strong> to KYS dashboard for API keys</li>
+            <li>🌊 Built <strong>FloodClaim Pro</strong> — flood adjuster SaaS with AI photo analysis, team management, damage reports</li>
+            <li>📦 Pushed all new repos to GitHub: liberty-oil-website, floodclaim-pro</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:3px solid #6366f1">
+          <div class="card-header"><div class="card-title">📆 Sun Apr 19, 2026</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🤖 First contact — Jay introduced himself and shared project access</li>
+            <li>🧠 Restored brain from echo-v1, loaded full memory + all credentials</li>
+            <li>📊 Built <strong>EcDash</strong> command center dashboard with projects, todos, AI panel</li>
+            <li>🔗 KYS: Added Command Center link, hardened security, 26/26 tests passed</li>
+            <li>💾 Set up daily 5 AM brain backup cron to GitHub + GitLab</li>
+            <li>🚀 Deployed KYS updates, EcDash updates to Railway</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:3px solid #10b981">
+          <div class="card-header"><div class="card-title">📆 Apr 13–18, 2026 — Foundation Week</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🎨 Full UI redesign across all 6 apps — Inter font, indigo brand, modern cards</li>
+            <li>🤖 OpenRouter model picker deployed to all apps — 20 AI models available</li>
+            <li>🔒 Security hardening: bcrypt, headers, rate limiting, audit logs across all apps</li>
+            <li>📧 SMTP email (forgot password) added to all apps</li>
+            <li>💾 GitLab backup mirror set up for all 8 repos</li>
+            <li>🐛 Fixed 10+ bugs: Overseer 500 error, password reset, Consignment Railway connection</li>
+          </ul>
+        </div>
+
       </div>
     </div>
 

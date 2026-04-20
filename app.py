@@ -7,14 +7,40 @@ import urllib.error
 import time
 import threading
 import sqlite3
+from datetime import timedelta
 from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session, jsonify
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'portfolio-secret-2026')
 
-CONFIG_FILE      = os.path.join(os.path.dirname(__file__), 'config.json')
-CHAT_DB_PATH     = os.path.join(os.path.dirname(__file__), 'chat_history.db')
+# ── Stable secret key (survives redeploys) ────────────────────────────────────
+_SECRET_KEY = os.environ.get('SECRET_KEY', '')
+if not _SECRET_KEY:
+    _DATA_DIR = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', os.path.dirname(__file__))
+    _KEY_FILE = os.path.join(_DATA_DIR, '.secret_key')
+    try:
+        os.makedirs(_DATA_DIR, exist_ok=True)
+        if os.path.exists(_KEY_FILE):
+            with open(_KEY_FILE) as _f: _SECRET_KEY = _f.read().strip()
+        if not _SECRET_KEY:
+            import secrets as _s
+            _SECRET_KEY = _s.token_hex(32)
+            with open(_KEY_FILE, 'w') as _f: _f.write(_SECRET_KEY)
+    except Exception:
+        import secrets as _s
+        _SECRET_KEY = _s.token_hex(32)
+app.secret_key = _SECRET_KEY
+
+# ── Session config ────────────────────────────────────────────────────────────
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
+app.config['SESSION_COOKIE_HTTPONLY']    = True
+app.config['SESSION_COOKIE_SAMESITE']   = 'Lax'
+app.config['SESSION_COOKIE_SECURE']     = False  # Railway edge handles TLS
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
+_DATA_DIR    = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', os.path.dirname(__file__))
+CONFIG_FILE  = os.path.join(os.path.dirname(__file__), 'config.json')
+CHAT_DB_PATH = os.path.join(_DATA_DIR, 'chat_history.db')
 
 # ── Chat history DB ───────────────────────────────────────────────────────────
 def get_chat_db():

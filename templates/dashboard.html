@@ -209,6 +209,7 @@
     <button class="nav-item" onclick="showPanel('links')">🔗 <span>Quick Links</span></button>
     <button class="nav-item" onclick="showPanel('support')">🛟 <span>Support</span></button>
     <button class="nav-item" onclick="showPanel('notes')">📝 <span>Notes</span></button>
+    <button class="nav-item" onclick="showPanel('credentials')">🔐 <span>Credentials</span></button>
     <button class="nav-item" onclick="showPanel('ai')">🦾 <span>My AI</span></button>
     <div class="nav-section">System</div>
     <a href="/chat" class="nav-item" style="color:var(--accent3);font-weight:600">💬 <span>Chat with EcDash</span></a>
@@ -720,6 +721,106 @@
           <span class="notes-saved" id="notes-saved">✅ Saved</span>
         </div>
         <textarea class="notes-area" id="notes-area" placeholder="Jot anything down here — ideas, URLs, quick reminders...&#10;&#10;Auto-saves as you type."></textarea>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-credentials">
+      <div class="section-title">🔐 App Credentials</div>
+      <div class="section-sub">Login info for all your apps — visible only to you behind this password-protected dashboard</div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;max-width:1100px">
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🛡️ Keep Your Secrets (KYS)</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://ai-api-tracker-production.up.railway.app/dashboard" target="_blank">ai-api-tracker ↗</a></div>
+            <div><b>Username:</b> emporiumandthrift@gmail.com</div>
+            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+            <div style="margin-top:0.5rem"><b>Overseer:</b> <a href="https://ai-api-tracker-production.up.railway.app/overseer" target="_blank">/overseer ↗</a></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🌐 EcDash (Portfolio Dashboard)</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://jay-portfolio-production.up.railway.app/dashboard" target="_blank">jay-portfolio ↗</a></div>
+            <div><b>Password:</b> <span style="font-family:monospace">liberty2026</span></div>
+            <div style="color:#94a3b8;font-size:0.8rem">(Change in Settings or set DASHBOARD_PASSWORD in Railway)</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🤖 AI Agent Widget</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://ai-agent-widget-production.up.railway.app" target="_blank">Live App ↗</a></div>
+            <div><b>Stripe Webhook:</b> Stored in KYS</div>
+            <div><b>Stripe Secret Key:</b> Stored in KYS</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🐕 Pet Vet AI</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://pet-vet-ai-production.up.railway.app" target="_blank">Live App ↗</a></div>
+            <div><b>Email:</b> emporiumandthrift@gmail.com</div>
+            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🚧 Contractor Pro AI</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank">Live App ↗</a></div>
+            <div><b>Email:</b> emporiumandthrift@gmail.com</div>
+            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">📦 Dropship Shipping</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://dropship-shipping-production.up.railway.app" target="_blank">Live App ↗</a></div>
+            <div><b>Email:</b> emporiumandthrift@gmail.com</div>
+            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">💼 Consignment Solutions</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://web-production-43ce4.up.railway.app" target="_blank">Live App ↗</a></div>
+            <div><b>Email:</b> emporiumandthrift@gmail.com</div>
+            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏪 Liberty Inventory</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>URL:</b> <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank">Live App ↗</a></div>
+            <div><b>Email:</b> emporiumandthrift@gmail.com</div>
+            <div><b>Password:</b> <span style="font-family:monospace">Treetop121570!</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔑 Developer Accounts</div></div>
+          <div style="font-size:0.85rem;line-height:2">
+            <div><b>GitHub Org:</b> Liberty-Emporium</div>
+            <div><b>GitLab:</b> gitlab.com/Liberty-Emporium</div>
+            <div><b>Railway:</b> railway.app (emporiumandthrift@gmail.com)</div>
+            <div><b>SMTP:</b> emporiumandthrift@gmail.com</div>
+          </div>
+        </div>
+
+        <div class="card" style="border:1px solid #f59e0b22;background:rgba(245,158,11,0.05)">
+          <div class="card-header"><div class="card-title">⚠️ Missing / Need to Add</div></div>
+          <div style="font-size:0.85rem;line-height:2;color:#94a3b8">
+            <div>Tell Echo any passwords I don’t have and I’ll add them here.</div>
+            <div style="margin-top:0.5rem">Known gaps: Liberty Oil site, Mom’s app, GymForge</div>
+          </div>
+        </div>
+
       </div>
     </div>
 

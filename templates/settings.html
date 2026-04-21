@@ -598,7 +598,7 @@ async function selectModel(el, modelId) {
   // Save to server immediately
   try {
     await fetch('/api/settings', {
-      method: 'POST',
+      method: 'POST', credentials: 'include',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({echo_model: modelId})
     });
@@ -647,7 +647,7 @@ async function saveBrain(filename, editorId, statusId) {
   const content = el.value;
   try {
     await fetch('/api/brain/' + filename, {
-      method: 'POST',
+      method: 'POST', credentials: 'include',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({content})
     });
@@ -713,7 +713,7 @@ async function saveAccountSettings() {
 
   try {
     const r = await fetch('/api/change-password', {
-      method: 'POST',
+      method: 'POST', credentials: 'include',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(body)
     });

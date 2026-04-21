@@ -275,7 +275,7 @@ function renderConvList(list) {
 }
 
 async function newConversation() {
-  const r = await fetch('/api/conversations', {method:'POST'});
+  const r = await fetch('/api/conversations', {method:'POST', credentials: 'include'});
   const conv = await r.json();
   currentConvId = conv.id;
   chatHistory = [];
@@ -310,7 +310,7 @@ async function loadConversation(convId) {
 async function deleteConversation(e, convId) {
   e.stopPropagation();
   if (!confirm('Delete this conversation?')) return;
-  await fetch(`/api/conversations/${convId}`, {method:'DELETE'});
+  await fetch(`/api/conversations/${convId}`, {method:'DELETE', credentials: 'include'});
   if (currentConvId === convId) {
     currentConvId = null;
     chatHistory = [];
@@ -368,7 +368,7 @@ function addMessage(role, content, typing=false, iso=null) {
 async function persistMessage(role, content) {
   if (!currentConvId) return;
   await fetch(`/api/conversations/${currentConvId}/messages`, {
-    method:'POST',
+    method:'POST', credentials: 'include',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({role, content})
   });
@@ -387,7 +387,7 @@ async function sendMessage() {
 
   // Create conversation if none active
   if (!currentConvId) {
-    const r = await fetch('/api/conversations', {method:'POST'});
+    const r = await fetch('/api/conversations', {method:'POST', credentials: 'include'});
     const conv = await r.json();
     currentConvId = conv.id;
     await loadConversations();
@@ -403,7 +403,7 @@ async function sendMessage() {
 
   try {
     const res = await fetch('/api/chat', {
-      method:'POST',
+      method:'POST', credentials: 'include',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({message:text, history:chatHistory.slice(-12)})
     });
@@ -466,7 +466,7 @@ async function sendToEcho() {
   const btn = document.getElementById('echo-btn');
   btn.textContent = '⏳ Sending...'; btn.disabled = true;
   if (!currentConvId) {
-    const r = await fetch('/api/conversations', {method:'POST'});
+    const r = await fetch('/api/conversations', {method:'POST', credentials: 'include'});
     const conv = await r.json();
     currentConvId = conv.id;
     await loadConversations();
@@ -477,7 +477,7 @@ async function sendToEcho() {
   input.value = '';
   try {
     const r = await fetch('/api/echo-bridge', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST', credentials: 'include', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({task:text})
     });
     const d = await r.json();

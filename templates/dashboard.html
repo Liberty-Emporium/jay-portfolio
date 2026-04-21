@@ -985,7 +985,7 @@ async function addTodo() {
   input.value = '';
   try {
     const r = await fetch('/api/todos', {
-      method: 'POST',
+      method: 'POST', credentials: 'include',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({text, priority})
     });
@@ -1003,7 +1003,7 @@ async function toggleTodo(id) {
   renderTodos();
   updateOverviewTodos();
   await fetch(`/api/todos/${id}`, {
-    method: 'PATCH',
+    method: 'PATCH', credentials: 'include',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({done: t.done})
   });
@@ -1013,7 +1013,7 @@ async function deleteTodo(id) {
   _todos = _todos.filter(t => t.id !== id);
   renderTodos();
   updateOverviewTodos();
-  await fetch(`/api/todos/${id}`, {method: 'DELETE'});
+  await fetch(`/api/todos/${id}`, {method: 'DELETE', credentials: 'include'});
 }
 
 async function clearDone() {
@@ -1022,7 +1022,7 @@ async function clearDone() {
   renderTodos();
   updateOverviewTodos();
   for (const t of done) {
-    await fetch(`/api/todos/${t.id}`, {method: 'DELETE'});
+    await fetch(`/api/todos/${t.id}`, {method: 'DELETE', credentials: 'include'});
   }
 }
 

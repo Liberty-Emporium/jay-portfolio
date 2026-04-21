@@ -351,7 +351,7 @@ function closeModal() { document.getElementById('ticket-modal').style.display='n
 async function updateStatus(status) {
   if (!currentTicketId) return;
   await fetch(`/api/tickets/${currentTicketId}`, {
-    method:'PATCH', headers:{'Content-Type':'application/json'},
+    method:'PATCH', credentials: 'include', headers:{'Content-Type':'application/json'},
     body:JSON.stringify({status})
   });
   const t = allTickets.find(x=>x.id===currentTicketId);
@@ -378,7 +378,7 @@ async function getAiSuggestion() {
   box.classList.add('show');
   try {
     const r = await fetch('/api/chat', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST', credentials: 'include', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         message: `Draft a professional, warm support reply for this ticket from ${t.app}:\n\nSubject: ${t.subject}\nMessage: ${t.message}\n\nKeep it concise, helpful, and sign off as the ${t.app} support team.`,
         history: []
@@ -399,7 +399,7 @@ async function createTicket() {
   const message = document.getElementById('new-message').value.trim();
   if (!subject || !message) return alert('Subject and message are required');
   await fetch('/api/tickets', {
-    method:'POST', headers:{'Content-Type':'application/json'},
+    method:'POST', credentials: 'include', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
       app: document.getElementById('new-app').value,
       subject, message,

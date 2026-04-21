@@ -93,6 +93,17 @@
     .dot-red{background:var(--red)}
     .dot-gray{background:#374151}
 
+    /* Script cards */
+    .script-group{margin-bottom:4px}
+    .script-group-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#4b5563;font-weight:700;padding:10px 4px 6px}
+    .script-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:6px;transition:border-color .2s}
+    .script-card:hover{border-color:var(--accent)}
+    .script-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .script-name{font-size:.85rem;font-weight:600;color:var(--text)}
+    .script-pre{font-family:'Courier New',monospace;font-size:.78rem;color:var(--accent3);background:rgba(0,0,0,.3);padding:8px 12px;border-radius:6px;border:1px solid var(--border);overflow-x:auto;white-space:pre;word-break:normal}
+    .copy-btn{padding:5px 12px;font-size:.75rem}
+    .copy-btn.copied{background:rgba(16,185,129,.15);border-color:var(--green);color:var(--green)}
+
     /* Empty state */
     .empty{text-align:center;padding:60px 20px;color:var(--muted)}
     .empty-icon{font-size:3rem;margin-bottom:12px}
@@ -172,6 +183,168 @@
         <div style="font-size:.85rem">Click <strong>▶ Run All Tests</strong> to check all your apps</div>
       </div>
     </div>
+
+    <!-- Manual Browser Tests -->
+    <div style="margin-top:36px">
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;margin-bottom:6px">
+        🖥️ Manual Browser Tests <span style="font-size:.75rem;color:var(--muted);font-weight:400;margin-left:8px">Run in Chromium on your machine, paste results back to Echo</span>
+      </div>
+      <div style="color:var(--muted);font-size:.82rem;margin-bottom:16px">
+        Copy any command below → paste in your Kali terminal → copy the output → send to Echo to fix issues.
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px" id="scriptList">
+
+        <!-- FloodClaim -->
+        <div class="script-group">
+          <div class="script-group-label">🌊 FloodClaim Pro</div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Login + Dashboard</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('floodclaim_login')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="floodclaim_login">python3 ~/browser_suite.py --test floodclaim_login</pre>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Add Room + Line Item</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('floodclaim_rooms')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="floodclaim_rooms">python3 ~/browser_suite.py --test floodclaim_rooms</pre>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">AI Estimate</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('floodclaim_estimate')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="floodclaim_estimate">python3 ~/browser_suite.py --test floodclaim_estimate</pre>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Delete Safety Check</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('floodclaim_delete_safety')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="floodclaim_delete_safety">python3 ~/browser_suite.py --test floodclaim_delete_safety</pre>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">All FloodClaim Tests</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('flood_all')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="flood_all">python3 ~/browser_suite.py --test floodclaim_login floodclaim_rooms floodclaim_estimate floodclaim_delete_safety</pre>
+          </div>
+        </div>
+
+        <!-- AI Agent Widget -->
+        <div class="script-group">
+          <div class="script-group-label">🤖 AI Agent Widget</div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Signup + Dashboard</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('ai_widget_signup')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="ai_widget_signup">python3 ~/browser_suite.py --test ai_widget_signup</pre>
+          </div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Pricing Page</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('ai_widget_pricing')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="ai_widget_pricing">python3 ~/browser_suite.py --test ai_widget_pricing</pre>
+          </div>
+        </div>
+
+        <!-- EcDash -->
+        <div class="script-group">
+          <div class="script-group-label">🎛️ EcDash</div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Login + Panels</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('ecdash_login')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="ecdash_login">python3 ~/browser_suite.py --test ecdash_login</pre>
+          </div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Echo Chat</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('ecdash_chat')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="ecdash_chat">python3 ~/browser_suite.py --test ecdash_chat</pre>
+          </div>
+        </div>
+
+        <!-- Grace + Others -->
+        <div class="script-group">
+          <div class="script-group-label">💜 Grace &amp; Others</div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Grace Home + AI</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('grace_all')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="grace_all">python3 ~/browser_suite.py --test grace_home grace_ai</pre>
+          </div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Pet Vet Finder</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('petvet_finder')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="petvet_finder">python3 ~/browser_suite.py --test petvet_finder</pre>
+          </div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Contractor Pro Login</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('contractor_login')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="contractor_login">python3 ~/browser_suite.py --test contractor_login</pre>
+          </div>
+          <div class="script-card">
+            <div class="script-header">
+              <span class="script-name">Keep Your Secrets Login</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('kys_login')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="kys_login">python3 ~/browser_suite.py --test kys_login</pre>
+          </div>
+        </div>
+
+        <!-- Run Everything -->
+        <div class="script-group">
+          <div class="script-group-label">🚀 Full Suite</div>
+          <div class="script-card" style="border-color:rgba(99,102,241,.4)">
+            <div class="script-header">
+              <span class="script-name" style="color:var(--accent3);font-weight:700">▶ Run ALL Browser Tests</span>
+              <button class="btn btn-primary copy-btn" onclick="copyScript('run_all')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="run_all">python3 ~/browser_suite.py</pre>
+          </div>
+        </div>
+
+        <!-- Setup (first time) -->
+        <details style="margin-top:8px">
+          <summary style="cursor:pointer;color:var(--muted);font-size:.82rem;padding:8px 0">⚙️ First-time setup (click to expand)</summary>
+          <div class="script-card" style="margin-top:10px">
+            <div class="script-header">
+              <span class="script-name">Install dependencies</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('setup')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="setup">pip install browser-use langchain-openai playwright && playwright install chromium</pre>
+          </div>
+          <div class="script-card" style="margin-top:8px">
+            <div class="script-header">
+              <span class="script-name">Download browser_suite.py to ~/</span>
+              <button class="btn btn-ghost copy-btn" onclick="copyScript('download')">📋 Copy</button>
+            </div>
+            <pre class="script-pre" id="download">curl -o ~/browser_suite.py https://raw.githubusercontent.com/Liberty-Emporium/echo-v1/main/scripts/browser_suite.py</pre>
+          </div>
+        </details>
+
+      </div>
+    </div>
+    <!-- End Manual Browser Tests -->
 
     <!-- History -->
     <div style="margin-top:36px">
@@ -323,6 +496,27 @@ function formatTime(iso) {
 
 // Load history on page load
 loadHistory();
+
+// Copy script to clipboard
+function copyScript(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const text = el.textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btns = document.querySelectorAll('.copy-btn');
+    btns.forEach(b => { if (b.getAttribute('onclick') === `copyScript('${id}')`) {
+      b.textContent = '✅ Copied!';
+      b.classList.add('copied');
+      setTimeout(() => { b.textContent = '📋 Copy'; b.classList.remove('copied'); }, 2000);
+    }});
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
 </script>
 </body>
 </html>

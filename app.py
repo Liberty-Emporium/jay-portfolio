@@ -790,6 +790,234 @@ def business_card():
             photo_b64 = 'data:image/jpeg;base64,' + base64.b64encode(f.read()).decode()
     return render_template('business_card.html', jay_photo_b64=photo_b64)
 
+# ── Test Suite ────────────────────────────────────────────────────────────────
+TEST_RUNS_FILE = os.path.join(os.path.dirname(__file__), 'test_runs.json')
+
+TEST_REGISTRY = [
+    {
+        'name': 'FloodClaim Pro', 'url': 'https://billy-floods.up.railway.app',
+        'icon': '🌊',
+        'tests': [
+            {'id': 'health',        'label': 'Health check',    'path': '/health',            'method': 'GET',  'expect_json': {'status': 'ok'}},
+            {'id': 'homepage',      'label': 'Homepage',        'path': '/',                  'method': 'GET',  'expect_status': 200},
+            {'id': 'login',         'label': 'Login page',      'path': '/login',             'method': 'GET',  'expect_status': 200},
+            {'id': 'willie_claims', 'label': 'Willie API',      'path': '/willie/api/claims', 'method': 'GET',
+             'headers': {'Authorization': 'Bearer S7LroZDvJSqzJZ304leqwQcxToJXRwF597gszWWarq4'}, 'expect_json_key': 'ok'},
+        ]
+    },
+    {
+        'name': 'AI Agent Widget', 'url': 'https://ai-agent-widget-production.up.railway.app',
+        'icon': '🤖',
+        'tests': [
+            {'id': 'health',   'label': 'Health check', 'path': '/health',  'method': 'GET', 'expect_json': {'status': 'ok'}},
+            {'id': 'homepage', 'label': 'Homepage',     'path': '/',        'method': 'GET', 'expect_status': 200},
+            {'id': 'login',    'label': 'Login page',   'path': '/login',   'method': 'GET', 'expect_status': 200},
+            {'id': 'pricing',  'label': 'Pricing page', 'path': '/pricing', 'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'EcDash', 'url': 'https://jay-portfolio-production.up.railway.app',
+        'icon': '🎛️',
+        'tests': [
+            {'id': 'homepage', 'label': 'Homepage', 'path': '/', 'method': 'GET', 'expect_status': 200},
+            {'id': 'apps',     'label': 'Apps page', 'path': '/apps', 'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'Keep Your Secrets', 'url': 'https://ai-api-tracker-production.up.railway.app',
+        'icon': '🔐',
+        'tests': [
+            {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
+            {'id': 'homepage', 'label': 'Homepage',     'path': '/',       'method': 'GET', 'expect_status': 200},
+            {'id': 'login',    'label': 'Login page',   'path': '/login',  'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'Pet Vet AI', 'url': 'https://pet-vet-ai-production.up.railway.app',
+        'icon': '🐾',
+        'tests': [
+            {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
+            {'id': 'homepage', 'label': 'Homepage',     'path': '/',       'method': 'GET', 'expect_status': 200},
+            {'id': 'login',    'label': 'Login page',   'path': '/login',  'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'Contractor Pro AI', 'url': 'https://contractor-pro-ai-production.up.railway.app',
+        'icon': '🔨',
+        'tests': [
+            {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
+            {'id': 'homepage', 'label': 'Homepage',     'path': '/',       'method': 'GET', 'expect_status': 200},
+            {'id': 'login',    'label': 'Login page',   'path': '/login',  'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'Dropship Shipping', 'url': 'https://dropship-shipping-production.up.railway.app',
+        'icon': '📦',
+        'tests': [
+            {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
+            {'id': 'homepage', 'label': 'Homepage',     'path': '/',       'method': 'GET', 'expect_status': 200},
+            {'id': 'login',    'label': 'Login page',   'path': '/login',  'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'Consignment Solutions', 'url': 'https://web-production-43ce4.up.railway.app',
+        'icon': '🏪',
+        'tests': [
+            {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
+            {'id': 'homepage', 'label': 'Homepage',     'path': '/',       'method': 'GET', 'expect_status': 200},
+            {'id': 'login',    'label': 'Login page',   'path': '/login',  'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'Liberty Inventory', 'url': 'https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app',
+        'icon': '📋',
+        'tests': [
+            {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
+            {'id': 'homepage', 'label': 'Homepage',     'path': '/',       'method': 'GET', 'expect_status': 200},
+            {'id': 'login',    'label': 'Login page',   'path': '/login',  'method': 'GET', 'expect_status': 200},
+        ]
+    },
+    {
+        'name': 'Grace', 'url': 'https://moms-ai-helper.up.railway.app',
+        'icon': '💜',
+        'tests': [
+            {'id': 'homepage',  'label': 'Homepage',  'path': '/',          'method': 'GET',  'expect_status': 200},
+            {'id': 'grace_api', 'label': 'Grace AI',  'path': '/api/grace', 'method': 'POST',
+             'body': {'message': 'Hello'}, 'expect_json_key': 'reply'},
+        ]
+    },
+    {
+        'name': 'Liberty Oil & Propane', 'url': 'https://liberty-oil-propane.up.railway.app',
+        'icon': '🛢️',
+        'tests': [
+            {'id': 'homepage', 'label': 'Homepage', 'path': '/', 'method': 'GET', 'expect_status': 200},
+        ]
+    },
+]
+
+
+def run_single_test(app_url, test):
+    url = app_url.rstrip('/') + test['path']
+    start = time.time()
+    result = {'id': test['id'], 'label': test['label'], 'url': url,
+              'passed': False, 'status_code': None, 'ms': None, 'error': None, 'detail': None}
+    try:
+        headers = {'User-Agent': 'EcDash-TestSuite/1.0'}
+        headers.update(test.get('headers', {}))
+        body = test.get('body')
+        data = json.dumps(body).encode() if body else None
+        if data: headers['Content-Type'] = 'application/json'
+        req = urllib.request.Request(url, data=data, headers=headers, method=test['method'])
+        with urllib.request.urlopen(req, timeout=10) as r:
+            ms = int((time.time() - start) * 1000)
+            result['ms'] = ms
+            result['status_code'] = r.status
+            raw = r.read().decode('utf-8', errors='replace')
+            expect_status = test.get('expect_status')
+            if expect_status and r.status != expect_status:
+                result['error'] = f'Expected HTTP {expect_status}, got {r.status}'
+                return result
+            expect_json = test.get('expect_json')
+            expect_json_key = test.get('expect_json_key')
+            if expect_json or expect_json_key:
+                try:
+                    obj = json.loads(raw)
+                    if expect_json:
+                        for k, v in expect_json.items():
+                            if obj.get(k) != v:
+                                result['error'] = f'{k}={obj.get(k)!r} (want {v!r})'
+                                return result
+                    if expect_json_key and expect_json_key not in obj:
+                        result['error'] = f'Missing key: {expect_json_key}'
+                        return result
+                except json.JSONDecodeError:
+                    result['error'] = 'Not valid JSON'
+                    return result
+            result['passed'] = True
+            result['detail'] = f'HTTP {r.status} · {ms}ms'
+    except urllib.error.HTTPError as e:
+        ms = int((time.time() - start) * 1000)
+        result['ms'] = ms
+        result['status_code'] = e.code
+        result['error'] = f'HTTP {e.code}'
+    except Exception as e:
+        ms = int((time.time() - start) * 1000)
+        result['ms'] = ms
+        result['error'] = str(e)[:80]
+    return result
+
+
+def _run_app_tests(app_entry, app_results):
+    test_results = [run_single_test(app_entry['url'], t) for t in app_entry['tests']]
+    passed = sum(1 for r in test_results if r['passed'])
+    app_results.append({
+        'name': app_entry['name'], 'url': app_entry['url'], 'icon': app_entry.get('icon', '🔵'),
+        'tests': test_results, 'passed': passed, 'total': len(test_results),
+        'ok': passed == len(test_results),
+    })
+
+
+def load_test_runs():
+    if os.path.exists(TEST_RUNS_FILE):
+        try:
+            with open(TEST_RUNS_FILE) as f: return json.load(f)
+        except: pass
+    return []
+
+
+def save_test_runs(runs):
+    with open(TEST_RUNS_FILE, 'w') as f: json.dump(runs[:20], f, indent=2)
+
+
+@app.route('/testing')
+@login_required
+def testing():
+    return render_template('testing.html', config=config)
+
+
+@app.route('/api/test-suite/run', methods=['POST'])
+@login_required
+def api_test_suite_run():
+    app_results = []
+    threads = [threading.Thread(target=_run_app_tests, args=(a, app_results)) for a in TEST_REGISTRY]
+    for t in threads: t.start()
+    for t in threads: t.join(timeout=15)
+    name_order = {a['name']: i for i, a in enumerate(TEST_REGISTRY)}
+    app_results.sort(key=lambda x: name_order.get(x['name'], 99))
+    total_tests  = sum(a['total']  for a in app_results)
+    total_passed = sum(a['passed'] for a in app_results)
+    run = {
+        'id': int(datetime.datetime.utcnow().timestamp() * 1000),
+        'ran_at': datetime.datetime.utcnow().isoformat(),
+        'apps': app_results,
+        'summary': {
+            'total_tests': total_tests, 'total_passed': total_passed,
+            'total_failed': total_tests - total_passed,
+            'apps_ok': sum(1 for a in app_results if a['ok']),
+            'apps_total': len(app_results),
+        }
+    }
+    runs = load_test_runs()
+    runs.insert(0, run)
+    save_test_runs(runs)
+    return jsonify(run)
+
+
+@app.route('/api/test-suite/runs', methods=['GET'])
+@login_required
+def api_test_suite_runs():
+    runs = load_test_runs()
+    return jsonify([{'id': r['id'], 'ran_at': r['ran_at'], 'summary': r.get('summary', {})} for r in runs])
+
+
+@app.route('/api/test-suite/runs/<int:run_id>', methods=['GET'])
+@login_required
+def api_test_suite_run_get(run_id):
+    for r in load_test_runs():
+        if r['id'] == run_id: return jsonify(r)
+    return jsonify({'error': 'not found'}), 404
+
+
 if __name__ == '__main__':
     if not os.path.exists(CONFIG_FILE):
         save_config(DEFAULT_CONFIG)

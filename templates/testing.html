@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Suite — EcDash</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#030712; --bg2:#0a0f1a; --card:#111827; --card2:#161f2e;
+      --border:#1f2937; --accent:#6366f1; --accent2:#8b5cf6; --accent3:#a78bfa;
+      --green:#10b981; --yellow:#f59e0b; --red:#ef4444; --text:#f9fafb; --muted:#9ca3af;
+      --grad:linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;z-index:100}
+    .sidebar-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;padding:0 20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+    .logo-dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .sidebar-nav{flex:1;padding:16px 0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:500;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+    .nav-item:hover,.nav-item.active{color:var(--text);background:rgba(99,102,241,.1)}
+    .nav-item.active{color:var(--accent3);border-right:2px solid var(--accent)}
+    .nav-section{padding:16px 20px 6px;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#374151;font-weight:600}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+
+    /* Main */
+    .main{margin-left:220px;min-height:100vh}
+    .topbar{background:rgba(3,7,18,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+    .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem}
+    .content{padding:32px}
+
+    /* Cards */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px}
+    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .card-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem}
+
+    /* Summary bar */
+    .summary-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .stat-tile{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+    .stat-num{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .stat-num.green{background:var(--green);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .stat-num.red{background:var(--red);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .stat-label{color:var(--muted);font-size:.82rem;margin-top:4px}
+
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:all .2s}
+    .btn-primary{background:var(--grad);color:#fff}
+    .btn-primary:hover{opacity:.88;transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+
+    /* App result cards */
+    .apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+    .app-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s}
+    .app-card.pass{border-color:rgba(16,185,129,.3)}
+    .app-card.fail{border-color:rgba(239,68,68,.3)}
+    .app-card-header{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+    .app-icon{font-size:1.5rem}
+    .app-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem}
+    .app-score{margin-left:auto;font-size:.8rem;font-weight:700}
+    .app-score.all-pass{color:var(--green)}
+    .app-score.has-fail{color:var(--red)}
+    .app-card-body{padding:6px 0}
+    .test-row{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:.83rem}
+    .test-row:hover{background:rgba(255,255,255,.02)}
+    .test-icon{width:18px;text-align:center;font-size:1rem;flex-shrink:0}
+    .test-label{flex:1;color:var(--text)}
+    .test-detail{font-size:.75rem;color:var(--muted)}
+    .test-error{font-size:.75rem;color:var(--red)}
+
+    /* History list */
+    .history-list{display:flex;flex-direction:column;gap:8px}
+    .history-item{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s;font-size:.85rem}
+    .history-item:hover{border-color:var(--accent)}
+    .history-time{color:var(--muted);font-size:.78rem;min-width:140px}
+    .history-summary{flex:1}
+    .history-badge{padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+    .badge-pass{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+    .badge-fail{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+
+    /* Spinner */
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Status dot */
+    .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+    .dot-green{background:var(--green);box-shadow:0 0 6px var(--green)}
+    .dot-red{background:var(--red)}
+    .dot-gray{background:#374151}
+
+    /* Empty state */
+    .empty{text-align:center;padding:60px 20px;color:var(--muted)}
+    .empty-icon{font-size:3rem;margin-bottom:12px}
+
+    /* Progress bar */
+    .progress-wrap{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:24px;display:none}
+    .progress-bar{height:100%;background:var(--grad);width:0%;transition:width .3s;border-radius:2px}
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-dot"></div>
+    Jay Alexander
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a href="/dashboard" class="nav-item">🏠 Dashboard</a>
+    <a href="/chat" class="nav-item">💬 Echo Chat</a>
+    <div class="nav-section">Apps</div>
+    <a href="/dashboard#apps" class="nav-item">🚀 My Apps</a>
+    <a href="/testing" class="nav-item active">🧪 Test Suite</a>
+    <div class="nav-section">Tools</div>
+    <a href="/tickets" class="nav-item">🎫 Tickets</a>
+    <a href="/settings" class="nav-item">⚙️ Settings</a>
+    <a href="/logout" class="nav-item">🚪 Logout</a>
+  </nav>
+  <div class="sidebar-footer">EcDash · Liberty-Emporium</div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">🧪 Test Suite</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span id="lastRanLabel" style="font-size:.78rem;color:var(--muted)">Never run</span>
+      <button class="btn btn-primary" id="runBtn" onclick="runTests()">
+        ▶ Run All Tests
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Summary tiles -->
+    <div class="summary-bar">
+      <div class="stat-tile">
+        <div class="stat-num" id="statApps">—</div>
+        <div class="stat-label">Apps Tested</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num green" id="statPassed">—</div>
+        <div class="stat-label">Tests Passed</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num red" id="statFailed">—</div>
+        <div class="stat-label">Tests Failed</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num" id="statTotal">—</div>
+        <div class="stat-label">Total Tests</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Results grid -->
+    <div id="resultsArea">
+      <div class="empty">
+        <div class="empty-icon">🧪</div>
+        <div style="font-weight:600;margin-bottom:8px">No results yet</div>
+        <div style="font-size:.85rem">Click <strong>▶ Run All Tests</strong> to check all your apps</div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div style="margin-top:36px">
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;margin-bottom:14px;color:var(--muted)">
+        📋 Run History
+      </div>
+      <div class="history-list" id="historyList">
+        <div style="color:var(--muted);font-size:.85rem">No previous runs.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let running = false;
+
+async function runTests() {
+  if (running) return;
+  running = true;
+  const btn = document.getElementById('runBtn');
+  btn.innerHTML = '<span class="spinner"></span> Running…';
+  btn.disabled = true;
+
+  // Progress bar animation
+  const pw = document.getElementById('progressWrap');
+  const pb = document.getElementById('progressBar');
+  pw.style.display = 'block';
+  pb.style.width = '10%';
+  let prog = 10;
+  const progTimer = setInterval(() => {
+    prog = Math.min(prog + 3, 90);
+    pb.style.width = prog + '%';
+  }, 400);
+
+  // Clear results
+  document.getElementById('resultsArea').innerHTML = '<div style="color:var(--muted);font-size:.88rem;padding:8px 0">⏳ Testing all apps in parallel…</div>';
+
+  try {
+    const res = await fetch('/api/test-suite/run', { method: 'POST' });
+    const run = await res.json();
+
+    clearInterval(progTimer);
+    pb.style.width = '100%';
+    setTimeout(() => { pw.style.display = 'none'; pb.style.width = '0%'; }, 600);
+
+    renderResults(run);
+    updateSummary(run.summary);
+    document.getElementById('lastRanLabel').textContent = 'Just now · ' + formatTime(run.ran_at);
+    loadHistory();
+  } catch(e) {
+    clearInterval(progTimer);
+    pw.style.display = 'none';
+    document.getElementById('resultsArea').innerHTML = `<div style="color:var(--red);padding:12px">❌ Error running tests: ${e.message}</div>`;
+  }
+
+  btn.innerHTML = '▶ Run All Tests';
+  btn.disabled = false;
+  running = false;
+}
+
+function renderResults(run) {
+  const apps = run.apps || [];
+  if (!apps.length) {
+    document.getElementById('resultsArea').innerHTML = '<div class="empty"><div class="empty-icon">❓</div><div>No results returned.</div></div>';
+    return;
+  }
+  let html = '<div class="apps-grid">';
+  for (const app of apps) {
+    const allPass = app.ok;
+    html += `
+    <div class="app-card ${allPass ? 'pass' : 'fail'}">
+      <div class="app-card-header">
+        <span class="app-icon">${app.icon}</span>
+        <div>
+          <div class="app-name">${app.name}</div>
+          <div style="font-size:.72rem;color:var(--muted)">${app.url}</div>
+        </div>
+        <span class="app-score ${allPass ? 'all-pass' : 'has-fail'}">${app.passed}/${app.total}</span>
+      </div>
+      <div class="app-card-body">`;
+    for (const t of app.tests) {
+      const icon = t.passed ? '✅' : '❌';
+      html += `
+        <div class="test-row">
+          <span class="test-icon">${icon}</span>
+          <span class="test-label">${t.label}</span>
+          ${t.passed
+            ? `<span class="test-detail">${t.detail || ''}</span>`
+            : `<span class="test-error">${t.error || 'failed'}</span>`}
+        </div>`;
+    }
+    html += '</div></div>';
+  }
+  html += '</div>';
+  document.getElementById('resultsArea').innerHTML = html;
+}
+
+function updateSummary(s) {
+  if (!s) return;
+  document.getElementById('statApps').textContent   = s.apps_ok + '/' + s.apps_total;
+  document.getElementById('statPassed').textContent = s.total_passed;
+  document.getElementById('statFailed').textContent = s.total_failed;
+  document.getElementById('statTotal').textContent  = s.total_tests;
+}
+
+async function loadHistory() {
+  try {
+    const res = await fetch('/api/test-suite/runs');
+    const runs = await res.json();
+    const el = document.getElementById('historyList');
+    if (!runs.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.85rem">No previous runs.</div>'; return; }
+    el.innerHTML = runs.map(r => {
+      const s = r.summary || {};
+      const allPass = s.total_failed === 0 && s.total_tests > 0;
+      return `
+      <div class="history-item" onclick="loadRun(${r.id})">
+        <span class="dot ${allPass ? 'dot-green' : 'dot-red'}"></span>
+        <span class="history-time">${formatTime(r.ran_at)}</span>
+        <span class="history-summary" style="font-size:.83rem">
+          ${s.apps_ok || 0}/${s.apps_total || 0} apps &nbsp;·&nbsp;
+          <span style="color:var(--green)">${s.total_passed || 0} passed</span>
+          ${s.total_failed ? `&nbsp;·&nbsp;<span style="color:var(--red)">${s.total_failed} failed</span>` : ''}
+        </span>
+        <span class="history-badge ${allPass ? 'badge-pass' : 'badge-fail'}">${allPass ? '✓ PASS' : '✗ FAIL'}</span>
+      </div>`;
+    }).join('');
+  } catch(e) { /* ignore */ }
+}
+
+async function loadRun(runId) {
+  try {
+    const res = await fetch(`/api/test-suite/runs/${runId}`);
+    const run = await res.json();
+    renderResults(run);
+    updateSummary(run.summary);
+    document.getElementById('lastRanLabel').textContent = formatTime(run.ran_at);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch(e) { alert('Could not load run: ' + e.message); }
+}
+
+function formatTime(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso + (iso.endsWith('Z') ? '' : 'Z'));
+    return d.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  } catch { return iso; }
+}
+
+// Load history on page load
+loadHistory();
+</script>
+</body>
+</html>

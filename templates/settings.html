@@ -143,6 +143,7 @@
   <!-- ── PROFILE ── -->
   <div class="stab active" id="tab-profile">
     <form method="POST" action="/admin">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="card">
         <div class="section-title">Identity</div>
         <div class="section-sub">How you appear on your portfolio and to visitors</div>

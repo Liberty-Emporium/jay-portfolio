@@ -144,6 +144,7 @@
       {% endwith %}
 
       <form method="POST" action="/login">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
           <label>Password</label>
           <input type="password" name="password" placeholder="••••••••••••" autofocus autocomplete="current-password">

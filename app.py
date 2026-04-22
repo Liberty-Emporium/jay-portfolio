@@ -37,6 +37,34 @@ app.config['SESSION_COOKIE_HTTPONLY']    = True
 app.config['SESSION_COOKIE_SAMESITE']   = 'Lax'
 app.config['SESSION_COOKIE_SECURE']     = False  # Railway edge handles TLS
 
+# ── CSRF protection ───────────────────────────────────────────────────────────────
+def _get_csrf_token():
+    """Generate (or retrieve) a per-session CSRF token."""
+    if 'csrf_token' not in session:
+        session['csrf_token'] = _secrets.token_hex(32)
+    return session['csrf_token']
+
+def _validate_csrf():
+    """Return True if the CSRF token in the request matches the session token."""
+    token = (request.form.get('csrf_token')
+             or request.headers.get('X-CSRF-Token', ''))
+    return bool(token and token == session.get('csrf_token', ''))
+
+# Expose to all Jinja2 templates as {{ csrf_token() }}
+app.jinja_env.globals['csrf_token'] = _get_csrf_token
+
+def csrf_required(f):
+    """Decorator: reject form POST requests with missing/invalid CSRF token."""
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if request.method == 'POST' and not _validate_csrf():
+            if request.is_json or request.headers.get('Authorization', ''):
+                return f(*args, **kwargs)
+            return jsonify({'error': 'CSRF validation failed'}), 403
+        return f(*args, **kwargs)
+    return decorated
+
 # ── Security headers ─────────────────────────────────────────────────────────
 @app.after_request
 def security_headers(response):
@@ -251,6 +279,7 @@ def api_create_token():
     return jsonify({'token': raw, 'label': label, 'expires_at': expires_at}), 201
 
 @app.route('/login', methods=['GET', 'POST'])
+@csrf_required
 def login():
     error = None
     if request.method == 'POST':
@@ -693,6 +722,7 @@ def api_tickets_update(ticket_id):
 
 # Public ticket submission (no login required — for embedding in other apps)
 @app.route('/submit-ticket', methods=['GET', 'POST'])
+@csrf_required
 def submit_ticket():
     app_name = request.args.get('app', request.form.get('app', 'Unknown'))
     if request.method == 'POST':
@@ -747,6 +777,7 @@ def investors():
     return render_template('investors.html', config=config)
 
 @app.route('/investor-inquiry', methods=['POST'])
+@csrf_required
 def investor_inquiry():
     name = request.form.get('name', '').strip()
     email = request.form.get('email', '').strip()
@@ -769,6 +800,7 @@ def dashboard():
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
+@csrf_required
 def settings():
     global config
     if request.method == 'POST':
@@ -783,6 +815,7 @@ def settings():
     return render_template('settings.html', config=config)
 
 @app.route('/admin', methods=['GET', 'POST'])
+@csrf_required
 def admin():
     global config
     if request.method == 'POST':

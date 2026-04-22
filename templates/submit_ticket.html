@@ -24,6 +24,7 @@
   <h1>Get Help</h1>
   <p class="sub">Submit a support request and we'll get back to you fast.</p>
   <form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="app" value="{{ app_name }}">
     <label>Your Name</label>
     <input type="text" name="name" placeholder="Optional">

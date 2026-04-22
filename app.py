@@ -8,7 +8,7 @@ import time
 import threading
 import sqlite3
 from datetime import timedelta
-from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
 
 app = Flask(__name__)
@@ -218,7 +218,7 @@ def login_required(f):
         # Accept bearer token OR session cookie
         if check_bearer_token():
             return f(*args, **kwargs)
-        if not flask_session.get('dashboard_auth'):
+        if not session.get('dashboard_auth'):
             if request.is_json or request.path.startswith('/api/'):
                 return jsonify({'error': 'unauthorized'}), 401
             return redirect(url_for('login'))
@@ -285,15 +285,15 @@ def login():
     if request.method == 'POST':
         pw = request.form.get('password', '')
         if pw == get_dashboard_password():
-            flask_session['dashboard_auth'] = True
-            flask_session.permanent = True
+            session['dashboard_auth'] = True
+            session.permanent = True
             return redirect(url_for('dashboard'))
         error = 'Wrong password. Try again.'
     return render_template('login.html', error=error)
 
 @app.route('/logout')
 def logout():
-    flask_session.pop('dashboard_auth', None)
+    session.pop('dashboard_auth', None)
     return redirect(url_for('index'))
 
 # ── Echo Bridge (EcDash → Echo task queue) ───────────────────────────────────

@@ -846,6 +846,24 @@
 
       <div style="max-width:800px;display:flex;flex-direction:column;gap:1.25rem">
 
+        <div class="card" style="border-left:3px solid #06b6d4">
+          <div class="card-header"><div class="card-title">📆 Wed Apr 22, 2026 — Security + Mobile + Knowledge Session</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🚨 <strong>AI Agent Widget</strong> — Fixed critical <code>debug=True</code> in production (allowed arbitrary code execution)</li>
+            <li>🔐 <strong>FloodClaim Pro</strong> — Migrated passwords from SHA-256 → bcrypt (12 rounds) with transparent auto-upgrade on login</li>
+            <li>🛡️ <strong>FloodClaim Pro</strong> — Added login rate limiting (5 attempts/60s), full security headers (CSP, X-Frame, Referrer-Policy)</li>
+            <li>🛡️ <strong>EcDash + Contractor Pro</strong> — Added full security headers to both apps</li>
+            <li>🔒 <strong>FloodClaim + EcDash</strong> — CSRF protection on all form POST routes (15 + 5 routes, all form templates patched)</li>
+            <li>📱 <strong>All 5 apps</strong> — Mobile-first overhaul: no horizontal scroll anywhere, 40+ templates patched</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>html,body{overflow-x:hidden}</code>, tables scroll internally, inputs 16px (no iOS zoom), responsive images</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ EcDash: hamburger menu + slide-out sidebar on mobile; AI Widget: responsive nav</li>
+            <li>🧠 <strong>Echo Knowledge Base</strong> — Studied & documented 5 domains: Information Systems, Computer Engineering, Internet Services, Web Design, Web App Automation (19KB research file)</li>
+            <li>🔧 <strong>Dev tools installed</strong> — Playwright 1.58, pytest 9.0, httpx 0.28, black 26.3, alembic 1.18</li>
+            <li>📚 <strong>BOOTSTRAP.md + bootstrap.sh updated</strong> — all new tools reinstall automatically on every fresh boot</li>
+            <li>💾 <strong>GitLab backup</strong> — All changes synced to GitHub + GitLab mirror</li>
+          </ul>
+        </div>
+
         <div class="card" style="border-left:3px solid #ec4899">
           <div class="card-header"><div class="card-title">📆 Tue Apr 21, 2026 — Late Session</div></div>
           <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">

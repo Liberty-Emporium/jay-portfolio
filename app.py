@@ -37,6 +37,20 @@ app.config['SESSION_COOKIE_HTTPONLY']    = True
 app.config['SESSION_COOKIE_SAMESITE']   = 'Lax'
 app.config['SESSION_COOKIE_SECURE']     = False  # Railway edge handles TLS
 
+# ── Security headers ─────────────────────────────────────────────────────────
+@app.after_request
+def security_headers(response):
+    response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.setdefault('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
+    response.headers.setdefault(
+        'Content-Security-Policy',
+        "default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval';"
+    )
+    return response
+
 # ── Paths ─────────────────────────────────────────────────────────────────────
 _DATA_DIR    = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', os.path.dirname(__file__))
 CONFIG_FILE  = os.path.join(os.path.dirname(__file__), 'config.json')

@@ -503,6 +503,25 @@ def brain_save(filename):
 
 # ── Echo chat ─────────────────────────────────────────────────────────────────
 
+
+@app.route('/api/brain/sync', methods=['POST'])
+def brain_sync():
+    """Receive brain push from AI Agent Widget. Token-protected, no session required."""
+    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
+    if not sync_token:
+        return jsonify({'error': 'sync not configured'}), 503
+    auth = request.headers.get('X-Brain-Sync-Token', '')
+    if not auth or auth != sync_token:
+        return jsonify({'error': 'unauthorized'}), 401
+    data = request.get_json(silent=True) or {}
+    allowed = {'IDENTITY.md', 'SOUL.md', 'MEMORY.md'}
+    saved = []
+    for filename, content in data.items():
+        if filename in allowed:
+            save_brain_file(filename, content or '')
+            saved.append(filename)
+    return jsonify({'ok': True, 'synced': saved})
+
 @app.route('/chat')
 @login_required
 def chat():

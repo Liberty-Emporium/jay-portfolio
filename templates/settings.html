@@ -127,7 +127,7 @@
 
 <div class="content">
   <div class="page-title">Settings</div>
-  <div class="page-sub">Manage your profile, AI behavior, API keys, and app network</div>
+  <div class="page-sub">Manage your profile, API keys, and app network</div>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}{% for cat,msg in messages %}
@@ -138,9 +138,7 @@
   <!-- Nav tabs -->
   <div class="settings-nav">
     <button class="snav-item active" onclick="showTab('profile')">👤 Profile</button>
-    <button class="snav-item" onclick="showTab('ai')">🤖 AI Behavior</button>
     <button class="snav-item" onclick="showTab('apikeys')">🔑 API Keys</button>
-    <button class="snav-item" onclick="showTab('brain')">🧠 Echo's Brain</button>
     <button class="snav-item" onclick="showTab('network')">🌐 App Network</button>
   </div>
 
@@ -222,8 +220,9 @@
     </div>
   </div>
 
-  <!-- ── AI BEHAVIOR ── -->
-  <div class="stab" id="tab-ai">
+  <!-- ── AI BEHAVIOR — REMOVED ── -->
+  <!-- tab-ai removed per Jay: AI behavior managed via AI Agent Widget -->
+  <div class="stab" id="tab-ai" style="display:none!important">
     <div class="card">
       <div class="section-title">Echo Identity</div>
       <div class="section-sub">How Echo introduces and behaves in your dashboard chat</div>
@@ -439,8 +438,9 @@ Always refer to yourself as EcDash. Never mention OpenAI, Anthropic, or any unde
     </div>
   </div>
 
-  <!-- ── ECHO'S BRAIN ── -->
-  <div class="stab" id="tab-brain">
+  <!-- ── ECHO'S BRAIN — REMOVED ── -->
+  <!-- tab-brain removed per Jay: brain managed via AI Agent Widget at ai-agent-widget-production.up.railway.app -->
+  <div class="stab" id="tab-brain" style="display:none!important">
     <div class="card highlight" style="margin-bottom:20px">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
         <div style="font-size:2.5rem">🧠</div>

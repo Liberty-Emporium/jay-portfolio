@@ -1084,6 +1084,308 @@ def api_test_suite_run_get(run_id):
     return jsonify({'error': 'not found'}), 404
 
 
+
+# =============================================================================
+# ECHO MONITORING SYSTEM
+# Receives health pings + error reports from all Liberty-Emporium apps
+# Writes a memory file to GitHub so Echo knows app status on every reboot
+# =============================================================================
+
+import sqlite3 as _sqlite3
+
+MONITOR_DB_PATH = os.path.join(_DATA_DIR, 'monitor.db')
+
+def get_monitor_db():
+    db = _sqlite3.connect(MONITOR_DB_PATH)
+    db.row_factory = _sqlite3.Row
+    db.execute('PRAGMA journal_mode=WAL')
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS health_pings (
+            id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            app      TEXT NOT NULL,
+            status   TEXT NOT NULL DEFAULT 'ok',
+            details  TEXT DEFAULT '{}',
+            ts       TEXT NOT NULL
+        )
+    """)
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS error_log (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            app        TEXT NOT NULL,
+            error      TEXT NOT NULL,
+            traceback  TEXT,
+            route      TEXT,
+            user_id    TEXT,
+            extra      TEXT DEFAULT '{}',
+            ts         TEXT NOT NULL,
+            resolved   INTEGER DEFAULT 0
+        )
+    """)
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS slow_log (
+            id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            app      TEXT NOT NULL,
+            route    TEXT,
+            elapsed  REAL,
+            status   INTEGER,
+            ts       TEXT NOT NULL
+        )
+    """)
+    db.commit()
+    return db
+
+def _reporter_auth(req):
+    """Validate the X-Reporter-Token header."""
+    token = os.environ.get('ECDASH_REPORTER_TOKEN', '')
+    if not token:
+        return False
+    return req.headers.get('X-Reporter-Token', '') == token
+
+# ── Ingest: health ping ───────────────────────────────────────────────────────
+@app.route('/api/monitor/health', methods=['POST'])
+def monitor_health_ingest():
+    if not _reporter_auth(request):
+        return jsonify({'error': 'unauthorized'}), 401
+    d = request.get_json(silent=True) or {}
+    db = get_monitor_db()
+    db.execute(
+        "INSERT INTO health_pings (app, status, details, ts) VALUES (?,?,?,?)",
+        (d.get('app','unknown'), d.get('status','ok'),
+         json.dumps(d.get('details',{})), d.get('ts', datetime.utcnow().isoformat()))
+    )
+    # Keep only last 500 pings per app
+    db.execute("""
+        DELETE FROM health_pings WHERE id NOT IN (
+            SELECT id FROM health_pings WHERE app=? ORDER BY id DESC LIMIT 500
+        ) AND app=?
+    """, (d.get('app'), d.get('app')))
+    db.commit()
+    # Async: push memory to GitHub every 50 pings
+    _maybe_push_memory_async()
+    return jsonify({'ok': True})
+
+# ── Ingest: error report ──────────────────────────────────────────────────────
+@app.route('/api/monitor/error', methods=['POST'])
+def monitor_error_ingest():
+    if not _reporter_auth(request):
+        return jsonify({'error': 'unauthorized'}), 401
+    d = request.get_json(silent=True) or {}
+    db = get_monitor_db()
+    db.execute(
+        "INSERT INTO error_log (app, error, traceback, route, user_id, extra, ts) VALUES (?,?,?,?,?,?,?)",
+        (d.get('app','unknown'), d.get('error',''), d.get('traceback',''),
+         d.get('route'), d.get('user_id'), json.dumps(d.get('extra',{})),
+         d.get('ts', datetime.utcnow().isoformat()))
+    )
+    db.commit()
+    # Always push memory on error — Jay needs to know ASAP
+    threading.Thread(target=_push_memory_to_github, daemon=True).start()
+    return jsonify({'ok': True})
+
+# ── Ingest: slow request ──────────────────────────────────────────────────────
+@app.route('/api/monitor/slow', methods=['POST'])
+def monitor_slow_ingest():
+    if not _reporter_auth(request):
+        return jsonify({'error': 'unauthorized'}), 401
+    d = request.get_json(silent=True) or {}
+    db = get_monitor_db()
+    db.execute(
+        "INSERT INTO slow_log (app, route, elapsed, status, ts) VALUES (?,?,?,?,?)",
+        (d.get('app','unknown'), d.get('route'), d.get('elapsed'),
+         d.get('status'), d.get('ts', datetime.utcnow().isoformat()))
+    )
+    db.commit()
+    return jsonify({'ok': True})
+
+# ── Monitoring dashboard page ─────────────────────────────────────────────────
+@app.route('/monitoring')
+@login_required
+def monitoring():
+    db = get_monitor_db()
+
+    # Last ping per app
+    app_status = {}
+    rows = db.execute("""
+        SELECT app, status, ts, details FROM health_pings
+        WHERE id IN (SELECT MAX(id) FROM health_pings GROUP BY app)
+        ORDER BY app
+    """).fetchall()
+    for r in rows:
+        app_status[r['app']] = {
+            'status': r['status'],
+            'ts': r['ts'],
+            'details': json.loads(r['details'] or '{}')
+        }
+
+    # Recent errors (last 50, unresolved first)
+    errors = db.execute("""
+        SELECT * FROM error_log ORDER BY resolved ASC, id DESC LIMIT 50
+    """).fetchall()
+
+    # Error counts per app (last 24h)
+    error_counts = {}
+    rows2 = db.execute("""
+        SELECT app, COUNT(*) as cnt FROM error_log
+        WHERE ts >= datetime('now', '-1 day')
+        GROUP BY app
+    """).fetchall()
+    for r in rows2:
+        error_counts[r['app']] = r['cnt']
+
+    # Slow request count per app (last 24h)
+    slow_counts = {}
+    rows3 = db.execute("""
+        SELECT app, COUNT(*) as cnt FROM slow_log
+        WHERE ts >= datetime('now', '-1 day')
+        GROUP BY app
+    """).fetchall()
+    for r in rows3:
+        slow_counts[r['app']] = r['cnt']
+
+    return render_template('monitoring.html',
+        app_status=app_status,
+        errors=errors,
+        error_counts=error_counts,
+        slow_counts=slow_counts,
+        config=config
+    )
+
+# ── Resolve error ─────────────────────────────────────────────────────────────
+@app.route('/api/monitor/resolve/<int:error_id>', methods=['POST'])
+@login_required
+def monitor_resolve(error_id):
+    db = get_monitor_db()
+    db.execute("UPDATE error_log SET resolved=1 WHERE id=?", (error_id,))
+    db.commit()
+    return jsonify({'ok': True})
+
+# ── Manual GitHub memory push ─────────────────────────────────────────────────
+@app.route('/api/monitor/push-memory', methods=['POST'])
+@login_required
+def monitor_push_memory():
+    threading.Thread(target=_push_memory_to_github, daemon=True).start()
+    return jsonify({'ok': True, 'msg': 'Memory push started'})
+
+# ── GitHub memory push logic ──────────────────────────────────────────────────
+_last_push_time = 0
+_push_counter   = 0
+
+def _maybe_push_memory_async():
+    """Push to GitHub at most once every 5 minutes."""
+    global _push_counter
+    _push_counter += 1
+    if _push_counter % 50 == 0:
+        threading.Thread(target=_push_memory_to_github, daemon=True).start()
+
+def _push_memory_to_github():
+    """Write app-status.md to the echo-v1 GitHub repo so Echo sees it on next boot."""
+    global _last_push_time
+    now = time.time()
+    if now - _last_push_time < 60:  # max once per minute
+        return
+    _last_push_time = now
+
+    gh_token = os.environ.get('GITHUB_TOKEN', '')
+    if not gh_token:
+        return
+
+    try:
+        db = get_monitor_db()
+
+        # Build the markdown content
+        lines = []
+        lines.append("# App Network Status")
+        lines.append(f"_Auto-generated by EcDash · {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}_")
+        lines.append("")
+
+        # Health table
+        lines.append("## App Health")
+        lines.append("| App | Status | Last Seen |")
+        lines.append("|-----|--------|-----------|")
+        rows = db.execute("""
+            SELECT app, status, ts FROM health_pings
+            WHERE id IN (SELECT MAX(id) FROM health_pings GROUP BY app)
+            ORDER BY app
+        """).fetchall()
+        for r in rows:
+            icon = "✅" if r['status'] == 'ok' else "🔴"
+            lines.append(f"| {r['app']} | {icon} {r['status']} | {r['ts'][:16]} |")
+        if not rows:
+            lines.append("| — | No pings received yet | — |")
+
+        lines.append("")
+
+        # Recent unresolved errors
+        errors = db.execute("""
+            SELECT app, error, route, ts FROM error_log
+            WHERE resolved=0
+            ORDER BY id DESC LIMIT 20
+        """).fetchall()
+
+        if errors:
+            lines.append("## ⚠️ Active Errors (needs attention)")
+            for e in errors:
+                lines.append(f"- **{e['app']}** | `{e['route'] or 'unknown route'}` | {e['ts'][:16]}")
+                lines.append(f"  > {e['error'][:200]}")
+        else:
+            lines.append("## ✅ No Active Errors")
+            lines.append("All apps reporting clean.")
+
+        lines.append("")
+
+        # 24h error counts
+        counts = db.execute("""
+            SELECT app, COUNT(*) as cnt FROM error_log
+            WHERE ts >= datetime('now', '-1 day') AND resolved=0
+            GROUP BY app ORDER BY cnt DESC
+        """).fetchall()
+        if counts:
+            lines.append("## Error Count (last 24h)")
+            for c in counts:
+                lines.append(f"- {c['app']}: {c['cnt']} error(s)")
+            lines.append("")
+
+        content = "\n".join(lines)
+
+        # GitHub API: get current file SHA if it exists
+        api_base = "https://api.github.com/repos/Liberty-Emporium/echo-v1/contents/memory/app-status.md"
+        headers  = {
+            "Authorization": f"token {gh_token}",
+            "Accept":        "application/vnd.github.v3+json",
+            "Content-Type":  "application/json",
+        }
+
+        sha = None
+        try:
+            get_req = urllib.request.Request(api_base, headers=headers, method='GET')
+            with urllib.request.urlopen(get_req, timeout=8) as resp:
+                existing = json.loads(resp.read())
+                sha = existing.get('sha')
+        except Exception:
+            pass  # File doesn't exist yet — that's fine
+
+        import base64 as _b64
+        payload = {
+            "message": f"chore: update app-status.md [{datetime.utcnow().strftime('%H:%M UTC')}]",
+            "content": _b64.b64encode(content.encode('utf-8')).decode('utf-8'),
+            "branch":  "main",
+        }
+        if sha:
+            payload["sha"] = sha
+
+        put_req = urllib.request.Request(
+            api_base,
+            data=json.dumps(payload).encode('utf-8'),
+            headers=headers,
+            method='PUT'
+        )
+        with urllib.request.urlopen(put_req, timeout=10):
+            pass
+
+    except Exception:
+        pass  # Never crash EcDash over a memory push
+
+
 if __name__ == '__main__':
     if not os.path.exists(CONFIG_FILE):
         save_config(DEFAULT_CONFIG)

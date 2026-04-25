@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Network Monitor — EcDash</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html,body{overflow-x:hidden!important;max-width:100%;}
+    :root{
+      --bg:#030712;--bg2:#0a0f1a;--card:#111827;--card2:#161f2e;
+      --border:#1f2937;--accent:#6366f1;--accent2:#8b5cf6;--accent3:#a78bfa;
+      --green:#10b981;--yellow:#f59e0b;--red:#ef4444;--text:#f9fafb;--muted:#9ca3af;
+      --grad:linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .topbar-left{display:flex;align-items:center;gap:12px;}
+    .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;}
+    .back-btn{color:var(--muted);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .2s;}
+    .back-btn:hover{color:var(--text);}
+
+    .content{max-width:1200px;margin:0 auto;padding:32px;}
+    .page-title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;margin-bottom:6px;}
+    .page-sub{color:var(--muted);font-size:.88rem;margin-bottom:32px;}
+
+    /* ── App Health Grid ── */
+    .health-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:32px;}
+    .health-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;transition:all .2s;}
+    .health-card.ok{border-color:rgba(16,185,129,.3);}
+    .health-card.error{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.04);}
+    .health-card.unknown{border-color:var(--border);}
+    .health-app-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem;margin-bottom:6px;}
+    .health-ts{font-size:.72rem;color:var(--muted);}
+    .health-badge{position:absolute;top:16px;right:16px;display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:20px;}
+    .badge-ok{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.25);}
+    .badge-error{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+    .badge-unknown{background:rgba(156,163,175,.1);color:var(--muted);border:1px solid var(--border);}
+    .health-counts{display:flex;gap:12px;margin-top:12px;}
+    .hcount{font-size:.75rem;color:var(--muted);}
+    .hcount span{font-weight:700;color:var(--text);}
+    .hcount.has-errors span{color:var(--red);}
+
+    .dot-pulse{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+    .dp-green{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+    .dp-red{background:var(--red);}
+    .dp-grey{background:#374151;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+    /* ── No apps yet ── */
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-state .icon{font-size:3rem;margin-bottom:16px;}
+    .empty-state h3{font-size:1.1rem;font-weight:600;margin-bottom:8px;color:var(--text);}
+    .empty-state p{font-size:.85rem;line-height:1.6;}
+
+    /* ── Section header ── */
+    .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .section-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;}
+    .section-sub{font-size:.78rem;color:var(--muted);}
+
+    /* ── Error log table ── */
+    .error-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+    .error-table th{text-align:left;padding:10px 14px;background:var(--card2);color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);}
+    .error-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+    .error-table tr:hover td{background:rgba(255,255,255,.02);}
+    .error-table tr.resolved td{opacity:.4;}
+    .app-chip{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;background:rgba(99,102,241,.15);color:var(--accent3);border:1px solid rgba(99,102,241,.2);}
+    .error-msg{color:#f87171;font-family:monospace;font-size:.8rem;max-width:360px;white-space:pre-wrap;word-break:break-all;}
+    .route-tag{font-family:monospace;font-size:.75rem;color:var(--muted);background:var(--card2);padding:2px 6px;border-radius:4px;}
+    .ts-cell{font-size:.72rem;color:var(--muted);white-space:nowrap;}
+    .resolve-btn{padding:4px 12px;border-radius:6px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+    .resolve-btn:hover{border-color:var(--green);color:var(--green);}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px;overflow:hidden;}
+
+    /* ── Action bar ── */
+    .action-bar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+    .btn{padding:9px 18px;border-radius:10px;font-weight:600;font-size:.82rem;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-primary{background:var(--grad);color:white;}
+    .btn-primary:hover{opacity:.9;transform:translateY(-1px);}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--text);}
+
+    /* ── Install guide ── */
+    .install-card{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(139,92,246,.06));border:1px solid rgba(99,102,241,.25);border-radius:14px;padding:24px;margin-bottom:24px;}
+    .install-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:8px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .install-steps{list-style:none;padding:0;}
+    .install-steps li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.83rem;color:var(--muted);}
+    .install-steps li:last-child{border:none;}
+    .step-num{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;width:24px;flex-shrink:0;}
+    code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.8rem;color:var(--accent3);}
+    pre{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:.78rem;color:var(--accent3);overflow-x:auto;margin-top:10px;line-height:1.7;}
+
+    @media(max-width:768px){
+      .content{padding:16px;}
+      .health-grid{grid-template-columns:1fr;}
+      .error-table{font-size:.75rem;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="/dashboard" class="back-btn">← Dashboard</a>
+    <span style="color:var(--border)">|</span>
+    <div class="topbar-title">📡 App Network Monitor</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span style="font-size:.75rem;color:var(--muted)">Auto-refreshes every 60s</span>
+    <button class="btn btn-ghost" onclick="location.reload()">🔄 Refresh</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-title">App Network Monitor</div>
+  <div class="page-sub">Real-time health and error tracking across all Liberty-Emporium apps</div>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="pushMemory()">🧠 Push Status to Echo's Memory</button>
+    <a href="/dashboard" class="btn btn-ghost">← Dashboard</a>
+  </div>
+
+  <!-- ── App Health Cards ── -->
+  <div class="section-hdr">
+    <div>
+      <div class="section-title">App Health</div>
+      <div class="section-sub">Last ping received from each app</div>
+    </div>
+  </div>
+
+  {% if app_status %}
+    <div class="health-grid">
+      {% for app_name, info in app_status.items() %}
+        {% set is_ok = info.status == 'ok' %}
+        {% set err_count = error_counts.get(app_name, 0) %}
+        {% set slow_count = slow_counts.get(app_name, 0) %}
+        <div class="health-card {{ 'ok' if is_ok and err_count == 0 else 'error' if err_count > 0 else 'ok' }}">
+          <div class="health-badge {{ 'badge-ok' if is_ok else 'badge-error' }}">
+            <span class="dot-pulse {{ 'dp-green' if is_ok else 'dp-red' }}"></span>
+            {{ info.status.upper() }}
+          </div>
+          <div class="health-app-name">{{ app_name }}</div>
+          <div class="health-ts">Last seen: {{ info.ts[:16].replace('T',' ') }} UTC</div>
+          <div class="health-counts">
+            <div class="hcount {{ 'has-errors' if err_count > 0 else '' }}">
+              Errors (24h): <span>{{ err_count }}</span>
+            </div>
+            <div class="hcount">
+              Slow req (24h): <span>{{ slow_count }}</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state" style="margin-bottom:32px;">
+      <div class="icon">📡</div>
+      <h3>No apps reporting yet</h3>
+      <p>Install echo_reporter.py in your apps to start seeing health data here.</p>
+    </div>
+  {% endif %}
+
+  <!-- ── Install Guide ── -->
+  <div class="install-card">
+    <div class="install-title">📦 How to add monitoring to any app</div>
+    <ol class="install-steps">
+      <li><span class="step-num">1.</span><span>Copy <code>echo_reporter.py</code> into the app's root folder (same level as app.py)</span></li>
+      <li><span class="step-num">2.</span><span>Add 2 lines to the app's <code>app.py</code> — right after <code>app = Flask(__name__)</code>:</span></li>
+      <li><span class="step-num">3.</span><span>Set 2 env vars in Railway for that app service</span></li>
+    </ol>
+    <pre>from echo_reporter import install_reporter
+install_reporter(app, 'Your App Name Here')</pre>
+    <div style="margin-top:16px;font-size:.82rem;color:var(--muted);">
+      Railway env vars to add to each app:
+      <pre>ECDASH_REPORTER_URL   = https://jay-portfolio-production.up.railway.app
+ECDASH_REPORTER_TOKEN = (your shared token — same for all apps)</pre>
+    </div>
+    <div style="margin-top:12px;font-size:.8rem;color:var(--muted);">
+      Also add <code>GITHUB_TOKEN</code> and <code>ECDASH_REPORTER_TOKEN</code> to <strong>this EcDash service</strong> so it can write Echo's memory to GitHub.
+    </div>
+  </div>
+
+  <!-- ── Error Log ── -->
+  <div class="card">
+    <div class="section-hdr" style="margin-bottom:20px;">
+      <div>
+        <div class="section-title">⚠️ Error Log</div>
+        <div class="section-sub">Last 50 errors — unresolved first. Click Resolve when fixed.</div>
+      </div>
+      <span style="font-size:.75rem;color:var(--muted);">
+        {{ errors|selectattr('resolved','equalto',0)|list|length }} unresolved
+      </span>
+    </div>
+
+    {% if errors %}
+      <div style="overflow-x:auto;">
+        <table class="error-table">
+          <thead>
+            <tr>
+              <th>App</th>
+              <th>Error</th>
+              <th>Route</th>
+              <th>Time</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="error-tbody">
+            {% for e in errors %}
+            <tr class="{{ 'resolved' if e['resolved'] else '' }}" id="erow-{{ e['id'] }}">
+              <td><span class="app-chip">{{ e['app'] }}</span></td>
+              <td><div class="error-msg">{{ e['error'][:200] }}</div></td>
+              <td>{% if e['route'] %}<span class="route-tag">{{ e['route'] }}</span>{% else %}<span style="color:#374151">—</span>{% endif %}</td>
+              <td class="ts-cell">{{ e['ts'][:16].replace('T',' ') }}</td>
+              <td>
+                {% if not e['resolved'] %}
+                  <button class="resolve-btn" onclick="resolveError({{ e['id'] }})">✓ Resolve</button>
+                {% else %}
+                  <span style="font-size:.72rem;color:#374151;">resolved</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="text-align:center;padding:40px;color:var(--muted);">
+        <div style="font-size:2rem;margin-bottom:12px;">✅</div>
+        <div style="font-weight:600;margin-bottom:4px;">No errors logged yet</div>
+        <div style="font-size:.82rem;">Once apps are reporting, errors will appear here automatically.</div>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+// Auto-refresh every 60 seconds
+setTimeout(() => location.reload(), 60000);
+
+async function resolveError(id) {
+  try {
+    const r = await fetch('/api/monitor/resolve/' + id, {method:'POST', credentials:'include'});
+    if (r.ok) {
+      const row = document.getElementById('erow-' + id);
+      if (row) {
+        row.classList.add('resolved');
+        const btn = row.querySelector('.resolve-btn');
+        if (btn) btn.outerHTML = '<span style="font-size:.72rem;color:#374151;">resolved</span>';
+      }
+    }
+  } catch(e) { alert('Failed to resolve: ' + e); }
+}
+
+async function pushMemory() {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '⏳ Pushing...';
+  try {
+    const r = await fetch('/api/monitor/push-memory', {method:'POST', credentials:'include'});
+    const d = await r.json();
+    btn.textContent = '✅ Pushed to GitHub!';
+    setTimeout(() => { btn.textContent = '🧠 Push Status to Echo\'s Memory'; btn.disabled = false; }, 3000);
+  } catch(e) {
+    btn.textContent = '❌ Failed';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

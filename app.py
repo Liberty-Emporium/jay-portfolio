@@ -13,6 +13,29 @@ from functools import wraps
 
 from echo_reporter import install_reporter  # Echo monitoring
 app = Flask(__name__)
+
+def _get_secret_key():
+    env_key = os.environ.get('SECRET_KEY')
+    if env_key:
+        return env_key
+    data_dir = os.environ.get('RAILWAY_DATA_DIR') or os.environ.get('DATA_DIR') or '/data'
+    key_file = os.path.join(data_dir, 'secret_key')
+    try:
+        os.makedirs(data_dir, exist_ok=True)
+        if os.path.exists(key_file):
+            with open(key_file) as f:
+                key = f.read().strip()
+            if key:
+                return key
+        import secrets as _sec
+        key = _sec.token_hex(32)
+        with open(key_file, 'w') as f:
+            f.write(key)
+        return key
+    except Exception:
+        import secrets as _sec
+        return _sec.token_hex(32)
+
 install_reporter(app, "EcDash")
 
 # ── Stable secret key (survives redeploys) ────────────────────────────────────
@@ -31,7 +54,7 @@ if not _SECRET_KEY:
     except Exception:
         import secrets as _s
         _SECRET_KEY = _s.token_hex(32)
-app.secret_key = _SECRET_KEY
+app.secret_key = _get_secret_key()
 
 # ── Session config ────────────────────────────────────────────────────────────
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)

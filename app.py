@@ -412,6 +412,7 @@ APPS_REGISTRY = [
     {'name': 'Consignment Solutions', 'url': 'https://web-production-43ce4.up.railway.app'},
     {'name': 'FloodClaim Pro',         'url': 'https://billy-floods.up.railway.app'},
     {'name': 'Liberty Oil & Propane',  'url': 'https://liberty-oil-propane.up.railway.app'},
+    {'name': 'Alexander AI Voice',      'url': 'https://alexander-ai-voice-landing-production.up.railway.app'},
 ]
 
 def ping_app(app_entry, results):

@@ -476,7 +476,15 @@ def check_all_apps():
 @app.route('/health', methods=['GET'])
 def health_check():
     """Public health endpoint — used by self-check and Railway health probes."""
-    return jsonify({'status': 'ok'})
+    db_status = 'ok'
+    try:
+        import sqlite3 as _s3
+        conn = _s3.connect(CHAT_DB_PATH)
+        conn.execute('SELECT 1')
+        conn.close()
+    except Exception:
+        db_status = 'error'
+    return jsonify({'status': 'ok', 'db': db_status})
 
 @app.route('/api/health', methods=['GET'])
 @login_required

@@ -79,6 +79,20 @@ def _validate_csrf():
 app.jinja_env.globals['csrf_token'] = _get_csrf_token
 
 
+# In-memory rate limiter
+_rate_store: dict = {}
+
+def rate_limit(key, max_calls=30, window=60):
+    """Return True if key has exceeded max_calls within window seconds."""
+    now = time.time()
+    calls = [t for t in _rate_store.get(key, []) if now - t < window]
+    _rate_store[key] = calls
+    if len(calls) >= max_calls:
+        return True
+    _rate_store[key].append(now)
+    return False
+
+
 @app.before_request
 def _csrf_protect():
     """Enforce CSRF on all state-changing requests."""

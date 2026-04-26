@@ -11,7 +11,9 @@ from datetime import timedelta
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
 
+from echo_reporter import install_reporter  # Echo monitoring
 app = Flask(__name__)
+install_reporter(app, "EcDash")
 
 # ── Stable secret key (survives redeploys) ────────────────────────────────────
 _SECRET_KEY = os.environ.get('SECRET_KEY', '')

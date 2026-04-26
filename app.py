@@ -402,7 +402,7 @@ def api_settings_save():
 
 # ── App health checker ────────────────────────────────────────────────────────
 APPS_REGISTRY = [
-    {'name': 'Jay Portfolio',         'url': 'https://jay-portfolio-production.up.railway.app'},
+    {'name': 'Jay Portfolio',         'url': 'http://127.0.0.1:' + os.environ.get('PORT', '5000')},  # self-check via loopback
     {'name': 'Liberty Inventory',     'url': 'https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app'},
     {'name': 'Inventory Demo',        'url': 'https://liberty-emporium-inventory-demo-app-production.up.railway.app'},
     {'name': 'Keep Your Secrets',     'url': 'https://ai-api-tracker-production.up.railway.app'},
@@ -438,6 +438,11 @@ def check_all_apps():
     name_order = {a['name']: i for i, a in enumerate(APPS_REGISTRY)}
     results.sort(key=lambda x: name_order.get(x['name'], 99))
     return results
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Public health endpoint — used by self-check and Railway health probes."""
+    return jsonify({'status': 'ok'})
 
 @app.route('/api/health', methods=['GET'])
 @login_required

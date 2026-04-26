@@ -402,7 +402,6 @@ def api_settings_save():
 
 # ── App health checker ────────────────────────────────────────────────────────
 APPS_REGISTRY = [
-    {'name': 'Jay Portfolio',         'url': 'https://jay-portfolio-production.up.railway.app/health'},  # lightweight self-check via /health
     {'name': 'Liberty Inventory',     'url': 'https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app'},
     {'name': 'Inventory Demo',        'url': 'https://liberty-emporium-inventory-demo-app-production.up.railway.app'},
     {'name': 'Keep Your Secrets',     'url': 'https://ai-api-tracker-production.up.railway.app'},

@@ -1317,6 +1317,15 @@
           </div>
         </div>
 
+        <!-- Sweet Spot Employees (live from Cakely API) -->
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-header">
+            <div class="card-title">🍰 Sweet Spot — Employee PINs</div>
+            <button class="btn btn-sm btn-ghost" onclick="loadSweetSpotEmployees()">🔄 Refresh</button>
+          </div>
+          <div id="ss-emp-table" style="font-size:.85rem;color:var(--muted);text-align:center;padding:16px 0">Loading...</div>
+        </div>
+
         <div class="card" style="border:1px solid rgba(52,211,153,.2);background:rgba(52,211,153,0.03)">
           <div class="card-header"><div class="card-title">✅ All Apps Accounted For</div></div>
           <div style="font-size:0.85rem;line-height:2;color:#94a3b8">
@@ -1617,6 +1626,71 @@ function sendBridgeTask() {
     input.disabled = false;
   });
 }
+
+// ── Sweet Spot Employee PINs ──
+function loadSweetSpotEmployees() {
+  const el = document.getElementById('ss-emp-table');
+  if (!el) return;
+  el.innerHTML = '<div style="color:var(--muted);font-size:.83rem;text-align:center;padding:12px 0">Loading employees...</div>';
+  fetch('/api/sweet-spot-employees')
+    .then(r => r.json())
+    .then(data => {
+      const emps = data.employees || [];
+      if (!emps.length) {
+        el.innerHTML = '<div style="color:var(--muted);font-size:.83rem;text-align:center;padding:12px 0">No employees found.</div>';
+        return;
+      }
+      el.innerHTML = `
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:.83rem">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Name</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Role</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Email</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Phone</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Rate</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Clock-In PIN</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${emps.map((e,i) => `
+                <tr style="border-bottom:1px solid rgba(31,41,55,.6);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background=''">
+                  <td style="padding:9px 12px;font-weight:600">${escHtml(e.name)}</td>
+                  <td style="padding:9px 12px;color:var(--muted)">${escHtml(e.role)}</td>
+                  <td style="padding:9px 12px;color:var(--muted);font-size:.78rem">${escHtml(e.email||'—')}</td>
+                  <td style="padding:9px 12px;color:var(--muted);font-size:.78rem">${escHtml(e.phone||'—')}</td>
+                  <td style="padding:9px 12px">$${parseFloat(e.hourly_rate||0).toFixed(2)}/hr</td>
+                  <td style="padding:9px 12px">
+                    ${e.pin_plain ? `
+                      <div class="pw-row">
+                        <span class="pw-val" data-pw="${escHtml(e.pin_plain)}">${'•'.repeat(e.pin_plain.length)}</span>
+                        <button class="pw-btn" onclick="togglePw(this)">&#128065; Show</button>
+                        <button class="pw-btn" onclick="copyPw(this)">&#128203; Copy</button>
+                      </div>` : '<span style="color:var(--muted)">—</span>'}
+                  </td>
+                  <td style="padding:9px 12px">${e.clocked_in_at
+                    ? '<span style="color:var(--green);font-size:.75rem;font-weight:600">🟢 In</span>'
+                    : '<span style="color:var(--muted);font-size:.75rem">⭕ Out</span>'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    })
+    .catch(e => {
+      el.innerHTML = '<div style="color:var(--red);font-size:.83rem;text-align:center;padding:12px 0">Could not load employees — ' + e.message + '</div>';
+    });
+}
+
+// Auto-load employees when credentials panel opens
+const _origShowPanel = showPanel;
+window.showPanel = function(id) {
+  _origShowPanel.call(this, id);
+  if (id === 'credentials') loadSweetSpotEmployees();
+};
 
 // ── Stats responsive tweak ──
 (function() {

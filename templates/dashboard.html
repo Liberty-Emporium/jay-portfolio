@@ -1317,6 +1317,15 @@
           </div>
         </div>
 
+        <!-- Sweet Spot Login Credentials (live from Cakely API) -->
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-header">
+            <div class="card-title">🔐 Sweet Spot — Login Credentials</div>
+            <button class="btn btn-sm btn-ghost" onclick="loadSweetSpotUsers()">🔄 Refresh</button>
+          </div>
+          <div id="ss-users-table" style="font-size:.85rem;color:var(--muted);text-align:center;padding:16px 0">Loading...</div>
+        </div>
+
         <!-- Sweet Spot Employees (live from Cakely API) -->
         <div class="card" style="grid-column:1/-1">
           <div class="card-header">
@@ -1627,6 +1636,65 @@ function sendBridgeTask() {
   });
 }
 
+// ── Sweet Spot Login Credentials ──
+function loadSweetSpotUsers() {
+  const el = document.getElementById('ss-users-table');
+  if (!el) return;
+  el.innerHTML = '<div style="color:var(--muted);font-size:.83rem;text-align:center;padding:12px 0">Loading...</div>';
+  fetch('/api/sweet-spot-users')
+    .then(r => r.json())
+    .then(data => {
+      const users = data.users || [];
+      if (!users.length) {
+        el.innerHTML = '<div style="color:var(--muted);font-size:.83rem;text-align:center;padding:12px 0">No users found.</div>';
+        return;
+      }
+      const roleColor = r => r === 'admin' ? 'var(--red)' : r === 'manager' ? 'var(--yellow)' : 'var(--muted)';
+      el.innerHTML = `
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:.83rem">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Name</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Email (Login)</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Role</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Password</th>
+                <th style="text-align:left;padding:7px 12px;font-weight:600">Active</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${users.map(u => `
+                <tr style="border-bottom:1px solid rgba(31,41,55,.6);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background=''">
+                  <td style="padding:9px 12px;font-weight:600">${escHtml(u.name||'')}</td>
+                  <td style="padding:9px 12px;font-family:monospace;font-size:.78rem;color:var(--accent3)">${escHtml(u.email||'')}
+                    <button class="pw-btn" onclick="navigator.clipboard.writeText('${escHtml(u.email||'')}')" title="Copy email">📋 Copy</button>
+                  </td>
+                  <td style="padding:9px 12px">
+                    <span style="font-size:.72rem;font-weight:700;color:${roleColor(u.role)}">${escHtml(u.role||'staff')}</span>
+                  </td>
+                  <td style="padding:9px 12px">
+                    ${u.password_plain ? `
+                      <div class="pw-row">
+                        <span class="pw-val" data-pw="${escHtml(u.password_plain)}">${'•'.repeat(Math.min(u.password_plain.length,16))}</span>
+                        <button class="pw-btn" onclick="togglePw(this)">👁 Show</button>
+                        <button class="pw-btn" onclick="copyPw(this)">📋 Copy</button>
+                      </div>` : '<span style="color:var(--muted)">—</span>'}
+                  </td>
+                  <td style="padding:9px 12px">
+                    ${u.active ? '<span style="color:var(--green);font-size:.75rem">✅ Yes</span>' : '<span style="color:var(--red);font-size:.75rem">❌ No</span>'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    })
+    .catch(e => {
+      el.innerHTML = '<div style="color:var(--red);font-size:.83rem;text-align:center;padding:12px 0">Could not load users — ' + e.message + '</div>';
+    });
+}
+
 // ── Sweet Spot Employee PINs ──
 function loadSweetSpotEmployees() {
   const el = document.getElementById('ss-emp-table');
@@ -1689,7 +1757,7 @@ function loadSweetSpotEmployees() {
 const _origShowPanel = showPanel;
 window.showPanel = function(id) {
   _origShowPanel.call(this, id);
-  if (id === 'credentials') loadSweetSpotEmployees();
+  if (id === 'credentials') { loadSweetSpotUsers(); loadSweetSpotEmployees(); }
 };
 
 // ── Stats responsive tweak ──

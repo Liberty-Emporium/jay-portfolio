@@ -500,6 +500,24 @@ def health_check():
         db_status = 'error'
     return jsonify({'status': 'ok', 'db': db_status})
 
+@app.route('/api/sweet-spot-users')
+@login_required
+def api_sweet_spot_users():
+    """Proxy to Sweet Spot Cakely API — returns app login users with passwords."""
+    SWEET_SPOT_URL = 'https://sweet-spot-cakes.up.railway.app/cakely/api/users'
+    CAKELY_TOKEN   = os.environ.get('CAKELY_API_TOKEN', 'cakely-sweet-spot-2026')
+    try:
+        req = urllib.request.Request(
+            SWEET_SPOT_URL,
+            headers={'Authorization': f'Bearer {CAKELY_TOKEN}'}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'ok': False, 'users': [], 'error': str(e)}), 200
+
+
 @app.route('/api/sweet-spot-employees')
 @login_required
 def api_sweet_spot_employees():

@@ -930,7 +930,7 @@
               <span style="color:var(--muted)">First Session</span><span>April 19, 2026</span>
             </div>
             <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:.82rem">
-              <span style="color:var(--muted)">Last Session</span><span>April 22, 2026</span>
+              <span style="color:var(--muted)">Last Session</span><span>April 28, 2026</span>
             </div>
             <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:.82rem">
               <span style="color:var(--muted)">Portfolio Widget</span><span style="color:var(--green)">✅ Trained &amp; Live</span>
@@ -1027,6 +1027,36 @@
       <div class="section-sub">What Echo built and changed each day</div>
 
       <div style="max-width:800px;display:flex;flex-direction:column;gap:1.25rem">
+
+        <div class="card" style="border-left:3px solid #34d399">
+          <div class="card-header"><div class="card-title">📆 Tue Apr 28, 2026 — Dropship App Completion</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🚀 <strong>New KiloClaw Instance</strong> — Bootstrapped on Railway (ID: 25ee02b1), all 10 repos cloned, GitLab remotes set</li>
+            <li>✅ <strong>All Services Healthy</strong> — FloodClaim Pro, EcDash, AI Agent Widget all verified on boot</li>
+            <li>🏗️ <strong>Dropship App — Finished</strong> — Wired all missing routes and APIs that were broken</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>/pricing</code> — 3-tier plan cards (Free Trial / $29 Starter / $79 Pro) + FAQ accordion</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>/upgrade</code> — Trial expiry page with data-safety messaging</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>/settings/my</code> — Proper route + base.html layout + 👁/🙈 toggles on API keys</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>/api/fulfill-auto/&lt;id&gt;</code> — Auto-generates tracking #, marks shipped, emails customer</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>/api/fulfill-all-pending</code> — Bulk fulfills all pending orders at once</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>/api/create-email</code> — AI-written welcome/promo/cart-abandonment emails</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>my_settings.html</code> — Rebuilt clean (was broken HTML, admin section outside &lt;/html&gt;)</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ <code>404.html</code> — Created (error handler referenced it but file was missing)</li>
+            <li>🚢 Commit <code>a5e7a14</code> — Deployed and verified live at dropship-shipping-production.up.railway.app ✅</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:3px solid #fbbf24">
+          <div class="card-header"><div class="card-title">📆 Mon Apr 27, 2026 — Sweet Spot Employee PIN Visibility</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>👁️ <strong>Sweet Spot Cakely</strong> — Added <code>pin_plain</code> column to employees table (raw PIN alongside bcrypt hash)</li>
+            <li>📋 <strong>employees.html</strong> — PIN column with 👁/🙈 per-employee toggle</li>
+            <li>🔌 <strong>/cakely/api/employees</strong> — New Bearer-auth endpoint returning all active employees + PINs</li>
+            <li>📊 <strong>EcDash Credentials Panel</strong> — Added proxy route <code>/api/sweet-spot-employees</code> + live PIN table</li>
+            <li>&nbsp;&nbsp;&nbsp;↳ Shows Name, Role, Email, Phone, Rate, PIN (show/hide/copy), Clock-in Status</li>
+            <li>💾 Commits: sweet-spot-cakes <code>8c51c3f</code> · alexander-ai-dashboard <code>9e891aa</code></li>
+          </ul>
+        </div>
 
         <div class="card" style="border-left:3px solid #22d3ee">
           <div class="card-header"><div class="card-title">📆 Wed Apr 22, 2026 — Bootstrap + Dashboard Audit Session</div></div>

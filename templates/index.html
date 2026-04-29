@@ -32,16 +32,16 @@
   --c-border-hi: rgba(139,92,246,0.35);
 
   --c-purple:    #7C6BFF;
-  --c-pink:      #FF5FA0;
+  --c-teal:      #22D3EE;
   --c-teal:      #22D3EE;
   --c-green:     #34D399;
   --c-amber:     #FBBF24;
 
-  --grad-brand:  linear-gradient(135deg, #7C6BFF 0%, #FF5FA0 100%);
+  --grad-brand:  linear-gradient(135deg, #7C6BFF 0%, #22D3EE 100%);
   --grad-teal:   linear-gradient(135deg, #22D3EE 0%, #7C6BFF 100%);
   --grad-green:  linear-gradient(135deg, #34D399 0%, #22D3EE 100%);
   --grad-amber:  linear-gradient(135deg, #FBBF24 0%, #F97316 100%);
-  --grad-text:   linear-gradient(135deg, #A78BFA 0%, #FF5FA0 60%, #FBBF24 100%);
+  --grad-text:   linear-gradient(135deg, #A78BFA 0%, #22D3EE 60%, #FBBF24 100%);
 
   --t-primary:   #F1F0FF;
   --t-secondary: #8B8BA8;
@@ -336,7 +336,7 @@ body {
 .about-photo-ring {
   position: absolute; inset: -12px;
   border-radius: 50%;
-  background: conic-gradient(from 180deg, #7C6BFF, #FF5FA0, #22D3EE, #7C6BFF);
+  background: conic-gradient(from 180deg, #7C6BFF, #22D3EE, #22D3EE, #7C6BFF);
   animation: spin 8s linear infinite;
   opacity: 0.7;
 }
@@ -421,7 +421,7 @@ body {
 }
 /* Coloured accent top strip per card */
 .project-card.accent-purple { border-top: 3px solid var(--c-purple); }
-.project-card.accent-pink   { border-top: 3px solid var(--c-pink); }
+.project-card.accent-teal   { border-top: 3px solid var(--c-teal); }
 .project-card.accent-teal   { border-top: 3px solid var(--c-teal); }
 .project-card.accent-green  { border-top: 3px solid var(--c-green); }
 .project-card.accent-amber  { border-top: 3px solid var(--c-amber); }
@@ -435,7 +435,7 @@ body {
   position: relative;
 }
 .project-icon-wrap.purple { background: rgba(124,107,255,0.12); }
-.project-icon-wrap.pink   { background: rgba(255,95,160,0.12); }
+.project-icon-wrap.teal   { background: rgba(34,211,238,0.12); }
 .project-icon-wrap.teal   { background: rgba(34,211,238,0.12); }
 .project-icon-wrap.green  { background: rgba(52,211,153,0.12); }
 .project-icon-wrap.amber  { background: rgba(251,191,36,0.12); }
@@ -470,7 +470,7 @@ body {
   text-decoration: none;
   transition: color 0.2s, gap 0.2s;
 }
-.project-link:hover { color: var(--c-pink); gap: 0.65rem; }
+.project-link:hover { color: var(--c-teal); gap: 0.65rem; }
 
 /* featured card content areas */
 .featured-body { display: flex; flex-direction: column; justify-content: center; }
@@ -792,8 +792,8 @@ body {
       </div>
 
       <!-- Dropship -->
-      <div class="project-card accent-pink reveal delay-2">
-        <div class="project-icon-wrap pink">🚀</div>
+      <div class="project-card accent-teal reveal delay-2">
+        <div class="project-icon-wrap teal">🚀</div>
         <h3 class="project-name">Andy — Dropship AI</h3>
         <p class="project-desc">AI-powered dropshipping platform with a built-in AI CEO assistant that manages your business, tracks orders, and helps you scale.</p>
         <div class="project-tags">

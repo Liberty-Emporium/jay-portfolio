@@ -464,7 +464,7 @@ APPS_REGISTRY = [
     {'name': 'Pet Vet AI',            'url': 'https://pet-vet-ai-production.up.railway.app'},
     {'name': 'GymForge',              'url': 'https://web-production-1c23.up.railway.app'},
     {'name': 'Contractor Pro AI',     'url': 'https://contractor-pro-ai-production.up.railway.app'},
-    {'name': 'Dropship Shipping',     'url': 'https://dropship-shipping-production.up.railway.app'},
+    {'name': 'Dropship Shipping',     'url': 'https://shop.alexanderai.site'},
     {'name': 'Consignment Solutions', 'url': 'https://web-production-43ce4.up.railway.app'},
     {'name': 'FloodClaim Pro',         'url': 'https://billy-floods.up.railway.app'},
     {'name': 'Liberty Oil & Propane',  'url': 'https://liberty-oil-propane.up.railway.app'},
@@ -1004,7 +1004,7 @@ TEST_REGISTRY = [
         ]
     },
     {
-        'name': 'AI Agent Widget', 'url': 'https://ai-agent-widget-production.up.railway.app',
+        'name': 'AI Agent Widget', 'url': 'https://ai.widget.alexanderai.site',
         'icon': '🤖',
         'tests': [
             {'id': 'health',   'label': 'Health check', 'path': '/health',  'method': 'GET', 'expect_json': {'status': 'ok'}},
@@ -1049,7 +1049,7 @@ TEST_REGISTRY = [
         ]
     },
     {
-        'name': 'Dropship Shipping', 'url': 'https://dropship-shipping-production.up.railway.app',
+        'name': 'Dropship Shipping', 'url': 'https://shop.alexanderai.site',
         'icon': '📦',
         'tests': [
             {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},

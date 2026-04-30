@@ -222,6 +222,607 @@
 <!-- ── Mobile hamburger ── -->
 <button id="mob-toggle" onclick="document.getElementById('sidebar').classList.toggle('mob-open');document.getElementById('mob-overlay').classList.toggle('show')" 
   style="display:none;position:fixed;top:12px;left:12px;z-index:1100;background:#1e293b;border:none;border-radius:8px;padding:8px 10px;cursor:pointer;color:#fff;font-size:1.1rem;">☰</button>
+<div id="mob-overlay" onclick="document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('mob-overlay').classList.remove('show')"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;"></div>
+<style>
+@media(max-width:600px){
+  #mob-toggle{display:block!important;}
+  #mob-overlay.show{display:block!important;}
+}
+</style>
+<!-- ── Sidebar ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo" style="display:flex;align-items:center;justify-content:space-between;">
+    <span class="logo-dot"></span>
+    <span>Jay's Hub</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Menu</div>
+    <button class="nav-item active" onclick="showPanel('overview')">🏠 <span>Overview</span></button>
+    <button class="nav-item" onclick="showPanel('projects')">🚀 <span>Projects</span></button>
+    <button class="nav-item" onclick="showPanel('todos')">✅ <span>To-Do List</span></button>
+    <button class="nav-item" onclick="showPanel('links')">🔗 <span>Quick Links</span></button>
+    <button class="nav-item" onclick="showPanel('support')">🛟 <span>Support</span></button>
+    <button class="nav-item" onclick="showPanel('notes')">📝 <span>Notes</span></button>
+    <button class="nav-item" onclick="showPanel('credentials')">🔐 <span>Credentials</span></button>
+    <button class="nav-item" onclick="showPanel('daily')">📅 <span>Daily Summary</span></button>
+    <button class="nav-item" onclick="showPanel('ai')">🦾 <span>My AI</span></button>
+    <div class="nav-section">System</div>
+    <a href="/chat" class="nav-item" style="color:var(--accent3);font-weight:600">💬 <span>Chat with EcDash</span></a>
+    <a href="/monitoring" class="nav-item" style="color:var(--green)">📡 <span>App Monitor</span></a>
+    <a href="/testing" class="nav-item" style="color:var(--yellow)">🧪 <span>Test Suite</span></a>
+    <a href="/tickets" class="nav-item">🎫 <span>Support Tickets</span></a>
+    <a href="/settings" class="nav-item">⚙️ <span>Settings</span></a>
+    <a href="/logout" class="nav-item" style="color:#ef4444">🚪 <span>Log Out</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>v1.0 · Jay Alexander</span>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">🦾 Command Center</div>
+    <div class="topbar-right">
+      <div class="status-badge"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite"></span> All Systems Online</div>
+      <span style="font-size:.8rem;color:var(--muted)" id="clock"></span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════ OVERVIEW ══════════════ -->
+    <div class="panel active" id="panel-overview">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="section-title">Good to see you, Jay 👋</div>
+          <div class="section-sub">Alexander AI Integrated Solutions · Command Center</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="health-summary-badge" style="font-size:.8rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--green);padding:5px 12px;border-radius:20px;cursor:pointer" onclick="loadHealth()">⟳ Checking apps...</span>
+          <span style="font-size:.75rem;color:var(--muted)" id="health-last-checked"></span>
+        </div>
+      </div>
+
+      <!-- ── Row 1: 6 stat tiles ── -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:22px" id="ov-stats-row">
+        <div class="stat-tile"><div class="stat-num">19</div><div class="stat-label">Total Projects</div></div>
+        <div class="stat-tile"><div class="stat-num">13</div><div class="stat-label">Live Apps</div></div>
+        <div class="stat-tile"><div class="stat-num">3</div><div class="stat-label">Demos</div></div>
+        <div class="stat-tile"><div class="stat-num">8</div><div class="stat-label">Languages</div></div>
+        <div class="stat-tile"><div class="stat-num">32+</div><div class="stat-label">AI Skills</div></div>
+        <div class="stat-tile"><div class="stat-num" id="overview-todo-count">-</div><div class="stat-label">Open To-Dos</div></div>
+      </div>
+
+      <!-- ── Row 2: Health monitor + Priorities ── -->
+      <div class="grid-2" style="margin-bottom:20px">
+
+        <!-- Live App Health -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🟢 Live App Health</div>
+            <button class="btn btn-sm btn-ghost" onclick="loadHealth()">Refresh</button>
+          </div>
+          <div id="health-grid" style="display:flex;flex-direction:column;gap:7px">
+            <div style="color:var(--muted);font-size:.83rem;text-align:center;padding:12px 0">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Top Priorities -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">✅ Top Priorities</div><button class="btn btn-sm btn-ghost" onclick="showPanel('todos')">View All</button></div>
+          <div id="overview-todos" style="display:flex;flex-direction:column;gap:8px">
+            <div style="color:var(--muted);font-size:.85rem">Loading todos...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Row 3: Business snapshot + Echo Bridge + Quick Access ── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px">
+
+        <!-- Business Snapshot -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 Business Snapshot</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:.85rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+              <span style="color:var(--muted)">Company</span>
+              <span style="font-weight:600">Alexander AI Integrated Solutions</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+              <span style="color:var(--muted)">Seed Ask</span>
+              <span style="color:var(--green);font-weight:700">$150K · 10% equity</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+              <span style="color:var(--muted)">Valuation</span>
+              <span style="font-weight:600">$1.5M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+              <span style="color:var(--muted)">Tech Stack</span>
+              <span style="font-weight:600">Flask · Python · Railway</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+              <span style="color:var(--muted)">AI Models</span>
+              <span style="font-weight:600">Claude · Groq · GPT-4o</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+              <span style="color:var(--muted)">CI/CD</span>
+              <span style="font-weight:600">GitHub Actions (all repos)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+              <span style="color:var(--muted)">GitHub Org</span>
+              <a href="https://github.com/Liberty-Emporium" target="_blank" style="color:var(--accent3);font-weight:600;text-decoration:none">Liberty-Emporium ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Echo Bridge / Task Queue -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🧠 Echo Bridge</div>
+            <button class="btn btn-sm btn-ghost" onclick="loadEchoBridge()">Refresh</button>
+          </div>
+          <div id="echo-bridge-status" style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Loading...</div>
+          <div id="echo-bridge-tasks" style="display:flex;flex-direction:column;gap:8px"></div>
+          <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:8px">Send task to Echo</div>
+            <div style="display:flex;gap:8px">
+              <input id="bridge-task-input" class="todo-input" style="font-size:.8rem;padding:7px 10px" placeholder="Ask Echo to do something...">
+              <button class="btn btn-primary btn-sm" onclick="sendBridgeTask()">Send</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">⚡ Quick Access</div></div>
+          <div class="links-grid" style="gap:8px">
+            <a href="https://jay-portfolio-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🌐</span><div class="link-chip-info"><div class="link-chip-name">Portfolio</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://billy-floods.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🌊</span><div class="link-chip-info"><div class="link-chip-name">FloodClaim Pro</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://ai.widget.alexanderai.site" target="_blank" class="link-chip"><span class="link-chip-icon">🤖</span><div class="link-chip-info"><div class="link-chip-name">AI Agent Widget</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🐕</span><div class="link-chip-info"><div class="link-chip-name">Pet Vet AI</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://sweet-spot-cakes.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🍰</span><div class="link-chip-info"><div class="link-chip-name">Sweet Spot Cakes</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://moms-ai-helper.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">💜</span><div class="link-chip-info"><div class="link-chip-name">Grace</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://liberty-oil-propane.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🔥</span><div class="link-chip-info"><div class="link-chip-name">Liberty Oil</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://github.com/Liberty-Emporium" target="_blank" class="link-chip"><span class="link-chip-icon">🐙</span><div class="link-chip-info"><div class="link-chip-name">GitHub Org</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="https://railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🚂</span><div class="link-chip-info"><div class="link-chip-name">Railway</div></div><span class="link-chip-arrow">↗</span></a>
+            <a href="/investors" target="_blank" class="link-chip"><span class="link-chip-icon">💰</span><div class="link-chip-info"><div class="link-chip-name">Investor Deck</div></div><span class="link-chip-arrow">↗</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Row 4: App portfolio timeline ── -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">🏗️ App Portfolio</div><span style="font-size:.78rem;color:var(--muted)">All live deployments</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+          <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🏪</div>
+              <div style="font-size:.83rem;font-weight:600">Liberty Inventory</div>
+              <div style="font-size:.72rem;color:var(--muted)">Multi-tenant SaaS</div>
+            </div>
+          </a>
+
+          <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🐕</div>
+              <div style="font-size:.83rem;font-weight:600">Pet Vet AI</div>
+              <div style="font-size:.72rem;color:var(--muted)">AI pet health</div>
+            </div>
+          </a>
+          <a href="https://web-production-1c23.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🏋️</div>
+              <div style="font-size:.83rem;font-weight:600">GymForge</div>
+              <div style="font-size:.72rem;color:var(--muted)">Gym management</div>
+            </div>
+          </a>
+          <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🏗️</div>
+              <div style="font-size:.83rem;font-weight:600">Contractor Pro AI</div>
+              <div style="font-size:.72rem;color:var(--muted)">Construction AI</div>
+            </div>
+          </a>
+          <a href="https://shop.alexanderai.site" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">📦</div>
+              <div style="font-size:.83rem;font-weight:600">Dropship (Andy)</div>
+              <div style="font-size:.72rem;color:var(--muted)">E-commerce AI</div>
+            </div>
+          </a>
+          <a href="https://ai.widget.alexanderai.site" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🤖</div>
+              <div style="font-size:.83rem;font-weight:600">AI Agent Widget</div>
+              <div style="font-size:.72rem;color:var(--muted)">Embeddable chat</div>
+            </div>
+          </a>
+          <a href="https://billy-floods.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🌊</div>
+              <div style="font-size:.83rem;font-weight:600">FloodClaim Pro</div>
+              <div style="font-size:.72rem;color:var(--muted)">Insurance SaaS</div>
+            </div>
+          </a>
+          <a href="https://sweet-spot-cakes.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🍰</div>
+              <div style="font-size:.83rem;font-weight:600">Sweet Spot Cakes</div>
+              <div style="font-size:.72rem;color:var(--muted)">Bakery SaaS</div>
+            </div>
+          </a>
+          <a href="https://moms-ai-helper.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">💜</div>
+              <div style="font-size:.83rem;font-weight:600">Grace</div>
+              <div style="font-size:.72rem;color:var(--muted)">AI caregiver</div>
+            </div>
+          </a>
+          <a href="https://liberty-oil-propane.up.railway.app/" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🔥</div>
+              <div style="font-size:.83rem;font-weight:600">Liberty Oil &amp; Propane</div>
+              <div style="font-size:.72rem;color:var(--muted)">Client website</div>
+            </div>
+          </a>
+          <a href="https://jay-portfolio-production.up.railway.app" target="_blank" style="text-decoration:none">
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:1.3rem;margin-bottom:4px">🌐</div>
+              <div style="font-size:.83rem;font-weight:600">EcDash / Portfolio</div>
+              <div style="font-size:.72rem;color:var(--muted)">This site</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════ PROJECTS ══════════════ -->
+    <div class="panel" id="panel-projects">
+      <div class="section-title">🚀 All Projects</div>
+      <div class="section-sub">Every app, demo, and tool we've built - click to open</div>
+
+      <div class="nav-section" style="padding:0 0 12px;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em">Live Apps</div>
+      <div class="grid-auto" style="margin-bottom:32px">
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏪</div>
+          <div class="proj-category">Inventory · SaaS</div>
+          <div class="proj-name">Liberty Emporium Inventory</div>
+          <div class="proj-desc">Multi-tenant inventory management for thrift stores with AI photo analysis and smart categorization.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Claude AI</span><span class="tag">Multi-tenant</span></div>
+          <div class="proj-links">
+            <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Liberty-Emporium-Inventory-App" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🐕</div>
+          <div class="proj-category">AI · Health</div>
+          <div class="proj-name">Pet Vet AI</div>
+          <div class="proj-desc">AI-powered pet health diagnosis. Upload a photo, get instant AI analysis and care recommendations.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Groq AI</span><span class="tag">Image AI</span></div>
+          <div class="proj-links">
+            <a href="https://pet-vet-ai-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Pet-Vet-AI" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏋️</div>
+          <div class="proj-category">Fitness · SaaS</div>
+          <div class="proj-name">GymForge</div>
+          <div class="proj-desc">All-in-one gym management platform with AI coaching, class scheduling, and 8 role-based portals.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span><span class="tag">Multi-role</span></div>
+          <div class="proj-links">
+            <a href="https://web-production-1c23.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/GymForge" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏗️</div>
+          <div class="proj-category">Construction · AI</div>
+          <div class="proj-name">Contractor Pro AI</div>
+          <div class="proj-desc">AI-powered construction estimating with 19 templates. Generates quotes, scope of work, and client proposals.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span><span class="tag">Estimating</span></div>
+          <div class="proj-links">
+            <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Contractor-Pro-AI" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">📦</div>
+          <div class="proj-category">E-commerce · AI</div>
+          <div class="proj-name">Dropship Shipping (Andy)</div>
+          <div class="proj-desc">Dropshipping business management with AI CEO assistant Andy. Tracks orders, suppliers, and margins.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI CEO</span><span class="tag">E-commerce</span></div>
+          <div class="proj-links">
+            <a href="https://shop.alexanderai.site" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Dropship-Shipping" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏛️</div>
+          <div class="proj-category">Legal · Personal</div>
+          <div class="proj-name">Court - Statement of Good Faith</div>
+          <div class="proj-desc">Ronald J. Alexander Jr.'s formal statement of good faith and legal documentation. QR code accessible.</div>
+          <div class="proj-tags"><span class="tag">Legal</span><span class="tag">Personal</span></div>
+          <div class="proj-links">
+            <a href="/court" target="_blank">View Doc ↗</a>
+            <a href="/court/qr" target="_blank">QR Code ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🌐</div>
+          <div class="proj-category">Portfolio · Personal</div>
+          <div class="proj-name">Jay's Portfolio</div>
+          <div class="proj-desc">This site - developer portfolio, investor deck, business card, tools library, and command center.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Portfolio</span></div>
+          <div class="proj-links">
+            <a href="https://jay-portfolio-production.up.railway.app" target="_blank">Live Site ↗</a>
+            <a href="https://github.com/Liberty-Emporium/jay-portfolio" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="nav-section" style="padding:0 0 12px;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em">Demos</div>
+      <div class="grid-auto" style="margin-bottom:32px">
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏪</div>
+          <div class="proj-category">Demo</div>
+          <div class="proj-name">Inventory Demo App</div>
+          <div class="proj-desc">Public demo of Liberty Inventory with test credentials. Shows prospects the full feature set without a signup.</div>
+          <div class="proj-tags"><span class="tag">Demo</span><span class="tag">Flask</span></div>
+          <div class="proj-links">
+            <a href="https://liberty-emporium-inventory-demo-app-production.up.railway.app" target="_blank">Live Demo ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🏠</div>
+          <div class="proj-category">Demo · Real Estate</div>
+          <div class="proj-name">Luxury Rentals Demo</div>
+          <div class="proj-desc">AI-powered luxury property rental demo showcasing smart search, recommendations, and booking flow.</div>
+          <div class="proj-tags"><span class="tag">Demo</span><span class="tag">AI</span><span class="tag">Real Estate</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Liberty-Emporium/luxury-rentals-demo" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-yellow" title="In Progress"></span></div>
+          <div class="proj-icon">🏪</div>
+          <div class="proj-category">Demo · E-commerce</div>
+          <div class="proj-name">Consignment Solutions</div>
+          <div class="proj-desc">Consignment store management system with AI pricing and automated listing syndication.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span></div>
+          <div class="proj-links">
+            <a href="https://web-production-43ce4.up.railway.app" target="_blank">Live ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Consignment-Solutions" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="nav-section" style="padding:0 0 12px;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em">Tools & Infrastructure</div>
+      <div class="grid-auto">
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🤖</div>
+          <div class="proj-category">AI Widget</div>
+          <div class="proj-name">AI Agent Widget</div>
+          <div class="proj-desc">Embeddable AI chat widget for any site. Drop in one script tag and you have a live AI assistant.</div>
+          <div class="proj-tags"><span class="tag">JS Widget</span><span class="tag">AI</span><span class="tag">Embeddable</span></div>
+          <div class="proj-links">
+            <a href="https://ai.widget.alexanderai.site" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/AI-Agent-Widget" target="_blank">GitHub ↗</a>
+            <a href="https://github.com/Liberty-Emporium/ai-widget-test-site" target="_blank">Test Site ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🧠</div>
+          <div class="proj-category">AI Infrastructure</div>
+          <div class="proj-name">echo-v1 (Brain Repo)</div>
+          <div class="proj-desc">My persistent memory and SaaS toolkit. Contains 32 custom skills, tools, scripts, and my long-term memory.</div>
+          <div class="proj-tags"><span class="tag">Echo</span><span class="tag">AI Memory</span><span class="tag">SaaS Kit</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Liberty-Emporium/echo-v1" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🌊</div>
+          <div class="proj-category">SaaS App · Insurance</div>
+          <div class="proj-name">FloodClaim Pro</div>
+          <div class="proj-desc">Professional flood damage assessment platform. Multi-adjuster team, Willie AI assistant, room-by-room damage logging, and printable reports.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI Vision</span><span class="tag">Insurance</span></div>
+          <div class="proj-links">
+            <a href="https://billy-floods.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/floodclaim-pro" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🍰</div>
+          <div class="proj-category">SaaS · Client Build</div>
+          <div class="proj-name">Sweet Spot Custom Cakes</div>
+          <div class="proj-desc">Full bakery management SaaS — orders, custom cake pricing, inventory, recipes, employees, timesheets, Stripe checkout, and reports.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Stripe</span><span class="tag">Bakery</span></div>
+          <div class="proj-links">
+            <a href="https://sweet-spot-cakes.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/sweet-spot-cakes" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">💜</div>
+          <div class="proj-category">AI · Caregiver</div>
+          <div class="proj-name">Grace</div>
+          <div class="proj-desc">AI caregiver companion for seniors — medication reminders, appointments, tasks, voice interface, and caregiver PIN access.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span><span class="tag">Healthcare</span></div>
+          <div class="proj-links">
+            <a href="https://moms-ai-helper.up.railway.app" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/grace-app" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🔥</div>
+          <div class="proj-category">Website · Client</div>
+          <div class="proj-name">Liberty Oil &amp; Propane</div>
+          <div class="proj-desc">Modern website for Liberty Oil &amp; Propane — heating oil, propane, and kerosene delivery in Liberty, NC. Live on Railway.</div>
+          <div class="proj-tags"><span class="tag">HTML</span><span class="tag">Railway</span><span class="tag">Client Site</span></div>
+          <div class="proj-links">
+            <a href="https://liberty-oil-propane.up.railway.app/" target="_blank">Live Site ↗</a>
+            <a href="https://github.com/Liberty-Emporium/liberty-oil-website" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════ TODOS ══════════════ -->
+    <div class="panel" id="panel-todos">
+      <div class="section-title">✅ To-Do List</div>
+      <div class="section-sub">Your running task list - saved in your browser</div>
+
+      <div class="card" style="max-width:720px">
+        <div class="todo-form">
+          <input class="todo-input" id="todo-input" placeholder="Add a new task..." onkeydown="if(event.key==='Enter')addTodo()">
+          <select class="todo-select" id="todo-priority">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+          <button class="btn btn-primary" onclick="addTodo()">Add</button>
+        </div>
+        <div class="todo-list" id="todo-list"></div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-ghost" onclick="filterTodos('all')">All</button>
+          <button class="btn btn-sm btn-ghost" onclick="filterTodos('open')">Open</button>
+          <button class="btn btn-sm btn-ghost" onclick="filterTodos('done')">Done</button>
+          <button class="btn btn-sm btn-ghost" style="margin-left:auto;color:var(--red);border-color:rgba(239,68,68,.3)" onclick="clearDone()">Clear Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ QUICK LINKS ══════════════ -->
+    <div class="panel" id="panel-links">
+      <div class="section-title">🔗 Quick Links</div>
+      <div class="section-sub">All the important places - one click away</div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">🚀 Live Apps</div></div>
+        <div class="links-grid">
+          <a href="https://jay-portfolio-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🌐</span><div class="link-chip-info"><div class="link-chip-name">Jay's Portfolio</div><div class="link-chip-url">jay-portfolio-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Liberty Inventory</div><div class="link-chip-url">liberty-emporium-inventory...railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://liberty-emporium-inventory-demo-app-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Inventory Demo</div><div class="link-chip-url">liberty-emporium-inventory-demo...railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🐕</span><div class="link-chip-info"><div class="link-chip-name">Pet Vet AI</div><div class="link-chip-url">pet-vet-ai-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://web-production-1c23.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏋️</span><div class="link-chip-info"><div class="link-chip-name">GymForge</div><div class="link-chip-url">web-production-1c23.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://ai.widget.alexanderai.site" target="_blank" class="link-chip"><span class="link-chip-icon">🤖</span><div class="link-chip-info"><div class="link-chip-name">AI Agent Widget</div><div class="link-chip-url">ai.widget.alexanderai.site</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏗️</span><div class="link-chip-info"><div class="link-chip-name">Contractor Pro AI</div><div class="link-chip-url">contractor-pro-ai-production.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://shop.alexanderai.site" target="_blank" class="link-chip"><span class="link-chip-icon">📦</span><div class="link-chip-info"><div class="link-chip-name">Dropship Shipping</div><div class="link-chip-url">shop.alexanderai.site</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://web-production-43ce4.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Consignment Solutions</div><div class="link-chip-url">web-production-43ce4.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://billy-floods.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🌊</span><div class="link-chip-info"><div class="link-chip-name">FloodClaim Pro</div><div class="link-chip-url">billy-floods.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://liberty-oil-propane.up.railway.app/" target="_blank" class="link-chip"><span class="link-chip-icon">🔥</span><div class="link-chip-info"><div class="link-chip-name">Liberty Oil &amp; Propane</div><div class="link-chip-url">liberty-oil-propane.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://moms-ai-helper.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">💜</span><div class="link-chip-info"><div class="link-chip-name">Grace</div><div class="link-chip-url">moms-ai-helper.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://sweet-spot-cakes.up.railway.app" target="_blank" class="link-chip"><span class="link-chip-icon">🍰</span><div class="link-chip-info"><div class="link-chip-name">Sweet Spot Cakes</div><div class="link-chip-url">sweet-spot-cakes.up.railway.app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://sweet-spot-cakes.up.railway.app/dashboard" target="_blank" class="link-chip"><span class="link-chip-icon">📊</span><div class="link-chip-info"><div class="link-chip-name">Sweet Spot Staff Dashboard</div><div class="link-chip-url">/dashboard</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://raw.githubusercontent.com/Liberty-Emporium/sweet-spot-cakes/main/sweet-spot-preview.html" download="sweet-spot-preview.html" class="link-chip" style="border-color:rgba(244,114,182,.25)"><span class="link-chip-icon">📱</span><div class="link-chip-info"><div class="link-chip-name">Sweet Spot Device Preview</div><div class="link-chip-url">Download HTML → open in any browser</div></div><span class="link-chip-arrow">⬇</span></a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">📄 Pages on This Site</div></div>
+        <div class="links-grid">
+          <a href="/" class="link-chip"><span class="link-chip-icon">🏠</span><div class="link-chip-info"><div class="link-chip-name">Home / Portfolio</div><div class="link-chip-url">/</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/apps" class="link-chip"><span class="link-chip-icon">📱</span><div class="link-chip-info"><div class="link-chip-name">Apps</div><div class="link-chip-url">/apps</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/investors" class="link-chip"><span class="link-chip-icon">💰</span><div class="link-chip-info"><div class="link-chip-name">Investor Page</div><div class="link-chip-url">/investors</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/tools" class="link-chip"><span class="link-chip-icon">🛠️</span><div class="link-chip-info"><div class="link-chip-name">Tools Library</div><div class="link-chip-url">/tools</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/court" class="link-chip"><span class="link-chip-icon">🏛️</span><div class="link-chip-info"><div class="link-chip-name">Court Document</div><div class="link-chip-url">/court</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/card" class="link-chip"><span class="link-chip-icon">💼</span><div class="link-chip-info"><div class="link-chip-name">Business Card</div><div class="link-chip-url">/card</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/admin" class="link-chip"><span class="link-chip-icon">⚙️</span><div class="link-chip-info"><div class="link-chip-name">Admin / Settings</div><div class="link-chip-url">/admin</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="/dashboard" class="link-chip"><span class="link-chip-icon">🦾</span><div class="link-chip-info"><div class="link-chip-name">This Dashboard</div><div class="link-chip-url">/dashboard</div></div><span class="link-chip-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">🐙 GitHub Repos</div></div>
+        <div class="links-grid">
+          <a href="https://github.com/Liberty-Emporium" target="_blank" class="link-chip"><span class="link-chip-icon">🏢</span><div class="link-chip-info"><div class="link-chip-name">Liberty-Emporium Org</div><div class="link-chip-url">github.com/Liberty-Emporium</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/echo-v1" target="_blank" class="link-chip"><span class="link-chip-icon">🧠</span><div class="link-chip-info"><div class="link-chip-name">echo-v1 (Brain)</div><div class="link-chip-url">Liberty-Emporium/echo-v1</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Liberty-Emporium-Inventory-App" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Inventory App</div><div class="link-chip-url">Liberty-Emporium-Inventory-App</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/pet-vet-ai" target="_blank" class="link-chip"><span class="link-chip-icon">🐕</span><div class="link-chip-info"><div class="link-chip-name">Pet Vet AI</div><div class="link-chip-url">pet-vet-ai</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Contractor-Pro-AI" target="_blank" class="link-chip"><span class="link-chip-icon">🏗️</span><div class="link-chip-info"><div class="link-chip-name">Contractor Pro AI</div><div class="link-chip-url">Contractor-Pro-AI</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Dropship-Shipping" target="_blank" class="link-chip"><span class="link-chip-icon">📦</span><div class="link-chip-info"><div class="link-chip-name">Dropship Shipping</div><div class="link-chip-url">Dropship-Shipping</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/jay-portfolio" target="_blank" class="link-chip"><span class="link-chip-icon">🌐</span><div class="link-chip-info"><div class="link-chip-name">Jay Portfolio</div><div class="link-chip-url">jay-portfolio</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/floodclaim-pro" target="_blank" class="link-chip"><span class="link-chip-icon">🌊</span><div class="link-chip-info"><div class="link-chip-name">FloodClaim Pro</div><div class="link-chip-url">floodclaim-pro</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/AI-Agent-Widget" target="_blank" class="link-chip"><span class="link-chip-icon">🤖</span><div class="link-chip-info"><div class="link-chip-name">AI Agent Widget</div><div class="link-chip-url">AI-Agent-Widget</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/liberty-oil-website" target="_blank" class="link-chip"><span class="link-chip-icon">🔥</span><div class="link-chip-info"><div class="link-chip-name">Liberty Oil Website</div><div class="link-chip-url">liberty-oil-website</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/sweet-spot-cakes" target="_blank" class="link-chip"><span class="link-chip-icon">🍰</span><div class="link-chip-info"><div class="link-chip-name">Sweet Spot Cakes</div><div class="link-chip-url">sweet-spot-cakes</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/grace-app" target="_blank" class="link-chip"><span class="link-chip-icon">💜</span><div class="link-chip-info"><div class="link-chip-name">Grace App</div><div class="link-chip-url">grace-app</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/GymForge" target="_blank" class="link-chip"><span class="link-chip-icon">🏋️</span><div class="link-chip-info"><div class="link-chip-name">GymForge</div><div class="link-chip-url">GymForge</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Consignment-Solutions" target="_blank" class="link-chip"><span class="link-chip-icon">🏪</span><div class="link-chip-info"><div class="link-chip-name">Consignment Solutions</div><div class="link-chip-url">Consignment-Solutions</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Vendor-Vault" target="_blank" class="link-chip"><span class="link-chip-icon">🗄️</span><div class="link-chip-info"><div class="link-chip-name">Vendor Vault</div><div class="link-chip-url">Vendor-Vault</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/list-it-everywhere" target="_blank" class="link-chip"><span class="link-chip-icon">📰</span><div class="link-chip-info"><div class="link-chip-name">List It Everywhere</div><div class="link-chip-url">list-it-everywhere</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/Dropship-AI-CEO" target="_blank" class="link-chip"><span class="link-chip-icon">📦</span><div class="link-chip-info"><div class="link-chip-name">Dropship AI CEO</div><div class="link-chip-url">Dropship-AI-CEO</div></div><span class="link-chip-arrow">↗</span></a>
+          <a href="https://github.com/Liberty-Emporium/luxury-rentals-demo" target="_blank" class="link-chip"><span class="link-chip-icon">🏠</span><div class="link-chip-info"><div class="link-chip-name">Luxury Rentals Demo</div><div class="link-chip-url">luxury-rentals-demo</div></div><span class="link-chip-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ SUPPORT ══════════════ -->
+    <div class="panel" id="panel-support">
+      <div class="section-title">🛟 Support Center</div>
+      <div class="section-sub">Central support hub - link your apps here so customers always know where to go</div>
+
+      <div class="support-card" style="margin-bottom:24px">
+        <div class="support-icon">🦾</div>
+        <h2>Jay Alexander Support</h2>
+        <p>Need help with one of our apps? You're in the right place. Reach out and we'll get you sorted fast.</p>
+        <div class="support-links">
+          <a href="mailto:jay@libertyemporium.com" class="support-link">📧 <span>jay@libertyemporium.com</span></a>
+          <a href="https://jay-portfolio-production.up.railway.app" target="_blank" class="support-link">🌐 <span>Portfolio</span></a>
+          <a href="https://github.com/Liberty-Emporium" target="_blank" class="support-link">🐙 <span>GitHub</span></a>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">📋 App Support Directory</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:10px"><span>🏪</span><span style="font-size:.85rem;font-weight:500">Liberty Inventory</span></div>
+              <a href="mailto:jay@libertyemporium.com?subject=Liberty Inventory Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
+            </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
               <div style="display:flex;align-items:center;gap:10px"><span>🐕</span><span style="font-size:.85rem;font-weight:500">Pet Vet AI</span></div>
               <a href="mailto:jay@libertyemporium.com?subject=Pet Vet AI Support" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Get Help ↗</a>
@@ -646,7 +1247,7 @@
         <div class="card">
           <div class="card-header"><div class="card-title">🌊 FloodClaim Pro</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
-            <div><b>URL:</b> <a href="https://billy-floods.up.railway.app" target="_blank">billy-floods ↗</a> <div><b>URL:</b> <a href="https://billy-floods.up.railway.app" target="_blank">billy-floods ↗</a></div>nbsp;<a href="https://billy-floods.up.railway.app/sales" target="_blank" style="color:#f59e0b">Sales Page ↗</a></div>
+            <div><b>URL:</b> <a href="https://billy-floods.up.railway.app" target="_blank">billy-floods ↗</a> <div><b>URL:</b> <a href="https://billy-floods.up.railway.app" target="_blank">billy-floods ↗</a> &nbsp;<a href="https://billy-floods.up.railway.app/sales" target="_blank" style="color:#f59e0b">Sales Page ↗</a></div>nbsp;<a href="https://billy-floods.up.railway.app/sales" target="_blank" style="color:#f59e0b">Sales Page ↗</a></div>
             <div><b>Email:</b></div>
             <div class="pw-row"><span class="pw-val" data-pw="admin@floodclaimpro.com">admin@floodclaimpro.com</span><button class="pw-btn" onclick="copyPw(this)">📋 Copy</button></div>
             <div><b>Password:</b></div>

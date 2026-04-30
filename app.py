@@ -460,7 +460,6 @@ def api_settings_save():
 APPS_REGISTRY = [
     {'name': 'Liberty Inventory',     'url': 'https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app'},
     {'name': 'Inventory Demo',        'url': 'https://liberty-emporium-inventory-demo-app-production.up.railway.app'},
-    {'name': 'Keep Your Secrets',     'url': 'https://ai-api-tracker-production.up.railway.app'},
     {'name': 'Pet Vet AI',            'url': 'https://pet-vet-ai-production.up.railway.app'},
     {'name': 'GymForge',              'url': 'https://web-production-1c23.up.railway.app'},
     {'name': 'Contractor Pro AI',     'url': 'https://contractor-pro-ai-production.up.railway.app'},
@@ -1019,15 +1018,6 @@ TEST_REGISTRY = [
         'tests': [
             {'id': 'homepage', 'label': 'Homepage', 'path': '/', 'method': 'GET', 'expect_status': 200},
             {'id': 'apps',     'label': 'Apps page', 'path': '/apps', 'method': 'GET', 'expect_status': 200},
-        ]
-    },
-    {
-        'name': 'Keep Your Secrets', 'url': 'https://ai-api-tracker-production.up.railway.app',
-        'icon': '🔐',
-        'tests': [
-            {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
-            {'id': 'homepage', 'label': 'Homepage',     'path': '/',       'method': 'GET', 'expect_status': 200},
-            {'id': 'login',    'label': 'Login page',   'path': '/login',  'method': 'GET', 'expect_status': 200},
         ]
     },
     {

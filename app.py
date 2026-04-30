@@ -466,7 +466,7 @@ APPS_REGISTRY = [
     {'name': 'Consignment Solutions', 'url': 'https://web-production-43ce4.up.railway.app'},
     {'name': 'FloodClaim Pro',         'url': 'https://billy-floods.up.railway.app'},
     {'name': 'Liberty Oil & Propane',  'url': 'https://liberty-oil-propane.up.railway.app'},
-    {'name': 'Alexander AI Voice',      'url': 'https://alexander-ai-voice-landing-production.up.railway.app'},
+    {'name': 'Alexander AI Voice',      'url': 'https://voice.alexanderai.site'},
 ]
 
 def ping_app(app_entry, results):
@@ -576,7 +576,7 @@ def build_system_prompt():
     memory   = load_brain_file('MEMORY.md')
 
     base = """You are EcDash — the personal AI executive assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions.
-You are accessed via the Command Center dashboard at jay-portfolio-production.up.railway.app.
+You are accessed via the Command Center dashboard at alexanderai.site.
 Never say you are ChatGPT, Claude, Gemini, or any AI product. You are Echo. Only Echo."""
 
     parts = [base]
@@ -673,7 +673,7 @@ def api_chat():
         'https://openrouter.ai/api/v1/chat/completions', data=payload,
         headers={'Authorization': f'Bearer {openrouter_key}',
                  'Content-Type': 'application/json; charset=utf-8',
-                 'HTTP-Referer': 'https://jay-portfolio-production.up.railway.app',
+                 'HTTP-Referer': 'https://alexanderai.site',
                  'X-Title': 'Echo - Jay Alexander Command Center'})
     try:
         with _safe_urlopen(req, timeout=30) as resp:
@@ -1012,7 +1012,7 @@ TEST_REGISTRY = [
         ]
     },
     {
-        'name': 'EcDash', 'url': 'https://jay-portfolio-production.up.railway.app',
+        'name': 'EcDash', 'url': 'https://alexanderai.site',
         'icon': '🎛️',
         'tests': [
             {'id': 'homepage', 'label': 'Homepage', 'path': '/', 'method': 'GET', 'expect_status': 200},

@@ -116,339 +116,7 @@
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-left">
-    <a href="/dashboard" class="back-btn">← Dashboard</a>
-    <span style="color:var(--border)">|</span>
-    <div class="topbar-title">⚙️ Settings</div>
-  </div>
-  <a href="/" style="font-size:.78rem;color:var(--muted);text-decoration:none;">View Site ↗</a>
-</div>
 
-<div class="content">
-  <div class="page-title">Settings</div>
-  <div class="page-sub">Manage your profile, API keys, and app network</div>
-
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}{% for cat,msg in messages %}
-      <div class="flash-success">✅ {{ msg }}</div>
-    {% endfor %}{% endif %}
-  {% endwith %}
-
-  <!-- Nav tabs -->
-  <div class="settings-nav">
-    <button class="snav-item active" onclick="showTab('profile')">👤 Profile</button>
-    <button class="snav-item" onclick="showTab('apikeys')">🔑 API Keys</button>
-    <button class="snav-item" onclick="showTab('network')">🌐 App Network</button>
-  </div>
-
-  <!-- ── PROFILE ── -->
-  <div class="stab active" id="tab-profile">
-    <form method="POST" action="/admin">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <div class="card">
-        <div class="section-title">Identity</div>
-        <div class="section-sub">How you appear on your portfolio and to visitors</div>
-
-        <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;padding:16px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
-          <div>
-            {% if config.photo_url %}
-              <img src="{{ config.photo_url }}" class="preview-avatar" id="avatar-preview" alt="Jay">
-            {% else %}
-              <div class="preview-emoji" id="avatar-preview">{{ config.photo }}</div>
-            {% endif %}
-          </div>
-          <div>
-            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">{{ config.name }}</div>
-            <div style="font-size:.82rem;color:var(--muted);margin-top:4px;">{{ config.tagline }}</div>
-            <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">{{ config.email }}</div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Display Name</label>
-          <input type="text" name="name" value="{{ config.name }}">
-        </div>
-        <div class="form-group">
-          <label>Tagline</label>
-          <input type="text" name="tagline" value="{{ config.tagline }}" placeholder="Building the Future with AI & Code">
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" name="email" value="{{ config.email }}">
-        </div>
-        <div class="form-group">
-          <label>Photo URL</label>
-          <input type="text" name="photo_url" value="{{ config.photo_url }}" placeholder="/static/uploads/jay.jpg or https://...">
-        </div>
-        <div class="form-group">
-          <label>Emoji Fallback (shown if no photo URL)</label>
-          <input type="text" name="photo" value="{{ config.photo }}" placeholder="👨‍💻">
-        </div>
-        <div class="btn-row">
-          <button type="submit" class="btn btn-primary">💾 Save Profile</button>
-          <a href="/" class="btn btn-ghost">👁 View Site</a>
-        </div>
-      </div>
-    </form>
-
-    <div class="card">
-      <div class="section-title">Security</div>
-      <div class="section-sub">Change your dashboard login password and contact email</div>
-
-      <div id="sec-msg" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:.85rem"></div>
-
-      <div class="form-group">
-        <label>Current Password</label>
-        <input type="password" id="sec-current" placeholder="Enter current password" autocomplete="current-password">
-      </div>
-      <div class="form-group">
-        <label>New Password <span style="color:var(--muted);font-weight:400">(leave blank to keep current)</span></label>
-        <input type="password" id="sec-new" placeholder="Min 6 characters" autocomplete="new-password">
-      </div>
-      <div class="form-group">
-        <label>Confirm New Password</label>
-        <input type="password" id="sec-confirm" placeholder="Repeat new password" autocomplete="new-password">
-      </div>
-      <div class="form-group">
-        <label>Contact Email <span style="color:var(--muted);font-weight:400">(leave blank to keep current)</span></label>
-        <input type="email" id="sec-email" placeholder="{{ config.email }}">
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveAccountSettings()">🔐 Save Account Settings</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── AI BEHAVIOR — REMOVED ── -->
-  <!-- tab-ai removed per Jay: AI behavior managed via AI Agent Widget -->
-  <div class="stab" id="tab-ai" style="display:none!important">
-    <div class="card">
-      <div class="section-title">Echo Identity</div>
-      <div class="section-sub">How Echo introduces and behaves in your dashboard chat</div>
-      <div class="form-group">
-        <label>Agent Name</label>
-        <input type="text" value="Echo" id="agent-name">
-      </div>
-      <div class="form-group">
-        <label>Agent Tagline</label>
-        <input type="text" value="Your AI Executive Assistant — Alexander AI Integrated Solutions" id="agent-tagline">
-      </div>
-      <div class="form-group">
-        <label>System Prompt (Echo's Personality & Instructions)</label>
-        <textarea id="system-prompt" rows="8">You are EcDash, the personal AI assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions. You are accessed via the Command Center dashboard.
-
-Your role: Help Jay manage his business and projects. Be concise, direct, and actionable. You are a trusted partner, not a generic chatbot.
-
-Always refer to yourself as EcDash. Never mention OpenAI, Anthropic, or any underlying AI provider.</textarea>
-      </div>
-      <div style="font-size:.75rem;color:var(--muted);margin-bottom:16px">💡 Changes here take effect on next chat session. To make permanent, tell Echo to update the system prompt in app.py.</div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">AI Model</div>
-      <div class="section-sub">Which model powers Echo's chat responses</div>
-      <div class="model-grid">
-        <div class="model-card selected" onclick="selectModel(this,'anthropic/claude-3.5-haiku')">
-          <div class="model-name">Claude 3.5 Haiku</div>
-          <div class="model-desc">Fast & smart. Current default.</div>
-        </div>
-        <div class="model-card" onclick="selectModel(this,'anthropic/claude-sonnet-4-5')">
-          <div class="model-name">Claude Sonnet 4.5</div>
-          <div class="model-desc">Most capable Anthropic model.</div>
-        </div>
-        <div class="model-card" onclick="selectModel(this,'openai/gpt-4o-mini')">
-          <div class="model-name">GPT-4o Mini</div>
-          <div class="model-desc">Fast & affordable OpenAI.</div>
-        </div>
-        <div class="model-card" onclick="selectModel(this,'openai/gpt-4o')">
-          <div class="model-name">GPT-4o</div>
-          <div class="model-desc">Most capable OpenAI model.</div>
-        </div>
-        <div class="model-card" onclick="selectModel(this,'google/gemini-2.0-flash')">
-          <div class="model-name">Gemini 2.0 Flash</div>
-          <div class="model-desc">Fast Google model.</div>
-        </div>
-        <div class="model-card" onclick="selectModel(this,'meta-llama/llama-3.3-70b-instruct')">
-          <div class="model-name">Llama 3.3 70B</div>
-          <div class="model-desc">Powerful open source.</div>
-        </div>
-      </div>
-          <div style="margin-top:14px;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:.75rem;color:var(--muted)">Active model:</span>
-        <span id="selected-model-label" style="font-size:.78rem;color:var(--accent3);font-weight:600">anthropic/claude-3.5-haiku</span>
-        <span id="model-saved-badge" style="font-size:.72rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved — takes effect immediately</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Behavior Settings</div>
-      <div class="section-sub">Fine-tune how Echo responds</div>
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <div class="toggle-label">Live health checks</div>
-          <div class="toggle-desc">Automatically ping apps when health-related questions are asked</div>
-        </div>
-        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <div class="toggle-label">Include todos in context</div>
-          <div class="toggle-desc">Echo can see your open todos when answering planning questions</div>
-        </div>
-        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <div class="toggle-label">Proactive suggestions</div>
-          <div class="toggle-desc">Echo offers ideas and next steps without being asked</div>
-        </div>
-        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <div class="toggle-label">Concise mode</div>
-          <div class="toggle-desc">Shorter, more direct responses (disable for detailed explanations)</div>
-        </div>
-        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-      </div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveAISettings()">💾 Save AI Settings</button>
-      <span style="font-size:.75rem;color:var(--green);align-self:center" id="ai-save-confirm" style="opacity:0;transition:opacity .3s"></span>
-    </div>
-
-    <hr style="border:none;border-top:1px solid var(--border);margin:28px 0">
-
-    <!-- SOUL.md inline editor -->
-    <div class="section">
-      <div class="section-title">🎭 SOUL.md — Personality & Values</div>
-      <div class="section-sub">Who Echo is at her core. Her values, vibe, and how she thinks. This shapes every response.</div>
-      <div class="card">
-        <div class="card-header" style="margin-bottom:12px">
-          <div class="card-title">SOUL.md</div>
-          <span id="soul-ai-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span>
-        </div>
-        <textarea class="notes-area" id="soul-ai-editor" rows="12" placeholder="Loading..."></textarea>
-        <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('SOUL.md','soul-ai-editor','soul-ai-status')">💾 Save SOUL.md</button>
-      </div>
-    </div>
-
-    <!-- MEMORY.md inline editor -->
-    <div class="section">
-      <div class="section-title">💾 MEMORY.md — Long-Term Memory</div>
-      <div class="section-sub">Everything Echo knows about you, your projects, and your goals. She reads this every single conversation.</div>
-      <div class="card">
-        <div class="card-header" style="margin-bottom:12px">
-          <div class="card-title">MEMORY.md</div>
-          <span id="memory-ai-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span>
-        </div>
-        <textarea class="notes-area" id="memory-ai-editor" rows="20" placeholder="Loading..."></textarea>
-        <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('MEMORY.md','memory-ai-editor','memory-ai-status')">💾 Save MEMORY.md</button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ── API KEYS ── -->
-  <div class="stab" id="tab-apikeys">
-
-    <div class="kys-banner">
-      <div class="kys-banner-icon">🛡️</div>
-      <div class="kys-banner-text">
-        <div class="title">Powered by Keep Your Secrets (KYS)</div>
-        <div class="sub">All API keys are managed and stored encrypted in your KYS app. This dashboard reads from KYS — never stores keys locally.</div>
-      </div>
-      <a href="https://ai-api-tracker-production.up.railway.app/dashboard" target="_blank">Open KYS →</a>
-    </div>
-
-    <div class="card">
-      <div class="section-title">AI Provider Keys</div>
-      <div class="section-sub">Keys used by Echo and your apps for AI features</div>
-
-      <div class="api-row">
-        <div class="api-icon">🔀</div>
-        <div class="api-info">
-          <div class="api-name">OpenRouter API Key</div>
-          <div class="api-desc">Powers Echo chat + all AI features across apps · <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--accent3)">openrouter.ai/keys</a></div>
-        </div>
-        <span class="api-status set">✓ Set</span>
-        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app/dashboard','_blank')">Manage in KYS</button>
-      </div>
-
-      <div class="api-row">
-        <div class="api-icon">🤖</div>
-        <div class="api-info">
-          <div class="api-name">Anthropic API Key</div>
-          <div class="api-desc">Direct Claude access (optional if using OpenRouter)</div>
-        </div>
-        <span class="api-status unset">Not set</span>
-        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app/dashboard','_blank')">Add in KYS</button>
-      </div>
-
-      <div class="api-row">
-        <div class="api-icon">🌿</div>
-        <div class="api-info">
-          <div class="api-name">Groq API Key</div>
-          <div class="api-desc">Powers Pet Vet AI · Ultra-fast inference</div>
-        </div>
-        <span class="api-status unset">Not set</span>
-        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app/dashboard','_blank')">Add in KYS</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Service Keys</div>
-      <div class="section-sub">Keys for payments, email, and other services</div>
-
-      <div class="api-row">
-        <div class="api-icon">💳</div>
-        <div class="api-info">
-          <div class="api-name">Stripe Secret Key</div>
-          <div class="api-desc">For accepting payments in your apps</div>
-        </div>
-        <span class="api-status unset">Not set</span>
-        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app/dashboard','_blank')">Add in KYS</button>
-      </div>
-
-      <div class="api-row">
-        <div class="api-icon">📧</div>
-        <div class="api-info">
-          <div class="api-name">SendGrid API Key</div>
-          <div class="api-desc">For sending emails from your apps</div>
-        </div>
-        <span class="api-status unset">Not set</span>
-        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app/dashboard','_blank')">Add in KYS</button>
-      </div>
-
-      <div class="api-row">
-        <div class="api-icon">🐙</div>
-        <div class="api-info">
-          <div class="api-name">GitHub Token</div>
-          <div class="api-desc">Liberty-Emporium org access · Used by Echo for deployments</div>
-        </div>
-        <span class="api-status set">✓ Set</span>
-        <button class="api-btn" onclick="window.open('https://ai-api-tracker-production.up.railway.app/dashboard','_blank')">Manage in KYS</button>
-      </div>
-    </div>
-
-    <div style="font-size:.78rem;color:var(--muted);padding:12px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
-      💡 <strong style="color:var(--text)">Goal:</strong> Each app will fetch its own API keys from KYS at runtime — rotate once, updates everywhere automatically. This is Phase 2 of the App Network vision.
-    </div>
-  </div>
-
-  <!-- ── ECHO'S BRAIN — REMOVED ── -->
-  <!-- tab-brain removed per Jay: brain managed via AI Agent Widget at ai.widget.alexanderai.site -->
-  <div class="stab" id="tab-brain" style="display:none!important">
-    <div class="card highlight" style="margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div style="font-size:2.5rem">🧠</div>
-        <div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Echo's Persistent Brain</div>
-          <div style="font-size:.8rem;color:var(--muted);margin-top:2px">These files define who Echo is, what she remembers, and how she behaves. Changes take effect on the next chat message.</div>
-        </div>
-      </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:.78rem">
         <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🎭 SOUL.md</div><div style="color:var(--muted)">Personality, values, how Echo thinks and talks</div></div>
         <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🪪 IDENTITY.md</div><div style="color:var(--muted)">Who Echo is, what she knows, how she speaks</div></div>
@@ -488,15 +156,15 @@ Always refer to yourself as EcDash. Never mention OpenAI, Anthropic, or any unde
         <div class="phase-item">
           <div class="phase-num">Phase 1 <span style="color:var(--green);font-size:.7rem">✓ NOW</span></div>
           <div>
-            <div class="phase-text">Unified Command Center + KYS as credential hub</div>
-            <div class="phase-sub">Dashboard controls all apps, KYS stores all API keys</div>
+            <div class="phase-text">Unified Command Center + EcDash as credential hub</div>
+            <div class="phase-sub">Dashboard controls all apps, EcDash Credentials stores all API keys</div>
           </div>
         </div>
         <div class="phase-item">
           <div class="phase-num">Phase 2</div>
           <div>
-            <div class="phase-text">Apps fetch API keys from KYS at runtime</div>
-            <div class="phase-sub">No more hardcoded env vars — rotate once in KYS, all apps update automatically</div>
+            <div class="phase-text">Apps fetch API keys from EcDash at runtime</div>
+            <div class="phase-sub">No more hardcoded env vars — rotate once in EcDash, all apps update automatically</div>
           </div>
         </div>
         <div class="phase-item">
@@ -522,8 +190,7 @@ Always refer to yourself as EcDash. Never mention OpenAI, Anthropic, or any unde
       <div style="display:flex;flex-direction:column;gap:8px">
         {% set apps = [
           ('🏪','Liberty Inventory','liberty-emporium-and-thrift-inventory-app-production.up.railway.app','live'),
-          ('🛡️','Keep Your Secrets','ai-api-tracker-production.up.railway.app','live'),
-          ('🐕','Pet Vet AI','pet-vet-ai-production.up.railway.app','live'),
+                    ('🐕','Pet Vet AI','pet-vet-ai-production.up.railway.app','live'),
           ('🏋️','GymForge','web-production-1c23.up.railway.app','live'),
           ('🏗️','Contractor Pro AI','contractor-pro-ai-production.up.railway.app','live'),
           ('📦','Dropship Shipping','shop.alexanderai.site','live'),
@@ -570,8 +237,8 @@ Always refer to yourself as EcDash. Never mention OpenAI, Anthropic, or any unde
       </div>
       <div class="toggle-row">
         <div class="toggle-info">
-          <div class="toggle-label">Fetch API keys from KYS (Phase 2)</div>
-          <div class="toggle-desc">Coming soon — apps will call KYS for credentials at runtime</div>
+          <div class="toggle-label">Fetch API keys from EcDash (Phase 2)</div>
+          <div class="toggle-desc">Coming soon — apps will call EcDash for credentials at runtime</div>
         </div>
         <label class="toggle"><input type="checkbox" disabled><span class="toggle-slider"></span></label>
       </div>

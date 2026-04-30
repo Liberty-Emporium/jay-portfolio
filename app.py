@@ -880,6 +880,31 @@ def flyer():
 def court():
     return render_template('court.html')
 
+# ── Bot / scanner sink ───────────────────────────────────────────────────────
+# Returns 410 Gone for every path that scanners probe but will never exist.
+# Keeps these out of the real error-monitor table.
+_BOT_PATHS = [
+    '/wp-admin/', '/wp-login.php', '/wp-cron.php', '/wp-includes/',
+    '/wp-content/', '/xmlrpc.php', '/wp-admin/install.php',
+    '/wp-json/', '/.env', '/.git/', '/config.php', '/setup.php',
+    '/install.php', '/phpmyadmin/', '/pma/', '/admin/config.php',
+    '/sitemap.xml', '/sitemap_index.xml', '/robots.txt.bak',
+    '/.htaccess', '/web.config', '/backup/', '/administrator/',
+    '/joomla/', '/drupal/', '/typo3/',
+]
+
+@app.before_request
+def block_bot_paths():
+    from flask import request as _req
+    path = _req.path
+    if any(path == p or path.startswith(p) for p in _BOT_PATHS):
+        return '', 410  # 410 Gone — tells scanners to stop retrying
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({'error': 'not found'}), 404
+# ─────────────────────────────────────────────────────────────────────────────
+
 @app.route('/robots.txt')
 def robots():
     return app.response_class(

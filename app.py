@@ -12,6 +12,14 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from functools import wraps
 
 from echo_reporter import install_reporter  # Echo monitoring
+
+# ── Safe URL helper — only allow https:// (blocks file://, ftp://, SSRF) ────
+def _safe_urlopen(req_or_url, timeout=10):
+    url = req_or_url if isinstance(req_or_url, str) else req_or_url.full_url
+    if not url.startswith('https://'):
+        raise ValueError(f'Blocked non-https URL: {url}')
+    return urllib.request.urlopen(req_or_url, timeout=timeout)
+
 app = Flask(__name__)
 
 def _get_secret_key():
@@ -392,7 +400,7 @@ def echo_bridge_send():
                 headers={'Content-Type': 'application/json; charset=utf-8'},
                 method='POST'
             )
-            with urllib.request.urlopen(req, timeout=10) as r:
+            with _safe_urlopen(req, timeout=10) as r:
                 result = json.loads(r.read().decode())
             task['status'] = 'sent'
             task['response'] = result.get('message', 'Task received by Echo')
@@ -468,7 +476,7 @@ def ping_app(app_entry, results):
     start = time.time()
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'EchoHealthCheck/1.0'})
-        with urllib.request.urlopen(req, timeout=8) as r:
+        with _safe_urlopen(req, timeout=8) as r:
             ms = int((time.time() - start) * 1000)
             results.append({'name': app_entry['name'], 'url': url, 'status': r.status, 'ms': ms, 'ok': r.status < 400})
     except urllib.error.HTTPError as e:
@@ -511,7 +519,7 @@ def api_sweet_spot_users():
             SWEET_SPOT_URL,
             headers={'Authorization': f'Bearer {CAKELY_TOKEN}'}
         )
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with _safe_urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read())
         return jsonify(data)
     except Exception as e:
@@ -529,7 +537,7 @@ def api_sweet_spot_employees():
             SWEET_SPOT_URL,
             headers={'Authorization': f'Bearer {CAKELY_TOKEN}'}
         )
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with _safe_urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read())
         return jsonify(data)
     except Exception as e:
@@ -670,7 +678,7 @@ def api_chat():
                  'HTTP-Referer': 'https://jay-portfolio-production.up.railway.app',
                  'X-Title': 'Echo - Jay Alexander Command Center'})
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with _safe_urlopen(req, timeout=30) as resp:
             result = json.loads(resp.read().decode('utf-8'))
             return jsonify({'reply': result['choices'][0]['message']['content']})
     except Exception as e:
@@ -1098,7 +1106,7 @@ def run_single_test(app_url, test):
         data = json.dumps(body).encode() if body else None
         if data: headers['Content-Type'] = 'application/json'
         req = urllib.request.Request(url, data=data, headers=headers, method=test['method'])
-        with urllib.request.urlopen(req, timeout=10) as r:
+        with _safe_urlopen(req, timeout=10) as r:
             ms = int((time.time() - start) * 1000)
             result['ms'] = ms
             result['status_code'] = r.status
@@ -1482,7 +1490,7 @@ def _push_memory_to_github():
         sha = None
         try:
             get_req = urllib.request.Request(api_base, headers=headers, method='GET')
-            with urllib.request.urlopen(get_req, timeout=8) as resp:
+            with _safe_urlopen(get_req, timeout=8) as resp:
                 existing = json.loads(resp.read())
                 sha = existing.get('sha')
         except Exception:
@@ -1503,7 +1511,7 @@ def _push_memory_to_github():
             headers=headers,
             method='PUT'
         )
-        with urllib.request.urlopen(put_req, timeout=10):
+        with _safe_urlopen(put_req, timeout=10):
             pass
 
     except Exception:

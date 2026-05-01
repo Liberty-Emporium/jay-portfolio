@@ -260,8 +260,8 @@
       /* Form inputs — prevent iOS zoom */
       input, select, textarea { font-size: 16px !important; }
 
-      /* Cred card thumbnails */
-      .cred-thumb { height: 110px; }
+      /* Cred card icon banners on mobile */
+      .cred-icon-banner { height: 64px; font-size: 2rem; }
 
       /* Support links */
       .support-links { flex-direction: column; align-items: stretch; }
@@ -288,13 +288,13 @@
     }
     .mob-nav-btn {
       background: none; border: none; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 6px 0; color: var(--muted);
-      font-size: .6rem; font-weight: 600; letter-spacing: .03em;
-      text-transform: uppercase; transition: color .18s;
+      transition: color .18s;
       -webkit-tap-highlight-color: transparent;
     }
-    .mob-nav-btn .mbn-icon { font-size: 1.25rem; line-height: 1; }
+    .mob-nav-btn .mbn-icon { font-size: 1.6rem; line-height: 1; }
+    .mob-nav-btn span:not(.mbn-icon) { display: none; }
     .mob-nav-btn.active { color: var(--accent3); }
     .mob-nav-btn.active .mbn-icon { filter: drop-shadow(0 0 6px var(--accent)); }
     @media (max-width: 600px) {
@@ -326,53 +326,18 @@
     }
   </style>
 
-  <!-- ── Thumbnail lightbox styles ── -->
+  <!-- ── Lightbox + credential banner styles ── -->
   <style>
-    /* Credential card thumbnails */
-    .cred-thumb {
-      margin: 0 0 14px 0;
-      height: 140px;
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-      cursor: zoom-in;
-    }
-    .cred-thumb img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: top;
-      opacity: 0; transition: opacity .5s;
-      display: block;
-    }
-    .cred-thumb img.loaded { opacity: 1; }
-    .cred-thumb img.loaded ~ .cred-thumb-bg { opacity: 0; }
-    .cred-thumb-bg {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      transition: opacity .5s;
-    }
-    .cred-thumb-bg span:first-child { font-size: 2.2rem; }
-    .ct-name {
-      font-size: .7rem; font-weight: 600;
-      color: rgba(255,255,255,.75);
-      margin-top: 6px; letter-spacing: .06em;
-      text-transform: uppercase;
-    }
-    .cred-thumb-hint {
-      position: absolute; inset: 0;
+    /* Credential card icon banner (replaces thumbnails) */
+    .cred-icon-banner {
+      margin: -1px -1px 14px -1px;
+      border-radius: 13px 13px 0 0;
+      height: 80px;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0);
-      color: transparent;
-      font-size: .78rem; font-weight: 600;
-      letter-spacing: .04em;
-      transition: background .2s, color .2s;
-      border-radius: 10px;
+      font-size: 2.4rem;
     }
-    .cred-thumb:hover .cred-thumb-hint {
-      background: rgba(0,0,0,.45);
-      color: #fff;
-    }
+
+    /* cred-thumb legacy styles removed */
     /* Thumbnail on proj-cards */
     .proj-card { overflow: hidden; }
     .proj-thumb-wrap {
@@ -1458,7 +1423,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;max-width:1100px">
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://alexanderai.site','EcDash (Portfolio Dashboard)')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://alexanderai.site" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#1e3a5f,#2563eb)"><span>🌐</span><span class="ct-name">EcDash (Portfolio Dashboard)</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#1e3a5f,#2563eb)">🌐</div>
           <div class="card-header"><div class="card-title">🌐 EcDash (Portfolio Dashboard)</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://alexanderai.site/dashboard" target="_blank">jay-portfolio ↗</a></div>
@@ -1469,7 +1434,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://ai.widget.alexanderai.site','AI Agent Widget')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://ai.widget.alexanderai.site" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#1a1a3e,#7c3aed)"><span>🤖</span><span class="ct-name">AI Agent Widget</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#1a1a3e,#7c3aed)">🤖</div>
           <div class="card-header"><div class="card-title">🤖 AI Agent Widget</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://ai.widget.alexanderai.site/dashboard" target="_blank">Dashboard ↗</a></div>
@@ -1482,7 +1447,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://pet-vet-ai-production.up.railway.app','Pet Vet AI')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://pet-vet-ai-production.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#0f3324,#059669)"><span>🐕</span><span class="ct-name">Pet Vet AI</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#0f3324,#059669)">🐕</div>
           <div class="card-header"><div class="card-title">🐕 Pet Vet AI</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://pet-vet-ai-production.up.railway.app" target="_blank">Live App ↗</a></div>
@@ -1494,7 +1459,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://contractor-pro-ai-production.up.railway.app','Contractor Pro AI')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://contractor-pro-ai-production.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#3b1a08,#d97706)"><span>🏗️</span><span class="ct-name">Contractor Pro AI</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#3b1a08,#d97706)">🏗️</div>
           <div class="card-header"><div class="card-title">🚧 Contractor Pro AI</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank">Live App ↗</a></div>
@@ -1506,7 +1471,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://web-production-43ce4.up.railway.app','Consignment Solutions')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://web-production-43ce4.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#1a0a2e,#9333ea)"><span>🏪</span><span class="ct-name">Consignment Solutions</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#1a0a2e,#9333ea)">🏪</div>
           <div class="card-header"><div class="card-title">💼 Consignment Solutions</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://web-production-43ce4.up.railway.app" target="_blank">Live App ↗</a></div>
@@ -1518,7 +1483,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app','Liberty Inventory')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#0a1e3b,#3b82f6)"><span>📦</span><span class="ct-name">Liberty Inventory</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#0a1e3b,#3b82f6)">📦</div>
           <div class="card-header"><div class="card-title">🏪 Liberty Inventory</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank">Live App ↗</a></div>
@@ -1530,7 +1495,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://billy-floods.up.railway.app','FloodClaim Pro')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://billy-floods.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#0c1f3a,#0ea5e9)"><span>🌊</span><span class="ct-name">FloodClaim Pro</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#0c1f3a,#0ea5e9)">🌊</div>
           <div class="card-header"><div class="card-title">🌊 FloodClaim Pro</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://billy-floods.up.railway.app" target="_blank">billy-floods ↗</a> &nbsp;<a href="https://billy-floods.up.railway.app/sales" target="_blank" style="color:#f59e0b">Sales Page ↗</a></div>
@@ -1552,7 +1517,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://web-production-1c23.up.railway.app','GymForge')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://web-production-1c23.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#1a0a0a,#ef4444)"><span>🏋️</span><span class="ct-name">GymForge</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#1a0a0a,#ef4444)">🏋️</div>
           <div class="card-header"><div class="card-title">🏋️ GymForge</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://web-production-1c23.up.railway.app" target="_blank">Live App ↗</a></div>
@@ -1564,7 +1529,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://moms-ai-helper.up.railway.app','Grace (Mom\'s AI Helper)')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://moms-ai-helper.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#1a0a2e,#a855f7)"><span>💜</span><span class="ct-name">Grace (Mom's AI Helper)</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#1a0a2e,#a855f7)">💜</div>
           <div class="card-header"><div class="card-title">💜 Grace (Mom's AI Helper)</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://moms-ai-helper.up.railway.app" target="_blank">Live App ↗</a></div>
@@ -1576,7 +1541,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://liberty-oil-propane.up.railway.app','Liberty Oil &amp; Propane')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://liberty-oil-propane.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#1a0f00,#f59e0b)"><span>🔥</span><span class="ct-name">Liberty Oil &amp; Propane</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#1a0f00,#f59e0b)">🔥</div>
           <div class="card-header"><div class="card-title">🔥 Liberty Oil &amp; Propane</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://liberty-oil-propane.up.railway.app" target="_blank">Live Site ↗</a></div>
@@ -1586,7 +1551,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://sweet-spot-cakes.up.railway.app','Sweet Spot Custom Cakes')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://sweet-spot-cakes.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#2d0a1e,#ec4899)"><span>🍰</span><span class="ct-name">Sweet Spot Custom Cakes</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#2d0a1e,#ec4899)">🍰</div>
           <div class="card-header"><div class="card-title">🍰 Sweet Spot Custom Cakes</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://sweet-spot-cakes.up.railway.app" target="_blank">sweet-spot-cakes.up.railway.app ↗</a></div>
@@ -1629,7 +1594,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://shop.alexanderai.site','Drop Shipping')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://shop.alexanderai.site" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#0a1f0a,#22c55e)"><span>🛒</span><span class="ct-name">Drop Shipping</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#0a1f0a,#22c55e)">🛒</div>
           <div class="card-header"><div class="card-title">🛒 Drop Shipping</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://shop.alexanderai.site" target="_blank">shop.alexanderai.site ↗</a></div>
@@ -1642,7 +1607,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://web-production-c799c.up.railway.app','List It Everywhere')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://web-production-c799c.up.railway.app" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#0f1f2e,#06b6d4)"><span>📰</span><span class="ct-name">List It Everywhere</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#0f1f2e,#06b6d4)">📰</div>
           <div class="card-header"><div class="card-title">📰 List It Everywhere</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://web-production-c799c.up.railway.app" target="_blank">Live App ↗</a></div>
@@ -1651,7 +1616,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://ai.info1.alexanderai.site','AI Info Site')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://ai.info1.alexanderai.site" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#0a1a2e,#6366f1)"><span>🌐</span><span class="ct-name">AI Info Site</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#0a1a2e,#6366f1)">🌐</div>
           <div class="card-header"><div class="card-title">🌐 AI Info Site</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://ai.info1.alexanderai.site" target="_blank">ai.info1.alexanderai.site ↗</a></div>
@@ -1660,7 +1625,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
         <div class="card">
-          <div class="cred-thumb" onclick="openLightbox('https://voice.alexanderai.site','Alexander AI Voice')"><img src="https://image.thum.io/get/width/600/crop/280/noanimate/https://voice.alexanderai.site" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><div class="cred-thumb-bg" style="background:linear-gradient(135deg,#1a0f1a,#e879f9)"><span>🎙️</span><span class="ct-name">Alexander AI Voice</span></div><span class="cred-thumb-hint">🔍 Preview</span></div>
+          <div class="cred-icon-banner" style="background:linear-gradient(135deg,#1a0f1a,#e879f9)">🎙️</div>
           <div class="card-header"><div class="card-title">🎙️ Alexander AI Voice</div></div>
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://voice.alexanderai.site" target="_blank">voice.alexanderai.site ↗</a></div>

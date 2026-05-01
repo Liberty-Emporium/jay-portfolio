@@ -287,6 +287,17 @@
       flex: 1;
       border: none;
       width: 100%;
+      overflow-y: auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      background: #0a0a14;
+    }
+    #thumb-lightbox-frame img {
+      width: 100%;
+      max-width: 1280px;
+      height: auto;
+      display: block;
     }
   </style>
 </head>
@@ -304,7 +315,7 @@
         <button class="thumb-lb-btn" onclick="closeLightbox()">✕ Close</button>
       </div>
     </div>
-    <iframe id="thumb-lightbox-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    <div id="thumb-lightbox-frame"><img id="thumb-lightbox-img" src="" alt="Site preview" onerror="this.style.display='none'"></div>
   </div>
 </div>
 
@@ -314,17 +325,22 @@ function openLightbox(url, name) {
   document.getElementById('thumb-lightbox-title').textContent = name;
   document.getElementById('thumb-lightbox-url').textContent = url;
   document.getElementById('thumb-lightbox-open').href = url;
-  document.getElementById('thumb-lightbox-frame').src = url;
+  // Use high-res screenshot instead of iframe (avoids X-Frame-Options blocks)
+  const imgUrl = 'https://image.thum.io/get/width/1280/crop/900/noanimate/' + url;
+  const img = document.getElementById('thumb-lightbox-img');
+  img.style.display = 'block';
+  img.src = imgUrl;
+  document.getElementById('thumb-lightbox-frame').scrollTop = 0;
   lb.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeLightbox(e) {
   if (e && e.target !== document.getElementById('thumb-lightbox')) return;
   document.getElementById('thumb-lightbox').classList.remove('open');
-  document.getElementById('thumb-lightbox-frame').src = 'about:blank';
+  document.getElementById('thumb-lightbox-img').src = '';
   document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.getElementById('thumb-lightbox').classList.remove('open'); document.getElementById('thumb-lightbox-frame').src='about:blank'; document.body.style.overflow=''; } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.getElementById('thumb-lightbox').classList.remove('open'); document.getElementById('thumb-lightbox-img').src=''; document.body.style.overflow=''; } });
 </script>
 
 <body>

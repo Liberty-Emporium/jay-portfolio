@@ -338,32 +338,7 @@
     }
 
     /* cred-thumb legacy styles removed */
-    /* Thumbnail on proj-cards */
-    .proj-card { overflow: hidden; }
-    .proj-thumb-wrap {
-      margin: -18px -18px 12px -18px;
-      height: 130px;
-      overflow: hidden;
-      border-radius: 14px 14px 0 0;
-      background: #0d0d1a;
-      position: relative;
-      cursor: zoom-in;
-    }
-    .proj-thumb-wrap img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: top;
-      display: block;
-      transition: transform .3s ease;
-    }
-    .proj-thumb-wrap:hover img { transform: scale(1.04); }
-    .proj-thumb-hint {
-      position: absolute; bottom: 6px; right: 8px;
-      background: rgba(0,0,0,.6); color: #fff;
-      font-size: .65rem; padding: 2px 7px;
-      border-radius: 20px; pointer-events: none;
-      opacity: 0; transition: opacity .2s;
-    }
-    .proj-thumb-wrap:hover .proj-thumb-hint { opacity: 1; }
+    /* proj-thumb styles removed */
 
     /* Lightbox */
     #thumb-lightbox {
@@ -715,10 +690,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app', 'Liberty Emporium Inventory')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" alt="Liberty Emporium Inventory preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🏪</div>
           <div class="proj-category">Inventory · SaaS</div>
           <div class="proj-name">Liberty Emporium Inventory</div>
@@ -734,10 +705,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://pet-vet-ai-production.up.railway.app', 'Pet Vet AI')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://pet-vet-ai-production.up.railway.app" alt="Pet Vet AI preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🐕</div>
           <div class="proj-category">AI · Health</div>
           <div class="proj-name">Pet Vet AI</div>
@@ -751,10 +718,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://web-production-1c23.up.railway.app', 'GymForge')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://web-production-1c23.up.railway.app" alt="GymForge preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🏋️</div>
           <div class="proj-category">Fitness · SaaS</div>
           <div class="proj-name">GymForge</div>
@@ -768,10 +731,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://contractor-pro-ai-production.up.railway.app', 'Contractor Pro AI')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://contractor-pro-ai-production.up.railway.app" alt="Contractor Pro AI preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🏗️</div>
           <div class="proj-category">Construction · AI</div>
           <div class="proj-name">Contractor Pro AI</div>
@@ -798,10 +757,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://alexanderai.site', 'Jay's Portfolio')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://alexanderai.site" alt="Jay's Portfolio preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🌐</div>
           <div class="proj-category">Portfolio · Personal</div>
           <div class="proj-name">Jay's Portfolio</div>
@@ -820,10 +775,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://liberty-emporium-inventory-demo-app-production.up.railway.app', 'Inventory Demo App')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://liberty-emporium-inventory-demo-app-production.up.railway.app" alt="Inventory Demo App preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🏪</div>
           <div class="proj-category">Demo</div>
           <div class="proj-name">Inventory Demo App</div>
@@ -848,10 +799,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-yellow" title="In Progress"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://web-production-43ce4.up.railway.app', 'Consignment Solutions')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://web-production-43ce4.up.railway.app" alt="Consignment Solutions preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🏪</div>
           <div class="proj-category">Demo · E-commerce</div>
           <div class="proj-name">Consignment Solutions</div>
@@ -870,10 +817,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://ai.widget.alexanderai.site', 'AI Agent Widget')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://ai.widget.alexanderai.site" alt="AI Agent Widget preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🤖</div>
           <div class="proj-category">AI Widget</div>
           <div class="proj-name">AI Agent Widget</div>
@@ -900,10 +843,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://billy-floods.up.railway.app', 'FloodClaim Pro')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://billy-floods.up.railway.app" alt="FloodClaim Pro preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🌊</div>
           <div class="proj-category">SaaS App · Insurance</div>
           <div class="proj-name">FloodClaim Pro</div>
@@ -917,10 +856,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://sweet-spot-cakes.up.railway.app', 'Sweet Spot Custom Cakes')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://sweet-spot-cakes.up.railway.app" alt="Sweet Spot Custom Cakes preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🍰</div>
           <div class="proj-category">SaaS · Client Build</div>
           <div class="proj-name">Sweet Spot Custom Cakes</div>
@@ -934,10 +869,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://moms-ai-helper.up.railway.app', 'Grace')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://moms-ai-helper.up.railway.app" alt="Grace preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">💜</div>
           <div class="proj-category">AI · Caregiver</div>
           <div class="proj-name">Grace</div>
@@ -951,10 +882,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
-          <div class="proj-thumb-wrap" onclick="openLightbox('https://liberty-oil-propane.up.railway.app/', 'Liberty Oil & Propane')">
-              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://liberty-oil-propane.up.railway.app/" alt="Liberty Oil & Propane preview" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="proj-thumb-hint">👁 Preview</span>
-            </div>
           <div class="proj-icon">🔥</div>
           <div class="proj-category">Website · Client</div>
           <div class="proj-name">Liberty Oil &amp; Propane</div>

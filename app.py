@@ -469,7 +469,7 @@ APPS_REGISTRY = [
     {'name': 'Alexander AI Voice',      'url': 'https://voice.alexanderai.site'},
     {'name': 'AI Agent Widget',         'url': 'https://ai.widget.alexanderai.site'},
     {'name': 'Drop Shipping',           'url': 'https://shop.alexanderai.site'},
-    {'name': 'List It Everywhere',      'url': 'https://ai.info1.alexanderai.site'},
+    {'name': 'List It Everywhere',      'url': 'https://web-production-c799c.up.railway.app'},
 ]
 
 def ping_app(app_entry, results):

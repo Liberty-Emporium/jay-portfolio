@@ -396,78 +396,54 @@
       <!-- ── Row 4: App portfolio timeline ── -->
       <div class="card">
         <div class="card-header"><div class="card-title">🏗️ App Portfolio</div><span style="font-size:.78rem;color:var(--muted)">All live deployments</span></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
-          <a href="https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🏪</div>
-              <div style="font-size:.83rem;font-weight:600">Liberty Inventory</div>
-              <div style="font-size:.72rem;color:var(--muted)">Multi-tenant SaaS</div>
-            </div>
-          </a>
+        <style>
+          .app-thumb { text-decoration:none; }
+          .app-thumb-card {
+            background:var(--card2);border:1px solid var(--border);border-radius:10px;
+            overflow:hidden;transition:border-color .2s,transform .15s;
+          }
+          .app-thumb-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+          .app-thumb-img {
+            width:100%;height:110px;object-fit:cover;object-position:top;
+            background:#1a1a2e;display:block;
+          }
+          .app-thumb-body { padding:8px 10px 10px; }
+          .app-thumb-name { font-size:.83rem;font-weight:600; }
+          .app-thumb-desc { font-size:.72rem;color:var(--muted);margin-top:2px; }
+        </style>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
 
-          <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🐕</div>
-              <div style="font-size:.83rem;font-weight:600">Pet Vet AI</div>
-              <div style="font-size:.72rem;color:var(--muted)">AI pet health</div>
+          {% set apps = [
+            ('https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app','Liberty Inventory','Multi-tenant SaaS'),
+            ('https://pet-vet-ai-production.up.railway.app','Pet Vet AI','AI pet health'),
+            ('https://web-production-1c23.up.railway.app','GymForge','Gym management'),
+            ('https://contractor-pro-ai-production.up.railway.app','Contractor Pro AI','Construction AI'),
+            ('https://ai.widget.alexanderai.site','AI Agent Widget','Embeddable chat'),
+            ('https://billy-floods.up.railway.app','FloodClaim Pro','Insurance SaaS'),
+            ('https://shop.alexanderai.site','Drop Shipping','Alexander AI Solutions'),
+            ('https://ai.info1.alexanderai.site','AI Info Site','ai.info1.alexanderai.site'),
+            ('https://sweet-spot-cakes.up.railway.app','Sweet Spot Cakes','Bakery SaaS'),
+            ('https://moms-ai-helper.up.railway.app','Grace','AI caregiver'),
+            ('https://liberty-oil-propane.up.railway.app/','Liberty Oil & Propane','Client website'),
+            ('https://alexanderai.site','EcDash / Portfolio','This site'),
+          ] %}
+
+          {% for url, name, desc in apps %}
+          <a href="{{ url }}" target="_blank" class="app-thumb">
+            <div class="app-thumb-card">
+              <img class="app-thumb-img"
+                src="https://image.thum.io/get/width/360/crop/220/noanimate/{{ url }}"
+                alt="{{ name }} preview"
+                loading="lazy"
+                onerror="this.style.display='none'">
+              <div class="app-thumb-body">
+                <div class="app-thumb-name">{{ name }}</div>
+                <div class="app-thumb-desc">{{ desc }}</div>
+              </div>
             </div>
           </a>
-          <a href="https://web-production-1c23.up.railway.app" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🏋️</div>
-              <div style="font-size:.83rem;font-weight:600">GymForge</div>
-              <div style="font-size:.72rem;color:var(--muted)">Gym management</div>
-            </div>
-          </a>
-          <a href="https://contractor-pro-ai-production.up.railway.app" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🏗️</div>
-              <div style="font-size:.83rem;font-weight:600">Contractor Pro AI</div>
-              <div style="font-size:.72rem;color:var(--muted)">Construction AI</div>
-            </div>
-          </a>
-          <a href="https://ai.widget.alexanderai.site" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🤖</div>
-              <div style="font-size:.83rem;font-weight:600">AI Agent Widget</div>
-              <div style="font-size:.72rem;color:var(--muted)">Embeddable chat</div>
-            </div>
-          </a>
-          <a href="https://billy-floods.up.railway.app" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🌊</div>
-              <div style="font-size:.83rem;font-weight:600">FloodClaim Pro</div>
-              <div style="font-size:.72rem;color:var(--muted)">Insurance SaaS</div>
-            </div>
-          </a>
-          <a href="https://sweet-spot-cakes.up.railway.app" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🍰</div>
-              <div style="font-size:.83rem;font-weight:600">Sweet Spot Cakes</div>
-              <div style="font-size:.72rem;color:var(--muted)">Bakery SaaS</div>
-            </div>
-          </a>
-          <a href="https://moms-ai-helper.up.railway.app" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">💜</div>
-              <div style="font-size:.83rem;font-weight:600">Grace</div>
-              <div style="font-size:.72rem;color:var(--muted)">AI caregiver</div>
-            </div>
-          </a>
-          <a href="https://liberty-oil-propane.up.railway.app/" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🔥</div>
-              <div style="font-size:.83rem;font-weight:600">Liberty Oil &amp; Propane</div>
-              <div style="font-size:.72rem;color:var(--muted)">Client website</div>
-            </div>
-          </a>
-          <a href="https://alexanderai.site" target="_blank" style="text-decoration:none">
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:1.3rem;margin-bottom:4px">🌐</div>
-              <div style="font-size:.83rem;font-weight:600">EcDash / Portfolio</div>
-              <div style="font-size:.72rem;color:var(--muted)">This site</div>
-            </div>
-          </a>
+          {% endfor %}
+
         </div>
       </div>
 
@@ -1320,6 +1296,14 @@
           <div style="font-size:0.85rem;line-height:2.2">
             <div><b>URL:</b> <a href="https://web-production-c799c.up.railway.app" target="_blank">Live App ↗</a></div>
             <div><b>GitHub:</b> <a href="https://github.com/Liberty-Emporium/list-it-everywhere" target="_blank">list-it-everywhere ↗</a></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🌐 AI Info Site</div></div>
+          <div style="font-size:0.85rem;line-height:2.2">
+            <div><b>URL:</b> <a href="https://ai.info1.alexanderai.site" target="_blank">ai.info1.alexanderai.site ↗</a></div>
+            <div><b>Railway:</b> <a href="https://web-production-fcc37d.up.railway.app" target="_blank">web-production-fcc37d ↗</a></div>
           </div>
         </div>
 

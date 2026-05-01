@@ -470,6 +470,8 @@ APPS_REGISTRY = [
     {'name': 'AI Agent Widget',         'url': 'https://ai.widget.alexanderai.site'},
     {'name': 'Drop Shipping',           'url': 'https://shop.alexanderai.site'},
     {'name': 'List It Everywhere',      'url': 'https://web-production-c799c.up.railway.app'},
+    {'name': 'AI Info Site',             'url': 'https://ai.info1.alexanderai.site'},
+    {'name': 'Drop Shipping',            'url': 'https://shop.alexanderai.site'},
 ]
 
 def ping_app(app_entry, results):

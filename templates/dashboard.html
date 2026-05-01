@@ -205,15 +205,124 @@
       .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
       .grid-2 { grid-template-columns: 1fr; }
     }
+
+    /* ── Full mobile overhaul ── */
     @media (max-width: 600px) {
+      /* Layout */
       .grid-3, .grid-4, .grid-auto { grid-template-columns: 1fr; }
-      .content { padding: 12px; }
-      .sidebar { transform: translateX(-100%); transition: transform .25s; position: fixed; z-index: 1000; width: 220px !important; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .content { padding: 14px 12px 80px; } /* bottom pad for nav bar */
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        position: fixed; z-index: 1000; width: 260px !important;
+        box-shadow: 4px 0 32px rgba(0,0,0,.6);
+      }
       .sidebar.mob-open { transform: translateX(0); }
       .main { margin-left: 0 !important; }
+
+      /* Topbar */
+      .topbar { padding: 0 14px 0 52px; height: 52px; }
+      .topbar-title { font-size: .9rem; }
+      .topbar-right { gap: 10px; }
+      #clock { display: none; }
+
+      /* Section headers */
+      .section-title { font-size: 1.15rem; }
+
+      /* Cards */
+      .card { padding: 14px; border-radius: 12px; }
+      .card-header { margin-bottom: 12px; }
+      .card-title { font-size: .92rem; }
+
+      /* Stat tiles */
+      .stat-num { font-size: 1.5rem; }
+      .stat-tile { padding: 14px; }
+
+      /* Project cards */
+      .proj-card:hover { transform: none; }
+
+      /* TODO form stack */
+      .todo-form { flex-wrap: wrap; }
+      .todo-input { min-width: 0; }
+      .todo-form .btn { width: 100%; }
+
+      /* Password rows — stack on tiny screens */
+      .pw-row { flex-wrap: wrap; }
+      .pw-val { min-width: 100%; margin-bottom: 4px; }
+
+      /* Tables */
       table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+
+      /* Images */
       img { max-width: 100%; height: auto; }
-      input,select,textarea { font-size: 16px !important; }
+
+      /* Form inputs — prevent iOS zoom */
+      input, select, textarea { font-size: 16px !important; }
+
+      /* Cred card thumbnails */
+      .cred-thumb { height: 110px; }
+
+      /* Support links */
+      .support-links { flex-direction: column; align-items: stretch; }
+      .support-link { justify-content: center; }
+
+      /* Links grid */
+      .links-grid { grid-template-columns: 1fr; }
+
+      /* Lightbox */
+      #thumb-lightbox-frame { width: 96vw !important; max-height: 70vh !important; }
+    }
+
+    /* ── Bottom nav bar ── */
+    #mob-bottom-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
+      background: rgba(10,15,26,.97);
+      backdrop-filter: blur(16px) saturate(1.4);
+      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      border-top: 1px solid var(--border);
+      padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+      display: none;
+      grid-template-columns: repeat(5, 1fr);
+    }
+    .mob-nav-btn {
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 6px 0; color: var(--muted);
+      font-size: .6rem; font-weight: 600; letter-spacing: .03em;
+      text-transform: uppercase; transition: color .18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mob-nav-btn .mbn-icon { font-size: 1.25rem; line-height: 1; }
+    .mob-nav-btn.active { color: var(--accent3); }
+    .mob-nav-btn.active .mbn-icon { filter: drop-shadow(0 0 6px var(--accent)); }
+    @media (max-width: 600px) {
+      #mob-bottom-nav { display: grid; }
+    }
+
+    /* ── Hamburger ── */
+    #mob-toggle {
+      display: none;
+      position: fixed; top: 10px; left: 10px; z-index: 1100;
+      background: rgba(30,41,59,.9); border: 1px solid var(--border);
+      border-radius: 9px; padding: 7px 10px;
+      cursor: pointer; color: #fff; font-size: 1.15rem;
+      backdrop-filter: blur(8px);
+      -webkit-tap-highlight-color: transparent;
+      transition: background .2s;
+    }
+    #mob-toggle:active { background: rgba(99,102,241,.35); }
+    #mob-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 999;
+      backdrop-filter: blur(2px);
+    }
+    @media (max-width: 600px) {
+      #mob-toggle { display: block; }
+      #mob-overlay.show { display: block; }
     }
   </style>
 
@@ -390,17 +499,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
 <body>
 
-<!-- ── Mobile hamburger ── -->
-<button id="mob-toggle" onclick="document.getElementById('sidebar').classList.toggle('mob-open');document.getElementById('mob-overlay').classList.toggle('show')" 
-  style="display:none;position:fixed;top:12px;left:12px;z-index:1100;background:#1e293b;border:none;border-radius:8px;padding:8px 10px;cursor:pointer;color:#fff;font-size:1.1rem;">☰</button>
-<div id="mob-overlay" onclick="document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('mob-overlay').classList.remove('show')"
-  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;"></div>
-<style>
-@media(max-width:600px){
-  #mob-toggle{display:block!important;}
-  #mob-overlay.show{display:block!important;}
-}
-</style>
+<!-- ── Mobile hamburger + overlay ── -->
+<button id="mob-toggle" onclick="openMobMenu()" aria-label="Open menu">☰</button>
+<div id="mob-overlay" onclick="closeMobMenu()"></div>
 <!-- ── Sidebar ── -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo" style="display:flex;align-items:center;justify-content:space-between;">
@@ -409,15 +510,15 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">Menu</div>
-    <button class="nav-item active" onclick="showPanel('overview')">🏠 <span>Overview</span></button>
-    <button class="nav-item" onclick="showPanel('projects')">🚀 <span>Projects</span></button>
-    <button class="nav-item" onclick="showPanel('todos')">✅ <span>To-Do List</span></button>
-    <button class="nav-item" onclick="showPanel('links')">🔗 <span>Quick Links</span></button>
-    <button class="nav-item" onclick="showPanel('support')">🛟 <span>Support</span></button>
-    <button class="nav-item" onclick="showPanel('notes')">📝 <span>Notes</span></button>
-    <button class="nav-item" onclick="showPanel('credentials')">🔐 <span>Credentials</span></button>
-    <button class="nav-item" onclick="showPanel('daily')">📅 <span>Daily Summary</span></button>
-    <button class="nav-item" onclick="showPanel('ai')">🦾 <span>My AI</span></button>
+    <button class="nav-item active" onclick="showPanelMob('overview')">🏠 <span>Overview</span></button>
+    <button class="nav-item" onclick="showPanelMob('projects')">🚀 <span>Projects</span></button>
+    <button class="nav-item" onclick="showPanelMob('todos')">✅ <span>To-Do List</span></button>
+    <button class="nav-item" onclick="showPanelMob('links')">🔗 <span>Quick Links</span></button>
+    <button class="nav-item" onclick="showPanelMob('support')">🛟 <span>Support</span></button>
+    <button class="nav-item" onclick="showPanelMob('notes')">📝 <span>Notes</span></button>
+    <button class="nav-item" onclick="showPanelMob('credentials')">🔐 <span>Credentials</span></button>
+    <button class="nav-item" onclick="showPanelMob('daily')">📅 <span>Daily Summary</span></button>
+    <button class="nav-item" onclick="showPanelMob('ai')">🦾 <span>My AI</span></button>
     <div class="nav-section">System</div>
     <a href="/chat" class="nav-item" style="color:var(--accent3);font-weight:600">💬 <span>Chat with EcDash</span></a>
     <a href="/monitoring" class="nav-item" style="color:var(--green)">📡 <span>App Monitor</span></a>
@@ -430,6 +531,25 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
     <span>v1.0 · Jay Alexander</span>
   </div>
 </aside>
+
+<!-- ── Mobile bottom nav bar ── -->
+<nav id="mob-bottom-nav" role="navigation" aria-label="Bottom navigation">
+  <button class="mob-nav-btn active" id="mbn-overview" onclick="showPanelMob('overview')">
+    <span class="mbn-icon">🏠</span><span>Home</span>
+  </button>
+  <button class="mob-nav-btn" id="mbn-projects" onclick="showPanelMob('projects')">
+    <span class="mbn-icon">🚀</span><span>Apps</span>
+  </button>
+  <button class="mob-nav-btn" id="mbn-credentials" onclick="showPanelMob('credentials')">
+    <span class="mbn-icon">🔐</span><span>Creds</span>
+  </button>
+  <button class="mob-nav-btn" id="mbn-todos" onclick="showPanelMob('todos')">
+    <span class="mbn-icon">✅</span><span>Tasks</span>
+  </button>
+  <button class="mob-nav-btn" id="mbn-more" onclick="openMobMenu()">
+    <span class="mbn-icon">☰</span><span>More</span>
+  </button>
+</nav>
 
 <!-- ── Main ── -->
 <main class="main">
@@ -1569,12 +1689,49 @@ function updateClock() {
 updateClock(); setInterval(updateClock, 1000);
 
 // ── Tab navigation ──
+function openMobMenu() {
+  document.getElementById('sidebar').classList.add('mob-open');
+  document.getElementById('mob-overlay').classList.add('show');
+  document.getElementById('mob-toggle').innerHTML = '✕';
+}
+function closeMobMenu() {
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('mob-overlay').classList.remove('show');
+  document.getElementById('mob-toggle').innerHTML = '☰';
+}
+
 function showPanel(id) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  // Mark sidebar nav item active
+  if (event && event.currentTarget) event.currentTarget.classList.add('active');
+  // Mark bottom nav button active
+  const mbn = document.getElementById('mbn-' + id);
+  if (mbn) mbn.classList.add('active');
+  // Scroll to top of content on mobile
+  if (window.innerWidth <= 600) window.scrollTo({ top: 0, behavior: 'smooth' });
   if (id === 'todos') renderTodos();
+}
+function showPanelMob(id) {
+  // Called from bottom nav — also close the slide-out menu
+  closeMobMenu();
+  // Synthesize an event so showPanel can mark the bottom nav btn
+  const fakeEvent = { currentTarget: document.getElementById('mbn-' + id) || document.createElement('button') };
+  const orig = window.event;
+  // Directly do the work without relying on window.event
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  const mbn = document.getElementById('mbn-' + id);
+  if (mbn) mbn.classList.add('active');
+  if (window.innerWidth <= 600) window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (id === 'todos') renderTodos();
+  if (id === 'credentials') { loadSweetSpotUsers(); loadSweetSpotEmployees(); }
 }
 
 // ── TODO system (server API) ──
@@ -1965,7 +2122,12 @@ function loadSweetSpotEmployees() {
     });
 }
 
-// Auto-load employees when credentials panel opens
+// Patch showPanelMob to also load credentials data when needed
+const _origShowPanelMob = showPanelMob;
+window.showPanelMob = function(id) {
+  _origShowPanelMob(id);
+};
+// Also patch showPanel for desktop credential loading
 const _origShowPanel = showPanel;
 window.showPanel = function(id) {
   _origShowPanel.call(this, id);

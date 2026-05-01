@@ -462,8 +462,8 @@ APPS_REGISTRY = [
     {'name': 'Inventory Demo',        'url': 'https://liberty-emporium-inventory-demo-app-production.up.railway.app'},
     {'name': 'Pet Vet AI',            'url': 'https://pet-vet-ai-production.up.railway.app'},
     {'name': 'GymForge',              'url': 'https://web-production-1c23.up.railway.app'},
-    {'name': 'Contractor Pro AI',     'url': 'https://contractor-pro-ai-production.up.railway.app'},
-    {'name': 'Consignment Solutions', 'url': 'https://web-production-43ce4.up.railway.app'},
+    {'name': 'Contractor Pro AI',     'url': 'https://contractor.ai.solutions.alexanderai.site'},
+    {'name': 'Consignment Solutions', 'url': 'https://consignment.ai.solutions.alexanderai.site'},
     {'name': 'FloodClaim Pro',         'url': 'https://billy-floods.up.railway.app'},
     {'name': 'Liberty Oil & Propane',  'url': 'https://liberty-oil-propane.up.railway.app'},
     {'name': 'Alexander AI Voice',      'url': 'https://voice.alexanderai.site'},
@@ -471,7 +471,6 @@ APPS_REGISTRY = [
     {'name': 'Drop Shipping',           'url': 'https://shop.alexanderai.site'},
     {'name': 'List It Everywhere',      'url': 'https://web-production-c799c.up.railway.app'},
     {'name': 'AI Info Site',             'url': 'https://ai.info1.alexanderai.site'},
-    {'name': 'Drop Shipping',            'url': 'https://shop.alexanderai.site'},
 ]
 
 def ping_app(app_entry, results):
@@ -1034,7 +1033,7 @@ TEST_REGISTRY = [
         ]
     },
     {
-        'name': 'Contractor Pro AI', 'url': 'https://contractor-pro-ai-production.up.railway.app',
+        'name': 'Contractor Pro AI', 'url': 'https://contractor.ai.solutions.alexanderai.site',
         'icon': '🔨',
         'tests': [
             {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},
@@ -1043,7 +1042,7 @@ TEST_REGISTRY = [
         ]
     },
     {
-        'name': 'Consignment Solutions', 'url': 'https://web-production-43ce4.up.railway.app',
+        'name': 'Consignment Solutions', 'url': 'https://consignment.ai.solutions.alexanderai.site',
         'icon': '🏪',
         'tests': [
             {'id': 'health',   'label': 'Health check', 'path': '/health', 'method': 'GET', 'expect_json': {'status': 'ok'}},

@@ -467,6 +467,9 @@ APPS_REGISTRY = [
     {'name': 'FloodClaim Pro',         'url': 'https://billy-floods.up.railway.app'},
     {'name': 'Liberty Oil & Propane',  'url': 'https://liberty-oil-propane.up.railway.app'},
     {'name': 'Alexander AI Voice',      'url': 'https://voice.alexanderai.site'},
+    {'name': 'AI Agent Widget',         'url': 'https://ai.widget.alexanderai.site'},
+    {'name': 'Drop Shipping',           'url': 'https://shop.alexanderai.site'},
+    {'name': 'List It Everywhere',      'url': 'https://ai.info1.alexanderai.site'},
 ]
 
 def ping_app(app_entry, results):

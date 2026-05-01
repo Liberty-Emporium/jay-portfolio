@@ -216,7 +216,117 @@
       input,select,textarea { font-size: 16px !important; }
     }
   </style>
+
+  <!-- ── Thumbnail lightbox styles ── -->
+  <style>
+    /* Thumbnail on proj-cards */
+    .proj-card { overflow: hidden; }
+    .proj-thumb-wrap {
+      margin: -18px -18px 12px -18px;
+      height: 130px;
+      overflow: hidden;
+      border-radius: 14px 14px 0 0;
+      background: #0d0d1a;
+      position: relative;
+      cursor: zoom-in;
+    }
+    .proj-thumb-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top;
+      display: block;
+      transition: transform .3s ease;
+    }
+    .proj-thumb-wrap:hover img { transform: scale(1.04); }
+    .proj-thumb-hint {
+      position: absolute; bottom: 6px; right: 8px;
+      background: rgba(0,0,0,.6); color: #fff;
+      font-size: .65rem; padding: 2px 7px;
+      border-radius: 20px; pointer-events: none;
+      opacity: 0; transition: opacity .2s;
+    }
+    .proj-thumb-wrap:hover .proj-thumb-hint { opacity: 1; }
+
+    /* Lightbox */
+    #thumb-lightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,.88);
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(6px);
+      cursor: zoom-out;
+    }
+    #thumb-lightbox.open { display: flex; }
+    #thumb-lightbox-inner {
+      width: 92vw; max-width: 1280px;
+      height: 88vh;
+      background: #0d0d1a;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 32px 80px rgba(0,0,0,.7);
+    }
+    #thumb-lightbox-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px;
+      background: #111127;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      flex-shrink: 0;
+    }
+    #thumb-lightbox-title { font-size: .9rem; font-weight: 600; color: #e2e8f0; }
+    #thumb-lightbox-url   { font-size: .75rem; color: #64748b; }
+    .thumb-lb-btn {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      color: #e2e8f0; border-radius: 8px; padding: 5px 14px;
+      font-size: .8rem; cursor: pointer; text-decoration: none;
+      display: inline-block;
+    }
+    .thumb-lb-btn:hover { background: rgba(255,255,255,.14); }
+    #thumb-lightbox-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+    }
+  </style>
 </head>
+
+<!-- Lightbox overlay -->
+<div id="thumb-lightbox" onclick="closeLightbox(event)">
+  <div id="thumb-lightbox-inner" onclick="event.stopPropagation()">
+    <div id="thumb-lightbox-bar">
+      <div>
+        <div id="thumb-lightbox-title">Loading...</div>
+        <div id="thumb-lightbox-url"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <a id="thumb-lightbox-open" href="#" target="_blank" class="thumb-lb-btn">Open Site ↗</a>
+        <button class="thumb-lb-btn" onclick="closeLightbox()">✕ Close</button>
+      </div>
+    </div>
+    <iframe id="thumb-lightbox-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+  </div>
+</div>
+
+<script>
+function openLightbox(url, name) {
+  const lb = document.getElementById('thumb-lightbox');
+  document.getElementById('thumb-lightbox-title').textContent = name;
+  document.getElementById('thumb-lightbox-url').textContent = url;
+  document.getElementById('thumb-lightbox-open').href = url;
+  document.getElementById('thumb-lightbox-frame').src = url;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('thumb-lightbox')) return;
+  document.getElementById('thumb-lightbox').classList.remove('open');
+  document.getElementById('thumb-lightbox-frame').src = 'about:blank';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.getElementById('thumb-lightbox').classList.remove('open'); document.getElementById('thumb-lightbox-frame').src='about:blank'; document.body.style.overflow=''; } });
+</script>
+
 <body>
 
 <!-- ── Mobile hamburger ── -->
@@ -459,6 +569,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app', 'Liberty Emporium Inventory')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app" alt="Liberty Emporium Inventory preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🏪</div>
           <div class="proj-category">Inventory · SaaS</div>
           <div class="proj-name">Liberty Emporium Inventory</div>
@@ -474,6 +588,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://pet-vet-ai-production.up.railway.app', 'Pet Vet AI')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://pet-vet-ai-production.up.railway.app" alt="Pet Vet AI preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🐕</div>
           <div class="proj-category">AI · Health</div>
           <div class="proj-name">Pet Vet AI</div>
@@ -487,6 +605,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://web-production-1c23.up.railway.app', 'GymForge')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://web-production-1c23.up.railway.app" alt="GymForge preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🏋️</div>
           <div class="proj-category">Fitness · SaaS</div>
           <div class="proj-name">GymForge</div>
@@ -500,6 +622,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://contractor-pro-ai-production.up.railway.app', 'Contractor Pro AI')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://contractor-pro-ai-production.up.railway.app" alt="Contractor Pro AI preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🏗️</div>
           <div class="proj-category">Construction · AI</div>
           <div class="proj-name">Contractor Pro AI</div>
@@ -526,6 +652,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://alexanderai.site', 'Jay's Portfolio')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://alexanderai.site" alt="Jay's Portfolio preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🌐</div>
           <div class="proj-category">Portfolio · Personal</div>
           <div class="proj-name">Jay's Portfolio</div>
@@ -544,6 +674,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://liberty-emporium-inventory-demo-app-production.up.railway.app', 'Inventory Demo App')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://liberty-emporium-inventory-demo-app-production.up.railway.app" alt="Inventory Demo App preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🏪</div>
           <div class="proj-category">Demo</div>
           <div class="proj-name">Inventory Demo App</div>
@@ -568,6 +702,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-yellow" title="In Progress"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://web-production-43ce4.up.railway.app', 'Consignment Solutions')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://web-production-43ce4.up.railway.app" alt="Consignment Solutions preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🏪</div>
           <div class="proj-category">Demo · E-commerce</div>
           <div class="proj-name">Consignment Solutions</div>
@@ -586,6 +724,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://ai.widget.alexanderai.site', 'AI Agent Widget')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://ai.widget.alexanderai.site" alt="AI Agent Widget preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🤖</div>
           <div class="proj-category">AI Widget</div>
           <div class="proj-name">AI Agent Widget</div>
@@ -612,6 +754,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://billy-floods.up.railway.app', 'FloodClaim Pro')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://billy-floods.up.railway.app" alt="FloodClaim Pro preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🌊</div>
           <div class="proj-category">SaaS App · Insurance</div>
           <div class="proj-name">FloodClaim Pro</div>
@@ -625,6 +771,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://sweet-spot-cakes.up.railway.app', 'Sweet Spot Custom Cakes')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://sweet-spot-cakes.up.railway.app" alt="Sweet Spot Custom Cakes preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🍰</div>
           <div class="proj-category">SaaS · Client Build</div>
           <div class="proj-name">Sweet Spot Custom Cakes</div>
@@ -638,6 +788,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://moms-ai-helper.up.railway.app', 'Grace')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://moms-ai-helper.up.railway.app" alt="Grace preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">💜</div>
           <div class="proj-category">AI · Caregiver</div>
           <div class="proj-name">Grace</div>
@@ -651,6 +805,10 @@
 
         <div class="proj-card">
           <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-thumb-wrap" onclick="openLightbox('https://liberty-oil-propane.up.railway.app/', 'Liberty Oil & Propane')">
+              <img src="https://image.thum.io/get/width/600/crop/300/noanimate/https://liberty-oil-propane.up.railway.app/" alt="Liberty Oil & Propane preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="proj-thumb-hint">👁 Preview</span>
+            </div>
           <div class="proj-icon">🔥</div>
           <div class="proj-category">Website · Client</div>
           <div class="proj-name">Liberty Oil &amp; Propane</div>

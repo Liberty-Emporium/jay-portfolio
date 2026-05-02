@@ -258,6 +258,8 @@ config = load_config()
 APP_SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'app_settings.json')
 
 DEFAULT_APP_SETTINGS = {
+    'echo_agent_name': 'EcDash',
+    'echo_agent_tagline': 'Your AI operational partner',
     'echo_model': 'anthropic/claude-3.5-haiku',
     'echo_max_tokens': 1024,
     'echo_temperature': 0.7,

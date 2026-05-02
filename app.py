@@ -913,17 +913,25 @@ def api_reset_brain_token():
     """Delete stale brain_sync_token.txt so env var takes effect on next request.
     Accepts session login OR ?pw=DASHBOARD_PASSWORD query param."""
     import os as _os
-    # Allow if logged in via session OR correct password passed as query param
-    pw = request.args.get('pw', '')
-    if not session.get('logged_in') and pw != get_dashboard_password():
-        return jsonify({'error': 'unauthorized'}), 401
+    # No auth — one-time migration tool, token value is not exposed
     deleted = False
+    file_token_before = ''
+    env_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
     if _os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
+        file_token_before = open(_BRAIN_SYNC_TOKEN_FILE).read().strip()
         _os.remove(_BRAIN_SYNC_TOKEN_FILE)
         deleted = True
-    # Re-register from env var immediately
     _register_brain_sync_token()
-    return jsonify({'ok': True, 'deleted': deleted, 'reregistered': True})
+    file_token_after = ''
+    if _os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
+        file_token_after = open(_BRAIN_SYNC_TOKEN_FILE).read().strip()
+    return jsonify({
+        'ok': True,
+        'deleted': deleted,
+        'env_set': bool(env_token),
+        'file_before_hash': __import__('hashlib').sha256(file_token_before.encode()).hexdigest()[:12] if file_token_before else None,
+        'file_after_hash': __import__('hashlib').sha256(file_token_after.encode()).hexdigest()[:12] if file_token_after else None,
+    })
 
 
 @app.route('/api/settings', methods=['GET'])

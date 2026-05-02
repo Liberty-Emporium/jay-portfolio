@@ -902,21 +902,92 @@ def save_brain_file(filename, content):
     path = os.path.join(DATA_DIR, filename)
     with open(path, 'w', encoding='utf-8') as f: f.write(content)
 
-def build_system_prompt():
+def get_app_file_tree():
+    """Return a compact file tree of the app for EcDash's context."""
+    import shutil
+    lines = []
+    for d in ['templates', 'static']:
+        dir_path = os.path.join(APP_ROOT, d)
+        if not os.path.isdir(dir_path): continue
+        for root, dirs, files in os.walk(dir_path):
+            dirs[:] = sorted(d for d in dirs if not d.startswith('.'))
+            for fname in sorted(files):
+                ext = os.path.splitext(fname)[1]
+                if ext in _CODE_ALLOWED_EXTS:
+                    rel = os.path.relpath(os.path.join(root, fname), APP_ROOT)
+                    size = os.path.getsize(os.path.join(root, fname))
+                    lines.append(f'  {rel} ({size//1024}kb)' if size > 1024 else f'  {rel} ({size}b)')
+    return '\n'.join(lines)
+
+def build_system_prompt(coding_mode=False):
     """Build Echo's system prompt from brain files. Falls back to defaults."""
     soul     = load_brain_file('SOUL.md')
     identity = load_brain_file('IDENTITY.md')
     memory   = load_brain_file('MEMORY.md')
+    s        = load_app_settings()
+    agent_name = s.get('echo_agent_name', 'EcDash')
 
-    base = """You are EcDash — the personal AI executive assistant for Jay Alexander, founder of Liberty-Emporium / Alexander AI Integrated Solutions.
-You are accessed via the Command Center dashboard at alexanderai.site.
-Never say you are ChatGPT, Claude, Gemini, or any AI product. You are Echo. Only Echo."""
+    base = f"""You are {agent_name} — the AI for Jay Alexander's Command Center at alexanderai.site (Liberty-Emporium / Alexander AI Integrated Solutions).
+Never say you are ChatGPT, Claude, Gemini, or any other AI product. You are {agent_name}."""
 
     parts = [base]
     if identity: parts.append('\n---\n# YOUR IDENTITY\n' + identity)
     if soul:     parts.append('\n---\n# YOUR SOUL & PERSONALITY\n' + soul)
     if memory:   parts.append('\n---\n# YOUR MEMORY (read this carefully)\n' + memory)
-    parts.append('\n---\nBe concise, direct, warm. You have opinions. You say "we" about Jay\'s projects. Never use filler like "Great question!".')
+    parts.append('\n---\nBe concise, direct, warm. You have opinions. Say "we" about Jay\'s projects. Skip filler like "Great question!".')
+
+    if coding_mode:
+        file_tree = get_app_file_tree()
+        parts.append(f"""
+---
+# YOUR CODING CAPABILITIES
+
+You are a skilled developer. You can read and write files in this dashboard app.
+The app is built with Python/Flask, Jinja2 templates, vanilla JS, Bootstrap 5.
+
+## App File Tree
+{file_tree}
+
+## How to Write Files
+When Jay asks you to make a change to the dashboard, you MUST:
+1. Think through what needs to change
+2. Write the complete updated file using the WRITE_FILE block syntax below
+3. Briefly explain what you changed and why
+
+## WRITE_FILE Syntax
+To write a file, include a block like this in your response:
+
+<<<WRITE_FILE: templates/dashboard.html>>>
+[complete file content here]
+<<<END_FILE>>>
+
+Rules:
+- Always write the COMPLETE file — never partial snippets with "rest stays the same"
+- You can write multiple files in one response
+- Only templates/ and static/ files are allowed
+- A .bak backup is automatically created before every write
+- After writing, tell Jay what you changed and what to look for
+- If Jay says "undo" or "revert", you can restore from the .bak file
+
+## Coding Standards (non-negotiable)
+- All password fields: show/hide eye toggle (👁️/🙈)
+- CSRF tokens on all forms
+- Security headers on all routes
+- No debug=True in production
+- /health endpoint on every app
+- bcrypt for passwords, never MD5/SHA1
+- Push all changes to GitHub after saving
+- Bootstrap 5 for UI, consistent dark theme
+
+## Current Design System
+```css
+--bg:#030712; --bg2:#0a0f1a; --card:#111827;
+--border:#1f2937; --accent:#6366f1; --accent3:#a78bfa;
+--green:#10b981; --yellow:#f59e0b; --red:#ef4444;
+--grad: linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);
+```
+""")
+
     return '\n'.join(parts)
 
 # Brain file API routes
@@ -977,6 +1048,34 @@ def chat():
     chat_token = os.environ.get('CHAT_BEARER_TOKEN', '')
     return render_template('chat.html', config=config, chat_token=chat_token)
 
+_CODE_KEYWORDS = [
+    'change', 'update', 'edit', 'fix', 'add', 'remove', 'delete', 'rename',
+    'redesign', 'rebuild', 'refactor', 'make', 'create', 'build', 'write',
+    'color', 'style', 'css', 'html', 'button', 'page', 'layout', 'sidebar',
+    'nav', 'header', 'footer', 'font', 'dashboard', 'template', 'code'
+]
+
+def _execute_write_files(reply_text):
+    """Parse and execute WRITE_FILE blocks from EcDash's reply. Returns list of saved paths."""
+    import re, shutil
+    saved = []
+    pattern = r'<<<WRITE_FILE:\s*([^>\n]+)>>>\n?([\s\S]*?)<<<END_FILE>>>'
+    for match in re.finditer(pattern, reply_text):
+        rel_path = match.group(1).strip()
+        content  = match.group(2)
+        full = _safe_code_path(rel_path)
+        if not full:
+            app.logger.warning(f'EcDash tried to write disallowed path: {rel_path}')
+            continue
+        os.makedirs(os.path.dirname(full), exist_ok=True)
+        if os.path.exists(full):
+            shutil.copy2(full, full + '.bak')
+        with open(full, 'w', encoding='utf-8') as f:
+            f.write(content)
+        app.logger.info(f'EcDash wrote: {rel_path} ({len(content)} chars)')
+        saved.append(rel_path)
+    return saved
+
 @app.route('/api/chat', methods=['POST'])
 @login_required
 def api_chat():
@@ -990,9 +1089,14 @@ def api_chat():
     if not openrouter_key:
         return jsonify({'reply': 'OpenRouter API key not configured. Add OPENROUTER_API_KEY to Railway environment variables.'})
 
-    system_content = build_system_prompt()
+    # Detect if this is a coding request
+    msg_lower = user_message.lower()
+    is_coding = any(kw in msg_lower for kw in _CODE_KEYWORDS)
+    system_content = build_system_prompt(coding_mode=is_coding)
+
+    # Inject live health data if relevant
     health_keywords = ['health', 'status', 'up', 'down', 'live', 'working', 'test', 'ping', 'check', 'running', 'broken', 'crash', 'offline']
-    if any(kw in user_message.lower() for kw in health_keywords):
+    if any(kw in msg_lower for kw in health_keywords):
         try:
             health = check_all_apps()
             lines = ['\n\nLIVE APP HEALTH (checked right now):']
@@ -1001,7 +1105,7 @@ def api_chat():
                 lines.append(f"- {r['name']}: {icon} (HTTP {r['status']}, {r['ms']}ms)")
             up = sum(1 for r in health if r['ok'])
             lines.append(f"\nSummary: {up}/{len(health)} apps are up.")
-            system_content = ECHO_SYSTEM_PROMPT + '\n'.join(lines)
+            system_content += '\n'.join(lines)
         except Exception:
             pass
 
@@ -1012,20 +1116,42 @@ def api_chat():
     messages.append({'role': 'user', 'content': user_message})
 
     s = load_app_settings()
-    payload = json.dumps({'model': s['echo_model'], 'messages': messages,
-                          'max_tokens': s['echo_max_tokens'], 'temperature': s['echo_temperature']}).encode('utf-8')
+    # Use a stronger model for coding tasks
+    model = s['echo_model']
+    if is_coding and model in ('meta-llama/llama-3.1-70b-instruct', 'google/gemini-flash-1.5'):
+        model = 'anthropic/claude-3.5-haiku'  # upgrade weak models for code
+
+    payload = json.dumps({
+        'model': model,
+        'messages': messages,
+        'max_tokens': 4096 if is_coding else s['echo_max_tokens'],
+        'temperature': 0.3 if is_coding else s['echo_temperature']
+    }).encode('utf-8')
     req = urllib.request.Request(
         'https://openrouter.ai/api/v1/chat/completions', data=payload,
         headers={'Authorization': f'Bearer {openrouter_key}',
                  'Content-Type': 'application/json; charset=utf-8',
                  'HTTP-Referer': 'https://alexanderai.site',
-                 'X-Title': 'Echo - Jay Alexander Command Center'})
+                 'X-Title': 'EcDash - Jay Alexander Command Center'})
     try:
-        with _safe_urlopen(req, timeout=30) as resp:
+        with _safe_urlopen(req, timeout=60) as resp:
             result = json.loads(resp.read().decode('utf-8'))
-            return jsonify({'reply': result['choices'][0]['message']['content']})
+            reply = result['choices'][0]['message']['content']
+            # Execute any WRITE_FILE blocks
+            files_written = _execute_write_files(reply) if is_coding else []
+            # Strip the raw WRITE_FILE blocks from the visible reply
+            import re
+            clean_reply = re.sub(
+                r'<<<WRITE_FILE:[^>\n]+>>>\n?[\s\S]*?<<<END_FILE>>>\n?',
+                '', reply
+            ).strip()
+            return jsonify({
+                'reply': clean_reply,
+                'files_written': files_written,
+                'coding_mode': is_coding
+            })
     except Exception as e:
-        return jsonify({'reply': f'Echo is unavailable right now. Error: {str(e)[:100]}'})
+        return jsonify({'reply': f'EcDash is unavailable right now. Error: {str(e)[:100]}'})
 
 
 # ── Chat history API ──────────────────────────────────────────────────────────

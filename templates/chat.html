@@ -355,7 +355,7 @@ function clearMessages() {
 }
 
 // ── Messaging ──────────────────────────────────────────────────────────────
-function addMessage(role, content, typing=false, iso=null) {
+function addMessage(role, content, typing=false, iso=null, rawHtml=false) {
   const welcome = document.getElementById('welcome');
   if (welcome) welcome.remove();
   const msgs = document.getElementById('messages');
@@ -375,7 +375,7 @@ function addMessage(role, content, typing=false, iso=null) {
     : `<div class="msg-avatar">${avatar}</div>
        <div class="msg-body">
          <div class="msg-name">${name}</div>
-         <div class="msg-bubble">${formatMessage(content)}</div>
+         <div class="msg-bubble">${rawHtml ? content : formatMessage(content)}</div>
          <div class="msg-time">${timeStr(iso)}</div>
        </div>`;
   msgs.appendChild(div);
@@ -429,6 +429,22 @@ async function sendMessage() {
     typingEl.remove();
     if (data.reply) {
       addMessage('echo', data.reply);
+      // Show files-written card if EcDash made code changes
+      if (data.files_written && data.files_written.length > 0) {
+        const filesList = data.files_written.map(f =>
+          `<div style="display:flex;align-items:center;gap:6px;padding:3px 0">
+            <span style="color:#34d399">✅</span>
+            <code style="font-size:.78rem;color:#a78bfa">${f}</code>
+            <a href="/code" target="_blank" style="margin-left:auto;font-size:.72rem;color:#6366f1;text-decoration:none">Open ↗</a>
+          </div>`
+        ).join('');
+        const card = `<div style="margin-top:10px;padding:12px 14px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:10px;font-size:.82rem">
+          <div style="font-weight:700;color:#34d399;margin-bottom:8px">💾 ${data.files_written.length} file${data.files_written.length>1?'s':''} updated — changes are live</div>
+          ${filesList}
+          <div style="margin-top:8px;font-size:.74rem;color:var(--muted)">Backups saved as .bak — tell EcDash "undo" to revert.</div>
+        </div>`;
+        addMessage('echo', card, false, null, true);
+      }
       chatHistory.push({role:'assistant', content:data.reply});
       await persistMessage('assistant', data.reply);
     } else {

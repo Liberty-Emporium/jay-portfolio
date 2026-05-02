@@ -2063,16 +2063,16 @@ window.showPanel = function(id) {
     const ts = s.updated ? s.updated.slice(0,10) : '';
     return `<div id="vault-card-${s.id}" style="background:var(--card2);border:1px solid var(--border);
               border-radius:10px;padding:14px 16px;position:relative">
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px">
+
+      <!-- Header: label + edit/delete -->
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px">
         <div style="flex:1;min-width:0">
-          <div style="font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_esc(s.label)}</div>
-          ${s.username?`<div style="font-size:.75rem;color:var(--muted);margin-top:2px">${_esc(s.username)}</div>`:''}
-          ${s.url?`<a href="${_esc(s.url)}" target="_blank" style="font-size:.72rem;color:var(--accent3);text-decoration:none">🔗 ${_esc(s.url.replace(/^https?:\/\//,'').split('/')[0])}</a>`:''}
+          <div style="font-size:.9rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_esc(s.label)}</div>
+          ${s.url ? `<a href="${_esc(s.url)}" target="_blank"
+            style="font-size:.72rem;color:var(--accent3);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:3px">
+            🔗 ${_esc(s.url.replace(/^https?:\/\//, '').split('/')[0])} ↗</a>` : ''}
         </div>
         <div style="display:flex;gap:4px;flex-shrink:0">
-          <button onclick="vaultReveal(${s.id})" title="Reveal"
-            style="background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:var(--accent3);
-                   border-radius:6px;padding:4px 8px;font-size:.75rem;cursor:pointer">👁</button>
           <button onclick="vaultEdit(${s.id})" title="Edit"
             style="background:var(--card);border:1px solid var(--border);color:var(--muted);
                    border-radius:6px;padding:4px 8px;font-size:.75rem;cursor:pointer">✏️</button>
@@ -2081,19 +2081,85 @@ window.showPanel = function(id) {
                    border-radius:6px;padding:4px 8px;font-size:.75rem;cursor:pointer">🗑</button>
         </div>
       </div>
-      <div id="vault-val-${s.id}" style="display:none;background:var(--card);border:1px solid var(--border);
-           border-radius:7px;padding:8px 10px;font-family:monospace;font-size:.78rem;
-           word-break:break-all;color:var(--green);margin-bottom:8px;position:relative">
-        <span id="vault-val-text-${s.id}"></span>
-        <button onclick="vaultCopy(${s.id})" style="position:absolute;right:6px;top:6px;
-          background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:5px;
-          color:var(--muted);font-size:.7rem;padding:2px 7px;cursor:pointer">📋</button>
+
+      <!-- Username row (always visible + one-click copy) -->
+      ${s.username ? `
+      <div style="display:flex;align-items:center;gap:8px;background:var(--card);
+                   border:1px solid var(--border);border-radius:7px;padding:7px 10px;margin-bottom:7px">
+        <span style="font-size:.68rem;color:var(--muted);width:60px;flex-shrink:0">👤 User</span>
+        <span style="flex:1;font-size:.82rem;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+              title="${_esc(s.username)}">${_esc(s.username)}</span>
+        <button onclick="vaultQuickCopy(this, \`${s.username.replace(/`/g,'\\`')}\`)"
+          style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:var(--accent3);
+                 border-radius:5px;padding:3px 9px;font-size:.7rem;cursor:pointer;flex-shrink:0">📋 Copy</button>
+      </div>` : ''}
+
+      <!-- Password row (dots by default, show/hide toggle + direct copy) -->
+      <div style="display:flex;align-items:center;gap:8px;background:var(--card);
+                   border:1px solid var(--border);border-radius:7px;padding:7px 10px;margin-bottom:7px">
+        <span style="font-size:.68rem;color:var(--muted);width:60px;flex-shrink:0">🔑 Pass</span>
+        <span id="vault-val-text-${s.id}" style="flex:1;font-size:.82rem;font-family:monospace;
+              color:var(--green);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">••••••••</span>
+        <button id="vault-eye-${s.id}" onclick="vaultReveal(${s.id})" title="Show/hide"
+          style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;
+                 padding:0 4px;flex-shrink:0">👁</button>
+        <button id="vault-copy-btn-${s.id}" onclick="vaultCopyDirect(${s.id}, this)" title="Copy password"
+          style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:var(--accent3);
+                 border-radius:5px;padding:3px 9px;font-size:.7rem;cursor:pointer;flex-shrink:0">📋 Copy</button>
       </div>
-      ${s.notes?`<div style="font-size:.75rem;color:var(--muted);margin-top:4px">${_esc(s.notes)}</div>`:''}
-      <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Updated ${ts}</div>
+
+      ${s.notes ? `<div style="font-size:.75rem;color:var(--muted);margin-top:6px;padding:0 2px">${_esc(s.notes)}</div>` : ''}
+      <div style="font-size:.65rem;color:var(--muted);margin-top:6px;padding:0 2px">Updated ${ts}</div>
     </div>`;
   }
 
+  // One-click copy for static values (username etc.)
+  window.vaultQuickCopy = function(btn, text) {
+    const orig = btn.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      btn.textContent = '✅ Copied!'; setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+  };
+
+  // Copy password directly — fetches from server if not yet revealed
+  window.vaultCopyDirect = function(id, btn) {
+    const textEl = document.getElementById('vault-val-text-' + id);
+    const cur    = textEl ? textEl.textContent : '';
+    const dots   = '••••••••';
+    const doCopy = (val) => {
+      const orig = btn.textContent;
+      navigator.clipboard.writeText(val).then(() => {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = val; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        btn.textContent = '✅ Copied!'; setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    };
+    if (cur && cur !== dots && cur !== '⏳ Loading...') {
+      doCopy(cur);
+    } else {
+      btn.textContent = '⏳';
+      fetch('/api/vault/' + id).then(r => r.json()).then(d => {
+        const val = d.secret || '';
+        if (textEl) textEl.textContent = val;
+        const eyeBtn = document.getElementById('vault-eye-' + id);
+        if (eyeBtn) eyeBtn.textContent = '🙈';
+        doCopy(val);
+      }).catch(() => {
+        btn.textContent = '❌';
+        setTimeout(() => { btn.textContent = '📋 Copy'; }, 1500);
+      });
+    }
+  };
   function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   window.vaultFilter = function() {

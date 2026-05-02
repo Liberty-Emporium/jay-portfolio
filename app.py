@@ -143,7 +143,7 @@ def security_headers(response):
 # ── Paths ─────────────────────────────────────────────────────────────────────
 _DATA_DIR    = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', os.path.dirname(__file__))
 _BRAIN_SYNC_TOKEN_FILE = os.path.join(_DATA_DIR if '_DATA_DIR' in dir() else os.path.dirname(__file__), 'brain_sync_token.txt')
-_BRAIN_SYNC_TOKEN_HASH = '8b75a9322a7074c48812c58671faf5a4ea21d2ef0641dd866f82eb91d819e1c5'
+_BRAIN_SYNC_TOKEN_HASH = 'a9e68f1e371178e760af52a58920fc7cb7895921f2e513809c22357f10b39ff2'
 
 def _get_brain_sync_token():
     """Return BRAIN_SYNC_TOKEN from env, /data file, or accept by hash comparison."""
@@ -342,11 +342,7 @@ def _vault_first_run():
         save_api_tokens(tokens)
 
 def _register_brain_sync_token():
-    """Write brain_sync_token.txt to /data on first boot so brain sync works
-    without requiring a Railway env var."""
-    if os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
-        return  # already written
-    # We can't recover the plaintext from the hash, so only write if env var present
+    """Write brain_sync_token.txt to /data — always prefer env var over stale file."""
     raw = os.environ.get('BRAIN_SYNC_TOKEN', '')
     if raw:
         try:
@@ -354,6 +350,8 @@ def _register_brain_sync_token():
                 f.write(raw)
         except Exception:
             pass
+    elif not os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
+        pass  # nothing to write
 
 _register_permanent_token()
 _vault_first_run()

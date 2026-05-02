@@ -871,16 +871,31 @@ async function selectModel(el, modelId) {
   } catch(e) { console.error('Model save failed', e); }
 }
 
-function saveAISettings() {
-  const name   = document.getElementById('agent-name').value;
+async function saveAISettings() {
+  const name   = document.getElementById('agent-name').value.trim();
+  const tagline= document.getElementById('agent-tagline').value.trim();
   const prompt = document.getElementById('system-prompt').value;
   const model  = document.getElementById('selected-model-label').textContent;
-  localStorage.setItem('echo_agent_name', name);
-  localStorage.setItem('echo_system_prompt', prompt);
-  localStorage.setItem('echo_model', model);
   const btn = event.currentTarget;
-  btn.textContent = '✅ Saved!';
-  setTimeout(() => btn.textContent = '💾 Save AI Settings', 2000);
+  btn.textContent = '⏳ Saving…';
+  try {
+    const r = await fetch('/api/settings', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        echo_model: model,
+        echo_agent_name: name,
+        echo_agent_tagline: tagline,
+        echo_system_prompt: prompt
+      })
+    });
+    if (!r.ok) throw new Error('Server error');
+    btn.textContent = '✅ Saved!';
+    setTimeout(() => btn.textContent = '💾 Save AI Settings', 2500);
+  } catch(e) {
+    btn.textContent = '❌ Failed';
+    setTimeout(() => btn.textContent = '💾 Save AI Settings', 2500);
+  }
 }
 
 // ── Brain file loading/saving ─────────────────────────────────────────────────
@@ -996,16 +1011,26 @@ function copyToken() {
 
 // ── On load ───────────────────────────────────────────────────────────────────
 window.addEventListener('load', async () => {
-  // Load active model
+  // Load settings from server
   try {
     const r = await fetch('/api/settings');
     const s = await r.json();
+
+    // Model
     const activeModel = s.echo_model || 'anthropic/claude-3.5-haiku';
     document.getElementById('selected-model-label').textContent = activeModel;
     document.querySelectorAll('.model-card').forEach(c => {
       const fn = c.getAttribute('onclick') || '';
       c.classList.toggle('selected', fn.includes("'" + activeModel + "'"));
     });
+
+    // Agent name & tagline
+    if (s.echo_agent_name) document.getElementById('agent-name').value = s.echo_agent_name;
+    if (s.echo_agent_tagline) document.getElementById('agent-tagline').value = s.echo_agent_tagline;
+    if (s.echo_system_prompt) {
+      const sp = document.getElementById('system-prompt');
+      if (sp && !sp.value) sp.value = s.echo_system_prompt;
+    }
   } catch(e) {
     const saved = localStorage.getItem('echo_model');
     if (saved) document.getElementById('selected-model-label').textContent = saved;

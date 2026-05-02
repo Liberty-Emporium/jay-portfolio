@@ -778,7 +778,8 @@ def api_settings_get():
 def api_settings_save():
     data = request.get_json()
     s = load_app_settings()
-    allowed = {'echo_model', 'echo_max_tokens', 'echo_temperature'}
+    allowed = {'echo_model', 'echo_max_tokens', 'echo_temperature',
+                'echo_agent_name', 'echo_agent_tagline', 'echo_system_prompt'}
     for k, v in data.items():
         if k in allowed: s[k] = v
     save_app_settings(s)

@@ -460,6 +460,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
     <button class="nav-item" onclick="showPanelMob('todos')">✅ <span>To-Do List</span></button>
     <button class="nav-item" onclick="showPanelMob('links')">🔗 <span>Quick Links</span></button>
     <button class="nav-item" onclick="showPanelMob('support')">🛟 <span>Support</span></button>
+    <button class="nav-item" onclick="showPanelMob('tasks')">🤖 <span>Echo Tasks</span></button>
     <button class="nav-item" onclick="showPanelMob('notes')">📝 <span>Notes</span></button>
     <button class="nav-item" onclick="showPanelMob('credentials')">🔐 <span>Credentials</span></button>
     <button class="nav-item" onclick="showPanelMob('daily')">📅 <span>Daily Summary</span></button>
@@ -1469,6 +1470,58 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
     </div>
 
+    <!-- ══════════════ ECHO TASKS (Phase 4) ══════════════ -->
+    <div class="panel" id="panel-tasks">
+      <div class="section-title">🤖 Echo Tasks</div>
+      <div class="section-sub">Tell Echo what to do — she'll handle it and report back. Tasks run automatically when Echo is online.</div>
+
+      <!-- Quick task buttons -->
+      <div style="margin-bottom:22px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem;margin-bottom:12px">⚡ Quick Tasks</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <button class="btn btn-primary" onclick="echoSendTask('check all apps')">🌐 Check All Apps</button>
+          <button class="btn btn-primary" onclick="echoSendTask('status report')">📊 Status Report</button>
+          <button class="btn btn-primary" onclick="echoSendTask('gitlab backup')">🦊 GitLab Backup</button>
+          <button class="btn btn-primary" onclick="echoSendTask('uptime check')">⏱️ Uptime Check</button>
+          <button class="btn btn-primary" onclick="echoSendTask('vault audit')">🔐 Vault Audit</button>
+        </div>
+      </div>
+
+      <!-- Custom task input -->
+      <div class="card" style="margin-bottom:22px">
+        <div class="card-header"><div class="card-title">📨 Send a Custom Task</div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <input id="echo-task-input" class="todo-input" style="flex:1;min-width:200px;font-size:.95rem"
+            placeholder="Tell Echo what to do... e.g. 'check all apps' or 'run a status report'"
+            onkeydown="if(event.key==='Enter')echoSendTask()">
+          <button class="btn btn-primary" onclick="echoSendTask()">Send to Echo 🚀</button>
+        </div>
+        <div id="echo-task-status" style="font-size:.8rem;color:var(--muted);margin-top:10px"></div>
+      </div>
+
+      <!-- Task history -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Task History</div>
+          <button class="btn btn-sm btn-ghost" onclick="loadEchoTasks()">🔄 Refresh</button>
+        </div>
+        <div id="echo-tasks-list" style="display:flex;flex-direction:column;gap:10px">
+          <div style="color:var(--muted);font-size:.85rem;text-align:center;padding:16px">Loading tasks...</div>
+        </div>
+      </div>
+
+      <!-- Network status panel -->
+      <div class="card" style="margin-top:20px">
+        <div class="card-header">
+          <div class="card-title">🕸️ App Network Status</div>
+          <button class="btn btn-sm btn-ghost" onclick="loadNetworkStatus()">🔄 Scan</button>
+        </div>
+        <div id="network-status-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+          <div style="color:var(--muted);font-size:.85rem;text-align:center;padding:16px">Click Scan to check all apps</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ══════════════ NOTES ══════════════ -->
     <div class="panel" id="panel-notes">
       <div class="section-title">📝 Notes</div>
@@ -1949,10 +2002,102 @@ function copyPw(btn) {
 
 })();
 
+// ── Echo Tasks (Phase 4) ──
+async function echoSendTask(taskText) {
+  const inp    = document.getElementById('echo-task-input');
+  const statEl = document.getElementById('echo-task-status');
+  const task   = taskText || (inp ? inp.value.trim() : '');
+  if (!task) return;
+  if (inp && !taskText) inp.value = '';
+  if (statEl) { statEl.textContent = '⏳ Sending to Echo…'; statEl.style.color = 'var(--muted)'; }
+  try {
+    const r = await fetch('/api/echo-bridge', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({task})
+    });
+    const d = await r.json();
+    if (statEl) { statEl.textContent = '✅ Task queued! Echo will run it next session.'; statEl.style.color = 'var(--green)'; }
+    loadEchoTasks();
+    loadEchoBridge();
+    setTimeout(() => { if (statEl) statEl.textContent = ''; }, 5000);
+  } catch(e) {
+    if (statEl) { statEl.textContent = '❌ Failed to send task'; statEl.style.color = 'var(--red)'; }
+  }
+}
+
+function loadEchoTasks() {
+  const el = document.getElementById('echo-tasks-list');
+  if (!el) return;
+  fetch('/api/echo-bridge', {credentials: 'include'})
+    .then(r => r.json())
+    .then(tasks => {
+      if (!tasks || tasks.length === 0) {
+        el.innerHTML = '<div style="color:var(--muted);font-size:.88rem;text-align:center;padding:24px">No tasks yet. Use the Quick Tasks buttons above to send Echo a job! 🚀</div>';
+        return;
+      }
+      el.innerHTML = tasks.slice(0,20).map(t => {
+        const icons  = {done: '✅', failed: '❌', pending: '⏳', queued: '📥', sent: '📤'};
+        const colors = {done: 'var(--green)', failed: 'var(--red)', pending: 'var(--yellow)', queued: 'var(--yellow)', sent: 'var(--accent3)'};
+        const icon   = icons[t.status] || '⏳';
+        const col    = colors[t.status] || 'var(--muted)';
+        const created = t.created ? new Date(t.created).toLocaleString() : '';
+        const response = (t.response || '').slice(0, 300);
+        return `
+          <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:${response ? '10px' : '0'}">
+              <span style="font-size:1.1rem;flex-shrink:0">${icon}</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:600;font-size:.92rem">${escHtml(t.task || 'Task')}</div>
+                <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${created}</div>
+              </div>
+              <span style="font-size:.75rem;font-weight:700;color:${col};padding:2px 10px;border-radius:20px;background:${col}22;border:1px solid ${col}44;flex-shrink:0">${t.status}</span>
+            </div>
+            ${response ? `<div style="font-size:.82rem;color:var(--muted);line-height:1.55;background:rgba(0,0,0,.2);border-radius:8px;padding:10px 12px;white-space:pre-wrap;max-height:180px;overflow-y:auto">${escHtml(response)}${(t.response||'').length > 300 ? '…' : ''}</div>` : ''}
+          </div>`;
+      }).join('');
+    })
+    .catch(() => { if(el) el.innerHTML = '<div style="color:var(--muted);font-size:.85rem;padding:16px">Could not load tasks</div>'; });
+}
+
+function loadNetworkStatus() {
+  const grid = document.getElementById('network-status-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="color:var(--muted);font-size:.85rem;padding:12px 0">⏳ Scanning all apps…</div>';
+  // Use the AI Widget /api/network-status endpoint which pings all apps
+  fetch('https://ai.widget.alexanderai.site/api/network-status', {mode: 'cors'})
+    .then(r => r.json())
+    .then(data => {
+      const results = data.results || {};
+      grid.innerHTML = Object.entries(results).map(([name, r]) => {
+        const ok      = r.healthy !== false && !r.error;
+        const uptime  = r.uptime_human || '';
+        const stats   = r.stats && !r.stats.error
+          ? Object.entries(r.stats).slice(0,2).map(([k,v])=>`${k}: ${v}`).join(' · ') : '';
+        return `<div style="display:flex;align-items:center;gap:10px;background:var(--card2);
+          border:1px solid ${ok ? 'rgba(16,185,129,.25)' : 'rgba(239,68,68,.25)'};
+          border-radius:12px;padding:11px 13px">
+          <span style="font-size:1.2rem">${ok ? '🟢' : '🔴'}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.88rem;font-weight:600">${name}</div>
+            <div style="font-size:.72rem;color:var(--muted)">${uptime || (ok ? 'online' : 'DOWN')}${stats ? ' · '+stats : ''}</div>
+          </div>
+        </div>`;
+      }).join('');
+      if (!Object.keys(results).length) grid.innerHTML = '<div style="color:var(--muted);padding:12px">No results</div>';
+    })
+    .catch(() => {
+      // Fallback: run our own health check
+      loadHealth();
+      grid.innerHTML = '<div style="color:var(--yellow);font-size:.82rem;padding:12px">Widget offline — check App Health panel for status.</div>';
+    });
+}
+
 // ── Init ──
 fetchTodos();
 loadHealth();
 loadEchoBridge();
+loadEchoTasks();
 
 // ── Live App Health ──
 function loadHealth() {

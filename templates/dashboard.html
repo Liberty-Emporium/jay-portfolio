@@ -1683,19 +1683,22 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Notes (localStorage) ──
+// ── Notes (localStorage) ── guard against missing element
 const notesArea = document.getElementById('notes-area');
 const notesSaved = document.getElementById('notes-saved');
 let notesSaveTimer;
-notesArea.value = localStorage.getItem('jay_notes') || '';
-notesArea.addEventListener('input', () => {
-  clearTimeout(notesSaveTimer);
-  notesSaveTimer = setTimeout(() => {
-    localStorage.setItem('jay_notes', notesArea.value);
-    notesSaved.classList.add('show');
-    setTimeout(() => notesSaved.classList.remove('show'), 2000);
-  }, 600);
-});
+if (notesArea) {
+  try { notesArea.value = localStorage.getItem('jay_notes') || ''; } catch(e) {}
+  notesArea.addEventListener('input', () => {
+    clearTimeout(notesSaveTimer);
+    notesSaveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem('jay_notes', notesArea.value);
+        if (notesSaved) { notesSaved.classList.add('show'); setTimeout(() => notesSaved.classList.remove('show'), 2000); }
+      } catch(e) {}
+    }, 600);
+  });
+}
 
 // ── Password show/hide + copy ──
 function togglePw(btn) {
@@ -1990,16 +1993,23 @@ window.showPanel = function(id) {
     const loading = document.getElementById('vault-loading');
     const list    = document.getElementById('vault-list');
     const empty   = document.getElementById('vault-empty');
-    if (loading) loading.style.display = 'block';
+    if (loading) { loading.style.display = 'block'; loading.innerHTML = 'Loading vault… <span id="vault-load-status" style="color:var(--muted);font-size:.8rem"></span>'; }
     if (list)    list.style.display    = 'none';
     if (empty)   empty.style.display   = 'none';
+    const setStatus = s => { const el = document.getElementById('vault-load-status'); if(el) el.textContent = s; };
 
+    setStatus('connecting…');
     const ctrl = new AbortController();
-    const vaultTimeout = setTimeout(() => ctrl.abort(), 10000);
-    fetch('/api/vault', {signal: ctrl.signal})
-      .then(r => { clearTimeout(vaultTimeout); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    const vaultTimeout = setTimeout(() => { ctrl.abort(); }, 8000);
+    fetch('/api/vault', {signal: ctrl.signal, credentials: 'include', cache: 'no-store'})
+      .then(r => {
+        clearTimeout(vaultTimeout);
+        setStatus('parsing…');
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' — try refreshing the page');
+        return r.json();
+      })
       .then(secrets => {
-        if (!Array.isArray(secrets)) throw new Error('unexpected response');
+        if (!Array.isArray(secrets)) throw new Error('unexpected server response');
         _allSecrets = secrets;
         if (loading) loading.style.display = 'none';
         _populateCatFilter(secrets);
@@ -2007,7 +2017,11 @@ window.showPanel = function(id) {
       })
       .catch(err => {
         clearTimeout(vaultTimeout);
-        if (loading) { loading.style.display = 'block'; loading.textContent = '❌ Failed to load vault - ' + (err.name === 'AbortError' ? 'timed out' : err.message); }
+        const msg = err.name === 'AbortError' ? 'timed out (8s) — check your connection' : err.message;
+        if (loading) {
+          loading.style.display = 'block';
+          loading.innerHTML = '❌ ' + msg + ' &nbsp; <button onclick="loadVault()" style="background:var(--accent);color:#fff;border:none;border-radius:5px;padding:3px 10px;font-size:.8rem;cursor:pointer">🔄 Retry</button>';
+        }
       });
   };
 

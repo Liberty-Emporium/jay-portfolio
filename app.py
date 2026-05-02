@@ -64,28 +64,7 @@ if not _SECRET_KEY:
         _SECRET_KEY = _s.token_hex(32)
 app.secret_key = _get_secret_key()
 
-# ── Auto-register permanent chat bearer token on startup ──────────────────────
-def _register_permanent_token():
-    """Register CHAT_BEARER_TOKEN in api_tokens.json on startup.
-    Survives redeploys — no session cookie needed for /chat or /dashboard."""
-    import hashlib as _hl
-    raw = os.environ.get('CHAT_BEARER_TOKEN', '')
-    if not raw:
-        return
-    token_hash = _hl.sha256(raw.encode()).hexdigest()
-    tokens = load_api_tokens()
-    if any(t.get('token_hash') == token_hash for t in tokens):
-        return
-    tokens = [t for t in tokens if t.get('label') != 'chat-permanent']
-    tokens.append({
-        'token_hash': token_hash,
-        'label':      'chat-permanent',
-        'expires_at': None,
-        'created':    datetime.datetime.utcnow().isoformat(),
-    })
-    save_api_tokens(tokens)
 
-_register_permanent_token()
 
 
 # ── Session config ────────────────────────────────────────────────────────────
@@ -293,6 +272,29 @@ def load_api_tokens():
 
 def save_api_tokens(tokens):
     with open(API_TOKENS_FILE, 'w') as f: json.dump(tokens, f, indent=2)
+
+# ── Auto-register permanent chat bearer token on startup ──────────────────────
+def _register_permanent_token():
+    """Register CHAT_BEARER_TOKEN in api_tokens.json on startup.
+    Survives redeploys — no session cookie needed for /chat or /dashboard."""
+    import hashlib as _hl
+    raw = os.environ.get('CHAT_BEARER_TOKEN', '')
+    if not raw:
+        return
+    token_hash = _hl.sha256(raw.encode()).hexdigest()
+    tokens = load_api_tokens()
+    if any(t.get('token_hash') == token_hash for t in tokens):
+        return
+    tokens = [t for t in tokens if t.get('label') != 'chat-permanent']
+    tokens.append({
+        'token_hash': token_hash,
+        'label':      'chat-permanent',
+        'expires_at': None,
+        'created':    datetime.datetime.utcnow().isoformat(),
+    })
+    save_api_tokens(tokens)
+
+_register_permanent_token()
 
 def check_bearer_token():
     """Check Authorization: Bearer <token> header. Returns True if valid."""

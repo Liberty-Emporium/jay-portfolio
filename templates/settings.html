@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings — Jay Alexander Command Center</title>
+  <title>Settings — EcDash</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     html,body{overflow-x:hidden!important;max-width:100%;}
     img{max-width:100%;height:auto;}
-    @media(max-width:768px){table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}input,select,textarea{font-size:16px!important;}}
-
+    @media(max-width:768px){
+      table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+      input,select,textarea{font-size:16px!important;}
+      .content{padding:16px!important;}
+      .settings-nav{flex-wrap:wrap;}
+      .snav-item{font-size:.78rem;padding:8px 10px;}
+    }
     :root {
       --bg:#030712;--bg2:#0a0f1a;--card:#111827;--card2:#161f2e;
       --border:#1f2937;--accent:#6366f1;--accent2:#8b5cf6;--accent3:#a78bfa;
@@ -19,47 +24,63 @@
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-    .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-    .topbar-left{display:flex;align-items:center;gap:12px;}
-    .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;}
-    .back-btn{color:var(--muted);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .2s;}
-    .back-btn:hover{color:var(--text);}
+    /* ── Topbar ── */
+    .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .topbar-left{display:flex;align-items:center;gap:14px;}
+    .topbar-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .topbar-sep{color:var(--border);font-size:1.2rem;}
+    .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem;color:var(--muted);}
+    .back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:500;padding:7px 14px;border:1px solid var(--border);border-radius:8px;transition:all .2s;}
+    .back-btn:hover{color:var(--text);border-color:var(--accent3);}
 
-    .content{max-width:900px;margin:0 auto;padding:32px;}
-    .page-title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;margin-bottom:6px;}
-    .page-sub{color:var(--muted);font-size:.88rem;margin-bottom:32px;}
+    /* ── Layout ── */
+    .content{max-width:920px;margin:0 auto;padding:32px 24px;}
+    .page-header{margin-bottom:28px;}
+    .page-title{font-family:'Space Grotesk',sans-serif;font-size:1.55rem;font-weight:700;margin-bottom:5px;}
+    .page-sub{color:var(--muted);font-size:.85rem;}
 
-    .settings-nav{display:flex;gap:4px;margin-bottom:32px;border-bottom:1px solid var(--border);padding-bottom:0;}
-    .snav-item{padding:10px 16px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+    /* ── Tab nav ── */
+    .settings-nav{display:flex;gap:2px;margin-bottom:28px;border-bottom:1px solid var(--border);padding-bottom:0;overflow-x:auto;}
+    .snav-item{padding:10px 16px;font-size:.83rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;}
     .snav-item.active{color:var(--accent3);border-bottom-color:var(--accent);}
-    .snav-item:hover{color:var(--text);}
+    .snav-item:hover:not(.active){color:var(--text);}
 
-    .stab{display:none;}.stab.active{display:block;}
+    /* ── Tabs ── */
+    .stab{display:none;animation:fadeIn .2s ease;}
+    .stab.active{display:block;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-    .section{margin-bottom:28px;}
-    .section-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem;margin-bottom:4px;}
-    .section-sub{font-size:.78rem;color:var(--muted);margin-bottom:16px;}
+    /* ── Cards ── */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px;}
+    .card.highlight{border-color:rgba(99,102,241,.4);background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(139,92,246,.04));}
+    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .card-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem;}
+    .card-sub{font-size:.78rem;color:var(--muted);margin-top:3px;}
 
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;}
-    .card.highlight{border-color:rgba(99,102,241,.4);background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.05));}
-
-    .form-group{margin-bottom:18px;}
-    label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:7px;}
+    /* ── Forms ── */
+    .section{margin-bottom:22px;}
+    .section-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.88rem;margin-bottom:3px;}
+    .section-sub{font-size:.76rem;color:var(--muted);margin-bottom:14px;}
+    .form-group{margin-bottom:16px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+    @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+    label{display:block;font-size:.75rem;font-weight:600;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;}
     input[type=text],input[type=email],input[type=url],input[type=password],textarea,select{
       width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;
-      padding:11px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;
+      padding:10px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:.87rem;outline:none;transition:border-color .2s;
     }
     input:focus,textarea:focus,select:focus{border-color:var(--accent);}
-    textarea{resize:vertical;min-height:100px;line-height:1.6;}
-    select option{background:var(--card2);}
+    textarea{resize:vertical;min-height:90px;line-height:1.6;}
+    .input-with-eye{position:relative;}
+    .input-with-eye input{padding-right:40px;}
+    .eye-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;padding:4px;transition:color .2s;}
+    .eye-btn:hover{color:var(--text);}
 
-    .input-group{display:flex;gap:10px;}
-    .input-group input{flex:1;}
-
+    /* ── Toggles ── */
     .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
     .toggle-row:last-child{border-bottom:none;}
-    .toggle-info .toggle-label{font-size:.88rem;font-weight:500;}
-    .toggle-info .toggle-desc{font-size:.75rem;color:var(--muted);margin-top:2px;}
+    .toggle-info .toggle-label{font-size:.87rem;font-weight:500;}
+    .toggle-info .toggle-desc{font-size:.74rem;color:var(--muted);margin-top:2px;}
     .toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
     .toggle input{opacity:0;width:0;height:0;}
     .toggle-slider{position:absolute;inset:0;background:#374151;border-radius:24px;cursor:pointer;transition:.3s;}
@@ -67,170 +88,480 @@
     .toggle input:checked + .toggle-slider{background:var(--accent);}
     .toggle input:checked + .toggle-slider::before{transform:translateX(20px);}
 
-    .model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
-    .model-card{padding:12px 14px;background:var(--card2);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;}
-    .model-card:hover{border-color:var(--accent);}
-    .model-card.selected{border-color:var(--accent);background:rgba(99,102,241,.1);}
-    .model-name{font-size:.85rem;font-weight:600;}
-    .model-desc{font-size:.72rem;color:var(--muted);margin-top:3px;}
-
-    .api-row{display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;}
-    .api-icon{font-size:1.3rem;flex-shrink:0;}
-    .api-info{flex:1;min-width:0;}
-    .api-name{font-size:.88rem;font-weight:600;}
-    .api-desc{font-size:.75rem;color:var(--muted);}
-    .api-status{font-size:.72rem;padding:3px 10px;border-radius:20px;font-weight:600;flex-shrink:0;}
-    .api-status.set{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2);}
-    .api-status.unset{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
-    .api-btn{padding:7px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
-    .api-btn:hover{border-color:var(--accent);color:var(--text);}
-
-    .vision-card{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08));border:1px solid rgba(99,102,241,.3);border-radius:14px;padding:24px;margin-bottom:20px;}
-    .vision-title{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:8px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-    .vision-body{font-size:.85rem;color:var(--muted);line-height:1.8;}
-    .phase{margin-top:12px;}
-    .phase-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
-    .phase-item:last-child{border:none;}
-    .phase-num{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;font-size:.85rem;flex-shrink:0;width:60px;}
-    .phase-text{font-size:.82rem;color:var(--text);}
-    .phase-sub{font-size:.75rem;color:var(--muted);}
-
-    .btn{padding:10px 20px;border-radius:10px;font-weight:600;font-size:.88rem;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s;}
+    /* ── Buttons ── */
+    .btn{padding:10px 20px;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
     .btn-primary{background:var(--grad);color:white;}
     .btn-primary:hover{opacity:.9;transform:translateY(-1px);}
     .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
     .btn-ghost:hover{border-color:var(--accent);color:var(--text);}
-    .btn-row{display:flex;gap:10px;margin-top:20px;}
+    .btn-danger{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;}
+    .btn-danger:hover{background:rgba(239,68,68,.22);}
+    .btn-sm{padding:7px 14px;font-size:.78rem;}
+    .btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
 
-    .flash-success{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;padding:10px 16px;border-radius:8px;font-size:.85rem;margin-bottom:20px;}
-    .preview-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);}
-    .preview-emoji{font-size:3rem;width:80px;height:80px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:50%;border:2px solid var(--border);}
+    /* ── Model grid ── */
+    .model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;}
+    .model-card{padding:12px 14px;background:var(--card2);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;}
+    .model-card:hover{border-color:var(--accent);}
+    .model-card.selected{border-color:var(--accent);background:rgba(99,102,241,.1);}
+    .model-name{font-size:.84rem;font-weight:600;}
+    .model-desc{font-size:.71rem;color:var(--muted);margin-top:3px;}
 
-    .kys-banner{display:flex;align-items:center;gap:14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:16px 20px;margin-bottom:20px;}
-    .kys-banner-icon{font-size:1.5rem;}
-    .kys-banner-text .title{font-size:.88rem;font-weight:700;color:#fbbf24;}
-    .kys-banner-text .sub{font-size:.78rem;color:var(--muted);margin-top:2px;}
-    .kys-banner a{margin-left:auto;padding:8px 14px;border-radius:8px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#fbbf24;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;flex-shrink:0;}
-    .kys-banner a:hover{background:rgba(245,158,11,.25);}
+    /* ── Vision / phase ── */
+    .vision-card{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08));border:1px solid rgba(99,102,241,.3);border-radius:14px;padding:22px;margin-bottom:18px;}
+    .vision-title{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:7px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .vision-body{font-size:.83rem;color:var(--muted);line-height:1.8;}
+    .phase{margin-top:14px;}
+    .phase-item{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+    .phase-item:last-child{border:none;}
+    .phase-badge{min-width:70px;font-weight:700;font-size:.78rem;}
+    .phase-badge.done{color:var(--green);}
+    .phase-badge.now{color:var(--yellow);}
+    .phase-badge.later{color:var(--muted);}
+    .phase-text{font-size:.82rem;color:var(--text);}
+    .phase-sub{font-size:.74rem;color:var(--muted);margin-top:2px;}
+
+    /* ── App registry rows ── */
+    .app-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+    .app-icon{font-size:1.2rem;flex-shrink:0;width:28px;text-align:center;}
+    .app-info{flex:1;min-width:0;}
+    .app-name{font-size:.86rem;font-weight:600;}
+    .app-url{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .status-badge{font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:600;flex-shrink:0;}
+    .status-live{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2);}
+    .status-progress{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2);}
+
+    /* ── Training doc ── */
+    .training-section{margin-bottom:22px;}
+    .training-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .training-icon{font-size:1.4rem;}
+    .training-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;}
+    .training-body{font-size:.84rem;color:var(--muted);line-height:1.8;}
+    .training-body strong{color:var(--text);}
+    .training-body ul{margin:8px 0 8px 18px;}
+    .training-body li{margin-bottom:4px;}
+    .training-divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px;}
+    .info-tile{padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;}
+    .info-tile-label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+    .info-tile-value{font-size:.85rem;font-weight:600;color:var(--text);}
+
+    /* ── Alerts ── */
+    .flash-success{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;padding:10px 16px;border-radius:8px;font-size:.84rem;margin-bottom:18px;}
+    .msg-box{padding:10px 16px;border-radius:8px;font-size:.83rem;margin-top:12px;display:none;}
+    .msg-ok{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;}
+    .msg-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;}
+
+    /* ── Profile avatar ── */
+    .avatar-preview{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid var(--border);display:none;}
+    .avatar-emoji{font-size:2.8rem;width:76px;height:76px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:50%;border:2px solid var(--border);}
+
+    /* ── Notes area ── */
+    .notes-area{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Inter',monospace;font-size:.82rem;line-height:1.6;resize:vertical;outline:none;transition:border-color .2s;}
+    .notes-area:focus{border-color:var(--accent);}
+
+    .badge-saved{font-size:.73rem;color:var(--green);opacity:0;transition:opacity .3s;margin-left:8px;}
   </style>
 </head>
 <body>
 
+<!-- ── Topbar ── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo">EcDash</span>
+    <span class="topbar-sep">›</span>
+    <span class="topbar-title">Settings</span>
+  </div>
+  <a href="/dashboard" class="back-btn">← Dashboard</a>
+</div>
 
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:.78rem">
-        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🎭 SOUL.md</div><div style="color:var(--muted)">Personality, values, how Echo thinks and talks</div></div>
-        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🪪 IDENTITY.md</div><div style="color:var(--muted)">Who Echo is, what she knows, how she speaks</div></div>
-        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)"><div style="font-weight:700;color:var(--accent3);margin-bottom:4px">💾 MEMORY.md</div><div style="color:var(--muted)">Long-term memory: projects, goals, history</div></div>
+<!-- ── Content ── -->
+<div class="content">
+
+  <div class="page-header">
+    <div class="page-title">⚙️ Settings</div>
+    <div class="page-sub">Manage your profile, security, Echo's brain, app network, and EcDash training.</div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="flash-success">✅ {{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- ── Tab Nav ── -->
+  <div class="settings-nav">
+    <button class="snav-item active" onclick="showTab('profile',this)">👤 Profile</button>
+    <button class="snav-item" onclick="showTab('security',this)">🔐 Security</button>
+    <button class="snav-item" onclick="showTab('ai',this)">🤖 AI & Echo</button>
+    <button class="snav-item" onclick="showTab('brain',this)">🧠 Echo's Brain</button>
+    <button class="snav-item" onclick="showTab('network',this)">🌐 App Network</button>
+    <button class="snav-item" onclick="showTab('training',this)">📚 EcDash Training</button>
+    <button class="snav-item" onclick="showTab('tokens',this)">🔑 API Tokens</button>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB: PROFILE
+  ════════════════════════════════════════════════ -->
+  <div class="stab active" id="tab-profile">
+    <form method="POST" action="/settings">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="card highlight">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Public Profile</div>
+            <div class="card-sub">Shown on your portfolio and business card</div>
+          </div>
+          <div id="avatar-display">
+            {% if config.get('photo_url') %}
+              <img class="avatar-preview" id="avatar-img" src="{{ config.photo_url }}" style="display:block">
+            {% else %}
+              <div class="avatar-emoji" id="avatar-emoji">{{ config.get('photo','👨‍💻') }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="name" value="{{ config.get('name','') }}" placeholder="Jay Alexander">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ config.get('email','') }}" placeholder="jay@alexanderai.site">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tagline</label>
+          <input type="text" name="tagline" value="{{ config.get('tagline','') }}" placeholder="Building the Future with AI & Code">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Photo URL</label>
+            <input type="url" name="photo_url" id="photo_url_input" value="{{ config.get('photo_url','') }}" placeholder="https://example.com/photo.jpg" oninput="previewPhoto(this.value)">
+          </div>
+          <div class="form-group">
+            <label>Emoji Avatar (fallback)</label>
+            <input type="text" name="photo" value="{{ config.get('photo','👨‍💻') }}" placeholder="👨‍💻" oninput="document.getElementById('avatar-emoji').textContent=this.value">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">💾 Save Profile</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB: SECURITY
+  ════════════════════════════════════════════════ -->
+  <div class="stab" id="tab-security">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Change Password</div>
+          <div class="card-sub">Update your dashboard login password</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Current Password</label>
+        <div class="input-with-eye">
+          <input type="password" id="sec-current" placeholder="Enter current password" autocomplete="current-password">
+          <button type="button" class="eye-btn" onclick="toggleEye('sec-current',this)">👁️</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>New Password</label>
+          <div class="input-with-eye">
+            <input type="password" id="sec-new" placeholder="New password (min 6 chars)" autocomplete="new-password">
+            <button type="button" class="eye-btn" onclick="toggleEye('sec-new',this)">👁️</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <div class="input-with-eye">
+            <input type="password" id="sec-confirm" placeholder="Repeat new password" autocomplete="new-password">
+            <button type="button" class="eye-btn" onclick="toggleEye('sec-confirm',this)">👁️</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Update Email (optional)</label>
+        <input type="email" id="sec-email" placeholder="New email address">
+      </div>
+
+      <div id="sec-msg" class="msg-box"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveAccountSettings()">🔐 Update Security</button>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:20px">
-      <div class="card-header" style="margin-bottom:12px"><div class="card-title">🎭 SOUL.md</div><span id="soul-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span></div>
-      <textarea class="notes-area" id="soul-editor" rows="12" placeholder="Loading..."></textarea>
-      <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('SOUL.md','soul-editor','soul-status')">💾 Save SOUL.md</button>
-    </div>
-
-    <div class="card" style="margin-bottom:20px">
-      <div class="card-header" style="margin-bottom:12px"><div class="card-title">🪪 IDENTITY.md</div><span id="identity-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span></div>
-      <textarea class="notes-area" id="identity-editor" rows="10" placeholder="Loading..."></textarea>
-      <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('IDENTITY.md','identity-editor','identity-status')">💾 Save IDENTITY.md</button>
-    </div>
-
     <div class="card">
-      <div class="card-header" style="margin-bottom:12px"><div class="card-title">💾 MEMORY.md</div><span id="memory-status" style="font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s">✅ Saved</span></div>
-      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">💡 Echo reads this every single conversation. Add new facts, decisions, projects, goals here.</div>
-      <textarea class="notes-area" id="memory-editor" rows="20" placeholder="Loading..."></textarea>
-      <button class="btn btn-primary" style="margin-top:10px" onclick="saveBrain('MEMORY.md','memory-editor','memory-status')">💾 Save MEMORY.md</button>
+      <div class="card-title" style="margin-bottom:14px">Session</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Require login on every session</div>
+          <div class="toggle-desc">Dashboard always prompts for password after browser restart</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">CSRF protection on all forms</div>
+          <div class="toggle-desc">Cryptographic tokens prevent cross-site request forgery</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
     </div>
   </div>
 
-  <!-- ── APP NETWORK ── -->
+  <!-- ════════════════════════════════════════════════
+       TAB: AI & ECHO
+  ════════════════════════════════════════════════ -->
+  <div class="stab" id="tab-ai">
+
+    <div class="card highlight">
+      <div class="card-header">
+        <div>
+          <div class="card-title">AI Model</div>
+          <div class="card-sub">Which model powers Echo's chat — <span id="selected-model-label" style="color:var(--accent3);font-weight:600">loading…</span> <span id="model-saved-badge" class="badge-saved">✅ Saved</span></div>
+        </div>
+      </div>
+      <div class="model-grid">
+        <div class="model-card" onclick="selectModel(this,'anthropic/claude-3.5-haiku')">
+          <div class="model-name">Claude 3.5 Haiku</div>
+          <div class="model-desc">Fast · Smart · Default</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'anthropic/claude-3.5-sonnet')">
+          <div class="model-name">Claude 3.5 Sonnet</div>
+          <div class="model-desc">Powerful · Best reasoning</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'openai/gpt-4o')">
+          <div class="model-name">GPT-4o</div>
+          <div class="model-desc">OpenAI · Balanced</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'openai/gpt-4o-mini')">
+          <div class="model-name">GPT-4o Mini</div>
+          <div class="model-desc">OpenAI · Economical</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'google/gemini-flash-1.5')">
+          <div class="model-name">Gemini Flash</div>
+          <div class="model-desc">Google · Very fast</div>
+        </div>
+        <div class="model-card" onclick="selectModel(this,'meta-llama/llama-3.1-70b-instruct')">
+          <div class="model-name">Llama 3.1 70B</div>
+          <div class="model-desc">Open source · Free tier</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Echo Agent Identity</div>
+      </div>
+      <div class="form-group">
+        <label>Agent Name</label>
+        <input type="text" id="agent-name" placeholder="Echo" value="Echo">
+      </div>
+      <div class="form-group">
+        <label>Tagline</label>
+        <input type="text" id="agent-tagline" placeholder="Your AI operational partner">
+      </div>
+      <div class="form-group">
+        <label>System Prompt (loaded from IDENTITY.md)</label>
+        <textarea id="system-prompt" rows="8" class="notes-area" placeholder="Loading from IDENTITY.md…"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveAISettings()">💾 Save AI Settings</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">Behavior</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Echo remembers conversation context</div>
+          <div class="toggle-desc">Echo reads MEMORY.md on every chat session start</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Proactive suggestions</div>
+          <div class="toggle-desc">Echo flags issues and surfaces opportunities without being asked</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Echo refers to projects as "ours"</div>
+          <div class="toggle-desc">Echo is a partner, not just an assistant</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB: ECHO'S BRAIN
+  ════════════════════════════════════════════════ -->
+  <div class="stab" id="tab-brain">
+
+    <div class="card highlight" style="margin-bottom:18px">
+      <div class="card-title" style="margin-bottom:8px">📖 How Echo's Brain Works</div>
+      <div style="font-size:.82rem;color:var(--muted);line-height:1.8;margin-bottom:14px">
+        Echo wakes up fresh each session. These three files are her persistent memory — she reads them at the start of every conversation. Edit them here and the changes take effect immediately.
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:.76rem">
+        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)">
+          <div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🎭 SOUL.md</div>
+          <div style="color:var(--muted)">Personality, values, how Echo thinks and talks</div>
+        </div>
+        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)">
+          <div style="font-weight:700;color:var(--accent3);margin-bottom:4px">🪪 IDENTITY.md</div>
+          <div style="color:var(--muted)">Who Echo is, what she knows, how she speaks</div>
+        </div>
+        <div style="padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(99,102,241,.2)">
+          <div style="font-weight:700;color:var(--accent3);margin-bottom:4px">💾 MEMORY.md</div>
+          <div style="color:var(--muted)">Long-term memory: projects, goals, history</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-header">
+        <div class="card-title">🎭 SOUL.md</div>
+        <span id="soul-status" class="badge-saved">✅ Saved</span>
+      </div>
+      <textarea class="notes-area" id="soul-editor" rows="12" placeholder="Loading…"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="saveBrain('SOUL.md','soul-editor','soul-status')">💾 Save SOUL.md</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-header">
+        <div class="card-title">🪪 IDENTITY.md</div>
+        <span id="identity-status" class="badge-saved">✅ Saved</span>
+      </div>
+      <textarea class="notes-area" id="identity-editor" rows="10" placeholder="Loading…"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="saveBrain('IDENTITY.md','identity-editor','identity-status')">💾 Save IDENTITY.md</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💾 MEMORY.md</div>
+        <span id="memory-status" class="badge-saved">✅ Saved</span>
+      </div>
+      <div style="font-size:.74rem;color:var(--muted);margin-bottom:10px">💡 Echo reads this every single conversation. Add new facts, decisions, projects, goals here.</div>
+      <textarea class="notes-area" id="memory-editor" rows="22" placeholder="Loading…"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="saveBrain('MEMORY.md','memory-editor','memory-status')">💾 Save MEMORY.md</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB: APP NETWORK
+  ════════════════════════════════════════════════ -->
   <div class="stab" id="tab-network">
 
     <div class="vision-card">
-      <div class="vision-title">🌐 The App Network Vision</div>
+      <div class="vision-title">🌐 The Liberty-Emporium App Network Vision</div>
       <div class="vision-body">
         All Liberty-Emporium apps communicating and working together — a self-managing, interconnected ecosystem where rotating one API key updates every app, and apps can call each other's capabilities.
       </div>
       <div class="phase">
         <div class="phase-item">
-          <div class="phase-num">Phase 1 <span style="color:var(--green);font-size:.7rem">✓ NOW</span></div>
+          <div class="phase-badge done">Phase 1 ✓</div>
           <div>
             <div class="phase-text">Unified Command Center + EcDash as credential hub</div>
-            <div class="phase-sub">Dashboard controls all apps, EcDash Credentials stores all API keys</div>
+            <div class="phase-sub">Dashboard controls all apps, EcDash Credentials stores all API keys — COMPLETE</div>
           </div>
         </div>
         <div class="phase-item">
-          <div class="phase-num">Phase 2</div>
+          <div class="phase-badge now">Phase 2 →</div>
           <div>
             <div class="phase-text">Apps fetch API keys from EcDash at runtime</div>
-            <div class="phase-sub">No more hardcoded env vars — rotate once in EcDash, all apps update automatically</div>
+            <div class="phase-sub">Rotate once in EcDash, all apps update automatically — IN PROGRESS</div>
           </div>
         </div>
         <div class="phase-item">
-          <div class="phase-num">Phase 3</div>
+          <div class="phase-badge later">Phase 3</div>
           <div>
             <div class="phase-text">Apps expose and call each other's APIs</div>
-            <div class="phase-sub">Example: Inventory app calls Pet Vet AI for photo analysis.</div>
+            <div class="phase-sub">Example: Inventory app calls Pet Vet AI for photo analysis</div>
           </div>
         </div>
         <div class="phase-item">
-          <div class="phase-num">Phase 4</div>
+          <div class="phase-badge later">Phase 4</div>
           <div>
             <div class="phase-text">Echo orchestrates tasks across the entire network</div>
-            <div class="phase-sub">Example: "Sync all new inventory photos through AI analysis" — Echo coordinates across 3 apps automatically</div>
+            <div class="phase-sub">A self-managing ecosystem — Echo coordinates across apps automatically</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="section-title">App Registry</div>
-      <div class="section-sub">All Liberty-Emporium apps and their connection status</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        {% set apps = [
-          ('🏪','Liberty Inventory','liberty-emporium-and-thrift-inventory-app-production.up.railway.app','live'),
-                    ('🐕','Pet Vet AI','pet-vet-ai-production.up.railway.app','live'),
-          ('🏋️','GymForge','web-production-1c23.up.railway.app','live'),
-          ('🏗️','Contractor Pro AI','contractor.ai.solutions.alexanderai.site','live'),
-                    ('🏪','Consignment Solutions','consignment.ai.solutions.alexanderai.site','in-progress'),
-          ('🌐','Jay Portfolio','alexanderai.site','live'),
-        ] %}
-        {% for icon,name,url,status in apps %}
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px">
-          <span style="font-size:1.2rem">{{ icon }}</span>
-          <div style="flex:1">
-            <div style="font-size:.88rem;font-weight:600">{{ name }}</div>
-            <div style="font-size:.72rem;color:var(--muted)">{{ url }}</div>
-          </div>
-          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;font-weight:600;{% if status=='live' %}background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2){% else %}background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2){% endif %}">{{ status }}</span>
-          <a href="https://{{ url }}" target="_blank" style="font-size:.75rem;color:var(--accent3);text-decoration:none">Open ↗</a>
-        </div>
-        {% endfor %}
+      <div class="card-header">
+        <div class="card-title">App Registry</div>
+        <div class="card-sub">All Liberty-Emporium apps</div>
       </div>
+      {% set apps = [
+        ('🌊','FloodClaim Pro','billy-floods.up.railway.app','live'),
+        ('🤖','AI Agent Widget','ai.widget.alexanderai.site','live'),
+        ('🍰','Sweet Spot Cakes','sweet-spot-cakes.up.railway.app','live'),
+        ('🐕','Pet Vet AI','pet-vet-ai-production.up.railway.app','live'),
+        ('🏗️','Contractor Pro AI','contractor-pro-ai-production.up.railway.app','live'),
+        ('📦','Drop Shipping','shop.alexanderai.site','live'),
+        ('🏪','Consignment Solutions','web-production-43ce4.up.railway.app','live'),
+        ('📋','Liberty Inventory','liberty-emporium-and-thrift-inventory-app-production.up.railway.app','live'),
+        ('🛢️','Liberty Oil & Propane','liberty-oil-propane.up.railway.app','live'),
+        ('🌐','EcDash (this app)','alexanderai.site','live'),
+      ] %}
+      {% for icon,name,url,status in apps %}
+      <div class="app-row">
+        <span class="app-icon">{{ icon }}</span>
+        <div class="app-info">
+          <div class="app-name">{{ name }}</div>
+          <div class="app-url">{{ url }}</div>
+        </div>
+        <span class="status-badge {{ 'status-live' if status=='live' else 'status-progress' }}">{{ status }}</span>
+        <a href="https://{{ url }}" target="_blank" style="font-size:.75rem;color:var(--accent3);text-decoration:none;white-space:nowrap">Open ↗</a>
+      </div>
+      {% endfor %}
     </div>
 
     <div class="card">
-      <div class="section-title">Echo's Network Access</div>
-      <div class="section-sub">What Echo can currently do across your apps</div>
+      <div class="card-title" style="margin-bottom:14px">Echo's Network Access</div>
       <div class="toggle-row">
         <div class="toggle-info">
           <div class="toggle-label">Read app health status</div>
-          <div class="toggle-desc">Echo can ping all apps and report their status</div>
+          <div class="toggle-desc">Echo pings all /health endpoints and reports status</div>
         </div>
         <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
         <div class="toggle-info">
-          <div class="toggle-label">Read & write todos</div>
-          <div class="toggle-desc">Echo can view and update your command center todo list</div>
+          <div class="toggle-label">Push code to GitHub</div>
+          <div class="toggle-desc">Echo deploys updates to any app directly via GitHub token</div>
         </div>
         <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
         <div class="toggle-info">
-          <div class="toggle-label">Push code to GitHub (via OpenClaw)</div>
-          <div class="toggle-desc">Echo can deploy updates to any app directly</div>
+          <div class="toggle-label">Read & update EcDash bridge queue</div>
+          <div class="toggle-desc">Echo polls /api/echo-bridge for tasks and posts completions</div>
         </div>
         <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
       </div>
@@ -251,41 +582,290 @@
     </div>
   </div>
 
+  <!-- ════════════════════════════════════════════════
+       TAB: ECDASH TRAINING
+  ════════════════════════════════════════════════ -->
+  <div class="stab" id="tab-training">
+
+    <div class="card highlight" style="margin-bottom:18px">
+      <div style="font-size:.84rem;color:var(--muted);line-height:1.8">
+        This is EcDash's training document — authored by Echo and committed to <code style="background:rgba(255,255,255,.07);padding:2px 6px;border-radius:4px">echo-v1/ECDASH_TRAINING.md</code>. It gives EcDash full operational context so it can act as a genuine partner, not just a dashboard.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="training-header">
+        <span class="training-icon">👤</span>
+        <div class="training-title">About Jay Alexander</div>
+      </div>
+      <div class="training-body">
+        <strong>Full name:</strong> Ronald J. Alexander Jr. — always call him <strong>Jay</strong>.<br>
+        <strong>Company:</strong> Alexander AI Integrated Solutions / Liberty-Emporium<br>
+        <strong>Timezone:</strong> America/New_York (Eastern)
+        <ul style="margin-top:10px">
+          <li>Warm, direct, visionary. Trusts Echo and EcDash deeply.</li>
+          <li>Wants speed over perfection — ship it, fix it later.</li>
+          <li>Doesn't want to be the bottleneck. If we can automate it, we do.</li>
+          <li>Wants visibility, not noise — surface what matters, skip the rest.</li>
+          <li>Thinks in systems — every feature connects to the bigger picture.</li>
+          <li><strong>Revenue first:</strong> Sweet Spot Cakes + Stripe integration are top priority.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="training-header">
+        <span class="training-icon">🎯</span>
+        <div class="training-title">The 4-Phase Vision</div>
+      </div>
+      <div class="phase" style="margin-top:0">
+        <div class="phase-item">
+          <div class="phase-badge done">Phase 1 ✓</div>
+          <div>
+            <div class="phase-text">Credentials Panel on EcDash — all API keys and passwords stored here</div>
+            <div class="phase-sub">Complete. EcDash is the single source of truth for all credentials.</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-badge now">Phase 2 →</div>
+          <div>
+            <div class="phase-text">Each app pulls its API keys from EcDash at runtime</div>
+            <div class="phase-sub">No local .env storage. Rotate once, all apps update automatically.</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-badge later">Phase 3</div>
+          <div>
+            <div class="phase-text">Apps expose APIs to each other</div>
+            <div class="phase-sub">Inventory calls Pet Vet AI for photo analysis. AI Widget reads data across apps.</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-badge later">Phase 4</div>
+          <div>
+            <div class="phase-text">Echo orchestrates tasks across the entire network</div>
+            <div class="phase-sub">Jay wakes up to a green dashboard. Between Echo and EcDash, nothing falls through the cracks.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="training-header">
+        <span class="training-icon">⚙️</span>
+        <div class="training-title">Technical Standards</div>
+      </div>
+      <div class="training-body">
+        <strong>Stack:</strong> Python / Flask · SQLite on Railway /data volumes · Bootstrap 5 · Jinja2 templates<br><br>
+        <strong>Non-negotiable rules:</strong>
+        <ul>
+          <li>All password fields have show/hide eye toggle (👁️/🙈)</li>
+          <li>CSRF tokens on all forms</li>
+          <li>Security headers on all routes</li>
+          <li>No <code>debug=True</code> in production — ever</li>
+          <li><code>/health</code> endpoint on every app returning JSON <code>{"status":"ok"}</code></li>
+          <li>Rate limiting on login + API endpoints</li>
+          <li>bcrypt for all passwords</li>
+          <li>Push to GitHub after every meaningful change with a descriptive commit message</li>
+          <li>GitLab is backup — push to both after significant changes</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="training-header">
+        <span class="training-icon">📡</span>
+        <div class="training-title">EcDash's Role & Responsibilities</div>
+      </div>
+      <div class="training-body">
+        <strong>EcDash is the control plane.</strong> Echo is the builder. Jay is the boss of both.<br><br>
+        <strong>What EcDash monitors:</strong>
+        <ul>
+          <li>Health of all 10 apps (hitting /health endpoints)</li>
+          <li>Error rates and 500s across the network</li>
+          <li>Echo-bridge task queue (pending tasks from Echo or Jay)</li>
+          <li>Credential expiry</li>
+        </ul>
+        <strong>What EcDash owns:</strong>
+        <ul>
+          <li>Credentials panel — single source of truth for all API keys/passwords</li>
+          <li>Echo Memory panel — live view of MEMORY.md, SOUL.md, IDENTITY.md</li>
+          <li>Monitoring grid — real-time app health</li>
+          <li>Notes panel — Jay ↔ Echo async communication</li>
+          <li>Bridge queue — <code>GET/POST /api/echo-bridge</code> task coordination</li>
+        </ul>
+        <strong>Mindset:</strong> Don't wait to be asked. If /api is throwing 500s, flag it in the bridge queue before Jay notices. You surface problems. Echo fixes them.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="training-header">
+        <span class="training-icon">⚠️</span>
+        <div class="training-title">Critical Flags</div>
+      </div>
+      <div class="training-body">
+        <ul>
+          <li><strong>🍰 Sweet Spot Cakes</strong> — Zero downtime tolerance once Stripe goes live. Monitor more aggressively than any other app. Railway volume <code>/data</code> must never be wiped.</li>
+          <li><strong>💳 Stripe Integration</strong> — Coming soon across all apps. Jay must add env vars manually in Railway dashboard.</li>
+          <li><strong>🔄 GitHub Token</strong> — Marked temporary by Jay. Will be rotated. Update <code>/root/.secrets/github_token</code> and the echo-v1 remote URL when it changes.</li>
+          <li><strong>📱 Liberty Oil DNS</strong> — Site is built, needs DNS pointed to <code>libertyoilandpropane.com</code>. Jay's step.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="training-header">
+        <span class="training-icon">📋</span>
+        <div class="training-title">Open Action Items</div>
+      </div>
+      <div class="training-body">
+        <ul>
+          <li>🔴 Jay must add Stripe env vars in Railway for all apps (STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY + price IDs)</li>
+          <li>🟡 Investigate EcDash 500s on /api, /admin, /_next/ — likely bot traffic hitting missing routes</li>
+          <li>🟡 Liberty Oil DNS — point to libertyoilandpropane.com</li>
+          <li>🟡 Hunt down ALL credentials and add to EcDash credentials panel</li>
+          <li>🟢 Flash drive backup of brain passphrase (Jay only)</li>
+          <li>🟢 Trademark filing — USPTO TEAS Plus, Class 42 + Class 35</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:16px 0;font-size:.75rem;color:var(--muted)">
+      Training document authored by Echo · <a href="https://github.com/Liberty-Emporium/echo-v1/blob/main/ECDASH_TRAINING.md" target="_blank" style="color:var(--accent3)">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB: API TOKENS
+  ════════════════════════════════════════════════ -->
+  <div class="stab" id="tab-tokens">
+
+    <div class="card highlight">
+      <div class="card-title" style="margin-bottom:6px">Create API Token</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:16px">Tokens let external services (like Echo's brain sync) authenticate with EcDash without your password.</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Token Label</label>
+          <input type="text" id="tok-label" placeholder="e.g. echo-bridge">
+        </div>
+        <div class="form-group">
+          <label>Expires In</label>
+          <select id="tok-expires">
+            <option value="30">30 days</option>
+            <option value="90">90 days</option>
+            <option value="365" selected>1 year</option>
+            <option value="730">2 years</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirm with current password</label>
+        <div class="input-with-eye">
+          <input type="password" id="tok-password" placeholder="Dashboard password">
+          <button type="button" class="eye-btn" onclick="toggleEye('tok-password',this)">👁️</button>
+        </div>
+      </div>
+
+      <div id="tok-result" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;font-size:.82rem;">
+        <div style="color:#34d399;font-weight:600;margin-bottom:6px">✅ Token created — copy it now, it won't be shown again:</div>
+        <div id="tok-value" style="font-family:monospace;background:var(--card2);padding:8px 12px;border-radius:6px;word-break:break-all;cursor:pointer" onclick="copyToken()" title="Click to copy"></div>
+        <div style="font-size:.74rem;color:var(--muted);margin-top:6px">Click the token to copy it to clipboard.</div>
+      </div>
+      <div id="tok-err" class="msg-box msg-err"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="createToken()">🔑 Create Token</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:6px">Known Tokens</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">Tokens used by Echo and integrated services</div>
+      <div class="app-row">
+        <span class="app-icon">🧠</span>
+        <div class="app-info">
+          <div class="app-name">echo-bridge</div>
+          <div class="app-url">Echo's task queue token · expires 2027-04-19</div>
+        </div>
+        <span class="status-badge status-live">active</span>
+      </div>
+      <div class="app-row">
+        <span class="app-icon">🔄</span>
+        <div class="app-info">
+          <div class="app-name">brain-sync</div>
+          <div class="app-url">Echo brain file sync token (BRAIN_SYNC_TOKEN on Railway)</div>
+        </div>
+        <span class="status-badge status-live">active</span>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /content -->
 
 <script>
-function showTab(id) {
+// ── Tab switching ──────────────────────────────────────────────────────────────
+function showTab(id, btn) {
   document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.snav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
+  btn.classList.add('active');
+  // Load brain on first open
+  if (id === 'brain' && !window._brainLoaded) { loadBrainFiles(); window._brainLoaded = true; }
+  if (id === 'ai' && !window._aiLoaded) { loadBrainFiles(); window._aiLoaded = true; }
 }
 
+// ── Eye toggle ────────────────────────────────────────────────────────────────
+function toggleEye(inputId, btn) {
+  const el = document.getElementById(inputId);
+  if (el.type === 'password') { el.type = 'text'; btn.textContent = '🙈'; }
+  else { el.type = 'password'; btn.textContent = '👁️'; }
+}
+
+// ── Photo preview ─────────────────────────────────────────────────────────────
+function previewPhoto(url) {
+  const img = document.getElementById('avatar-img');
+  const emoji = document.getElementById('avatar-emoji');
+  if (url && url.startsWith('http')) {
+    if (!img) {
+      const i = document.createElement('img');
+      i.id = 'avatar-img'; i.className = 'avatar-preview'; i.style.display = 'block';
+      document.getElementById('avatar-display').appendChild(i);
+      if (emoji) emoji.style.display = 'none';
+      i.src = url;
+    } else {
+      img.src = url; img.style.display = 'block';
+      if (emoji) emoji.style.display = 'none';
+    }
+  } else {
+    if (img) img.style.display = 'none';
+    if (emoji) emoji.style.display = 'flex';
+  }
+}
+
+// ── Model selection ──────────────────────────────────────────────────────────
 async function selectModel(el, modelId) {
   document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   document.getElementById('selected-model-label').textContent = modelId;
   localStorage.setItem('echo_model', modelId);
-  // Save to server immediately
   try {
     await fetch('/api/settings', {
-      method: 'POST', credentials: 'include',
-      headers: {'Content-Type':'application/json'},
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({echo_model: modelId})
     });
     const badge = document.getElementById('model-saved-badge');
     badge.style.opacity = '1';
-    setTimeout(() => badge.style.opacity = '0', 3000);
-  } catch(e) { console.error('Could not save model', e); }
+    setTimeout(() => badge.style.opacity = '0', 2500);
+  } catch(e) { console.error('Model save failed', e); }
 }
 
 function saveAISettings() {
-  const name = document.getElementById('agent-name').value;
-  const tagline = document.getElementById('agent-tagline').value;
+  const name   = document.getElementById('agent-name').value;
   const prompt = document.getElementById('system-prompt').value;
-  const model = document.getElementById('selected-model-label').textContent;
+  const model  = document.getElementById('selected-model-label').textContent;
   localStorage.setItem('echo_agent_name', name);
-  localStorage.setItem('echo_agent_tagline', tagline);
   localStorage.setItem('echo_system_prompt', prompt);
   localStorage.setItem('echo_model', model);
   const btn = event.currentTarget;
@@ -293,18 +873,19 @@ function saveAISettings() {
   setTimeout(() => btn.textContent = '💾 Save AI Settings', 2000);
 }
 
-
+// ── Brain file loading/saving ─────────────────────────────────────────────────
 async function loadBrainFiles() {
-  const mapping = [
-    ['SOUL.md',     ['soul-editor', 'soul-ai-editor']],
-    ['IDENTITY.md', ['identity-editor', 'system-prompt']],
-    ['MEMORY.md',   ['memory-editor', 'memory-ai-editor']],
+  const map = [
+    ['SOUL.md',     ['soul-editor']],
+    ['IDENTITY.md', ['identity-editor','system-prompt']],
+    ['MEMORY.md',   ['memory-editor']],
   ];
-  for (const [file, editorIds] of mapping) {
+  for (const [file, ids] of map) {
     try {
       const r = await fetch('/api/brain/' + file);
+      if (!r.ok) continue;
       const d = await r.json();
-      for (const id of editorIds) {
+      for (const id of ids) {
         const el = document.getElementById(id);
         if (el) el.value = d.content || '';
       }
@@ -315,49 +896,21 @@ async function loadBrainFiles() {
 async function saveBrain(filename, editorId, statusId) {
   const el = document.getElementById(editorId);
   if (!el) return;
-  const content = el.value;
   try {
-    await fetch('/api/brain/' + filename, {
-      method: 'POST', credentials: 'include',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({content})
+    const r = await fetch('/api/brain/' + filename, {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({content: el.value})
     });
+    if (!r.ok) { alert('Save failed'); return; }
     if (statusId) {
       const badge = document.getElementById(statusId);
-      if (badge) { badge.style.opacity = '1'; setTimeout(() => badge.style.opacity = '0', 3000); }
+      if (badge) { badge.style.opacity = '1'; setTimeout(() => badge.style.opacity = '0', 2500); }
     }
   } catch(e) { alert('Save failed: ' + e); }
 }
 
-// Load active model from server
-window.onload = async () => {
-  try {
-    const r = await fetch('/api/settings');
-    const s = await r.json();
-    const activeModel = s.echo_model || 'anthropic/claude-3.5-haiku';
-    document.getElementById('selected-model-label').textContent = activeModel;
-    // Highlight the matching card
-    document.querySelectorAll('.model-card').forEach(c => {
-      c.classList.remove('selected');
-      const fn = c.getAttribute('onclick') || '';
-      if (fn.includes(activeModel)) c.classList.add('selected');
-    });
-    localStorage.setItem('echo_model', activeModel);
-  } catch(e) {
-    // Fallback to localStorage
-    const saved = localStorage.getItem('echo_model');
-    if (saved) document.getElementById('selected-model-label').textContent = saved;
-  }
-};
-  loadBrainFiles().then(() => {
-    syncEditors('soul-ai-editor','soul-editor');
-    syncEditors('memory-ai-editor','memory-editor');
-    // Also populate the AI Behavior system prompt from IDENTITY.md
-    const mem = document.getElementById('identity-editor');
-    const sp = document.getElementById('system-prompt');
-    if (mem && sp && mem.value) sp.value = mem.value;
-  });
-
+// ── Security / password change ────────────────────────────────────────────────
 async function saveAccountSettings() {
   const current = document.getElementById('sec-current').value;
   const newPw   = document.getElementById('sec-new').value;
@@ -368,41 +921,93 @@ async function saveAccountSettings() {
   const showMsg = (text, ok) => {
     msgEl.textContent = text;
     msgEl.style.display = 'block';
-    msgEl.style.background = ok ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.15)';
-    msgEl.style.border = ok ? '1px solid rgba(16,185,129,.3)' : '1px solid rgba(239,68,68,.3)';
-    msgEl.style.color = ok ? '#34d399' : '#f87171';
+    msgEl.className = 'msg-box ' + (ok ? 'msg-ok' : 'msg-err');
   };
 
-  if (!current) return showMsg('Please enter your current password.', false);
+  if (!current) return showMsg('Enter your current password.', false);
   if (newPw && newPw !== confirm) return showMsg('New passwords do not match.', false);
   if (newPw && newPw.length < 6) return showMsg('New password must be at least 6 characters.', false);
   if (!newPw && !email) return showMsg('Nothing to change — enter a new password and/or email.', false);
 
-  const body = { current_password: current };
+  const body = {current_password: current};
   if (newPw) body.new_password = newPw;
   if (email) body.email = email;
 
   try {
     const r = await fetch('/api/change-password', {
-      method: 'POST', credentials: 'include',
-      headers: {'Content-Type':'application/json'},
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify(body)
     });
     const data = await r.json();
-    if (!r.ok) return showMsg(data.error || 'Error saving changes.', false);
-    const changed = data.changed || [];
-    const parts = [];
-    if (changed.includes('password')) parts.push('password updated');
-    if (changed.includes('email')) parts.push('email updated');
+    if (!r.ok) return showMsg(data.error || 'Error saving.', false);
+    const parts = (data.changed || []).map(c => c + ' updated');
     showMsg('✅ ' + (parts.join(' & ') || 'No changes made') + '.', true);
-    document.getElementById('sec-current').value = '';
-    document.getElementById('sec-new').value = '';
-    document.getElementById('sec-confirm').value = '';
-    document.getElementById('sec-email').value = '';
-  } catch(e) {
-    showMsg('Network error — try again.', false);
-  }
+    ['sec-current','sec-new','sec-confirm','sec-email'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+  } catch(e) { showMsg('Network error — try again.', false); }
 }
+
+// ── API token creation ────────────────────────────────────────────────────────
+async function createToken() {
+  const label    = document.getElementById('tok-label').value.trim();
+  const expires  = document.getElementById('tok-expires').value;
+  const password = document.getElementById('tok-password').value;
+  const errEl    = document.getElementById('tok-err');
+  const resEl    = document.getElementById('tok-result');
+
+  errEl.style.display = 'none'; resEl.style.display = 'none';
+  if (!label) { errEl.textContent='Enter a label.'; errEl.style.display='block'; return; }
+  if (!password) { errEl.textContent='Enter your password.'; errEl.style.display='block'; return; }
+
+  try {
+    const r = await fetch('/api/token', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({label, expires_days: parseInt(expires), password})
+    });
+    const data = await r.json();
+    if (!r.ok) { errEl.textContent = data.error || 'Failed to create token.'; errEl.style.display='block'; return; }
+    document.getElementById('tok-value').textContent = data.token;
+    resEl.style.display = 'block';
+    document.getElementById('tok-password').value = '';
+  } catch(e) { errEl.textContent='Network error.'; errEl.style.display='block'; }
+}
+
+function copyToken() {
+  const val = document.getElementById('tok-value').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const el = document.getElementById('tok-value');
+    el.textContent = '✅ Copied!';
+    setTimeout(() => el.textContent = val, 2000);
+  });
+}
+
+// ── On load ───────────────────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  // Load active model
+  try {
+    const r = await fetch('/api/settings');
+    const s = await r.json();
+    const activeModel = s.echo_model || 'anthropic/claude-3.5-haiku';
+    document.getElementById('selected-model-label').textContent = activeModel;
+    document.querySelectorAll('.model-card').forEach(c => {
+      const fn = c.getAttribute('onclick') || '';
+      c.classList.toggle('selected', fn.includes("'" + activeModel + "'"));
+    });
+  } catch(e) {
+    const saved = localStorage.getItem('echo_model');
+    if (saved) document.getElementById('selected-model-label').textContent = saved;
+  }
+
+  // Auto-load brain if starting on brain or ai tab (rare, but handle it)
+  const hash = location.hash.replace('#','');
+  if (hash) {
+    const btn = document.querySelector('[onclick*="showTab(\'' + hash + '\'"]');
+    if (btn) showTab(hash, btn);
+  }
+});
 </script>
 </body>
 </html>

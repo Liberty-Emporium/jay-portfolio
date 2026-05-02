@@ -261,7 +261,7 @@ def get_dashboard_password():
 import hashlib
 import secrets as _secrets
 
-API_TOKENS_FILE = os.path.join(os.path.dirname(__file__), 'api_tokens.json')
+API_TOKENS_FILE = os.path.join(_DATA_DIR, 'api_tokens.json')
 
 def load_api_tokens():
     if os.path.exists(API_TOKENS_FILE):

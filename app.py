@@ -817,6 +817,97 @@ def vault_echo_read():
     return jsonify(out)
 
 
+# ── Phase 2: App-to-EcDash key pull ──────────────────────────────────────────
+# Each Liberty-Emporium app can register an app token and pull its own secrets.
+# Apps hit POST /api/vault/app-keys with {"app": "FloodClaim Pro", "token": "...", "labels": [...]}
+
+def _get_app_token_db():
+    db = get_vault_db()  # reuse same DB
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS app_tokens (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            app_name    TEXT NOT NULL UNIQUE,
+            token_hash  TEXT NOT NULL,
+            categories  TEXT DEFAULT '',
+            created     TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    db.commit()
+    return db
+
+@app.route('/api/vault/app-keys', methods=['POST'])
+def vault_app_keys():
+    """Phase 2: Liberty-Emporium apps pull their own secrets at startup.
+    
+    POST body: {"app": "FloodClaim Pro", "token": "<app-token>", "labels": ["Stripe Secret Key", ...]}
+    Returns: {"Stripe Secret Key": "sk_live_..."}
+    """
+    import hashlib as _hl
+    data       = request.get_json(silent=True) or {}
+    app_name   = (data.get('app') or '').strip()
+    raw_token  = (data.get('token') or '').strip()
+    labels     = data.get('labels', [])
+    if not app_name or not raw_token:
+        return jsonify({'error': 'app and token required'}), 400
+    token_hash = _hl.sha256(raw_token.encode()).hexdigest()
+    db = _get_app_token_db()
+    row = db.execute('SELECT * FROM app_tokens WHERE app_name=?', (app_name,)).fetchone()
+    if not row or row['token_hash'] != token_hash:
+        db.close()
+        return jsonify({'error': 'unauthorized'}), 401
+    allowed_cats = set(c.strip() for c in (row['categories'] or '').split(',') if c.strip())
+    out = {}
+    for lbl in labels:
+        secret_row = db.execute('SELECT * FROM secrets WHERE label=?', (lbl,)).fetchone()
+        if secret_row:
+            # Only return if no category restriction, or category is allowed
+            if not allowed_cats or secret_row['category'] in allowed_cats:
+                out[lbl] = vault_decrypt(secret_row['secret'])
+                vault_audit(f'app-pull:{app_name}', lbl)
+    db.close()
+    return jsonify(out)
+
+@app.route('/api/vault/app-tokens', methods=['GET'])
+@login_required
+def vault_app_tokens_list():
+    """List registered app tokens (admin)."""
+    db = _get_app_token_db()
+    rows = db.execute('SELECT id, app_name, categories, created FROM app_tokens ORDER BY app_name').fetchall()
+    db.close()
+    return jsonify([dict(r) for r in rows])
+
+@app.route('/api/vault/app-tokens', methods=['POST'])
+@login_required
+def vault_app_tokens_create():
+    """Register an app token."""
+    import hashlib as _hl, secrets as _sec
+    data       = request.get_json(silent=True) or {}
+    app_name   = (data.get('app_name') or '').strip()
+    categories = (data.get('categories') or '').strip()
+    if not app_name:
+        return jsonify({'error': 'app_name required'}), 400
+    raw_token  = _sec.token_urlsafe(40)
+    token_hash = _hl.sha256(raw_token.encode()).hexdigest()
+    db = _get_app_token_db()
+    db.execute('INSERT OR REPLACE INTO app_tokens(app_name,token_hash,categories) VALUES(?,?,?)',
+               (app_name, token_hash, categories))
+    db.commit()
+    db.close()
+    vault_audit('app-token-created', app_name)
+    return jsonify({'app_name': app_name, 'token': raw_token,
+                    'note': 'Save this token — it will not be shown again. Set as ECDASH_APP_TOKEN in Railway.'})
+
+@app.route('/api/vault/app-tokens/<int:token_id>', methods=['DELETE'])
+@login_required
+def vault_app_tokens_delete(token_id):
+    """Revoke an app token."""
+    db = _get_app_token_db()
+    db.execute('DELETE FROM app_tokens WHERE id=?', (token_id,))
+    db.commit()
+    db.close()
+    return jsonify({'ok': True})
+
+
 @app.route('/api/settings', methods=['GET'])
 @login_required
 def api_settings_get():

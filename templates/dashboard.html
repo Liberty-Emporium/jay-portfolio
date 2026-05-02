@@ -1369,6 +1369,19 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
 
       </div>
+
+      <!-- ── Phase 2: App Tokens ── -->
+      <div style="margin-top:2rem;max-width:980px">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title">🔗 Phase 2 — App API Tokens</div>
+          <button class="btn btn-sm" onclick="createAppToken()">+ Register App</button>
+        </div>
+        <div class="section-sub" style="margin-bottom:14px">Each Liberty-Emporium app gets its own token to pull secrets from the vault at startup. Set <code>ECDASH_APP_TOKEN</code> in Railway for each app.</div>
+        <div id="app-tokens-list" style="display:flex;flex-direction:column;gap:8px">
+          <div style="color:var(--muted);font-size:.85rem">Loading...</div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ══════════════ NOTES ══════════════ -->
@@ -2167,9 +2180,47 @@ window.showPanel = function(id) {
 
   // Auto-load when panel opens
   const _origSP = window.showPanel;
-  window.showPanel = function(id) { _origSP(id); if(id==='credentials') loadVault(); };
+  window.showPanel = function(id) { _origSP(id); if(id==='credentials') { loadVault(); loadAppTokens(); } };
   const _origSPM = window.showPanelMob;
-  window.showPanelMob = function(id) { _origSPM(id); if(id==='credentials') loadVault(); };
+  window.showPanelMob = function(id) { _origSPM(id); if(id==='credentials') { loadVault(); loadAppTokens(); } };
+
+  // ── Phase 2: App Tokens ───────────────────────────────────────────────
+  window.loadAppTokens = function() {
+    fetch('/api/vault/app-tokens').then(r=>r.json()).then(list => {
+      const el = document.getElementById('app-tokens-list');
+      if (!el) return;
+      if (!list.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.85rem">No app tokens yet. Click “+ Register App” to give an app access to pull its own secrets.</div>'; return; }
+      el.innerHTML = list.map(t => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+          <div>
+            <div style="font-weight:600;font-size:.9rem">${t.app_name}</div>
+            <div style="font-size:.78rem;color:var(--muted)">Categories: ${t.categories||'all'} &middot; Registered: ${t.created.slice(0,10)}</div>
+          </div>
+          <button class="btn btn-sm" style="background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.3)" onclick="revokeAppToken(${t.id},'${t.app_name}')">Revoke</button>
+        </div>`).join('');
+    }).catch(()=>{});
+  };
+
+  window.createAppToken = function() {
+    const appName = prompt('App name (e.g. FloodClaim Pro):');
+    if (!appName) return;
+    const cats = prompt('Allowed categories (comma-separated, or leave blank for all):','');
+    fetch('/api/vault/app-tokens', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({app_name: appName, categories: cats||''})
+    }).then(r=>r.json()).then(d => {
+      if (d.token) {
+        alert('App token created!\n\nApp: '+d.app_name+'\nToken: '+d.token+'\n\nSet this as ECDASH_APP_TOKEN in Railway for this app. It will not be shown again.');
+        loadAppTokens();
+      } else { alert('Error: '+(d.error||JSON.stringify(d))); }
+    });
+  };
+
+  window.revokeAppToken = function(id, name) {
+    if (!confirm('Revoke token for "'+name+'"? The app will lose vault access.')) return;
+    fetch('/api/vault/app-tokens/'+id, {method:'DELETE'}).then(()=>loadAppTokens());
+  };
+
 })();
 
 // ── Notes (Jay ↔ Echo) ───────────────────────────────────────────────────────────

@@ -465,7 +465,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
     <button class="nav-item" onclick="showPanelMob('ai')">🦾 <span>My AI</span></button>
     <button class="nav-item" onclick="showPanelMob('memory')">🧠 <span>Echo's Memory</span></button>
     <div class="nav-section">System</div>
-    <a href="/chat" class="nav-item" style="color:var(--accent3);font-weight:600">💬 <span>Chat with EcDash</span></a>
+    <a href="/chat{% if chat_token %}?token={{ chat_token }}{% endif %}" class="nav-item" style="color:var(--accent3);font-weight:600">💬 <span>Chat with EcDash</span></a>
     <a href="/monitoring" class="nav-item" style="color:var(--green)">📡 <span>App Monitor</span></a>
     <a href="/testing" class="nav-item" style="color:var(--yellow)">🧪 <span>Test Suite</span></a>
     <a href="/tickets" class="nav-item">🎫 <span>Support Tickets</span></a>

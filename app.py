@@ -64,6 +64,30 @@ if not _SECRET_KEY:
         _SECRET_KEY = _s.token_hex(32)
 app.secret_key = _get_secret_key()
 
+# ── Auto-register permanent chat bearer token on startup ──────────────────────
+def _register_permanent_token():
+    """Register CHAT_BEARER_TOKEN in api_tokens.json on startup.
+    Survives redeploys — no session cookie needed for /chat or /dashboard."""
+    import hashlib as _hl
+    raw = os.environ.get('CHAT_BEARER_TOKEN', '')
+    if not raw:
+        return
+    token_hash = _hl.sha256(raw.encode()).hexdigest()
+    tokens = load_api_tokens()
+    if any(t.get('token_hash') == token_hash for t in tokens):
+        return
+    tokens = [t for t in tokens if t.get('label') != 'chat-permanent']
+    tokens.append({
+        'token_hash': token_hash,
+        'label':      'chat-permanent',
+        'expires_at': None,
+        'created':    datetime.datetime.utcnow().isoformat(),
+    })
+    save_api_tokens(tokens)
+
+_register_permanent_token()
+
+
 # ── Session config ────────────────────────────────────────────────────────────
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 app.config['SESSION_COOKIE_HTTPONLY']    = True
@@ -731,9 +755,21 @@ def brain_sync():
     return jsonify({'ok': True, 'synced': saved})
 
 @app.route('/chat')
-@login_required
 def chat():
-    return render_template('chat.html', config=config)
+    # Allow access via session cookie OR permanent bearer token in query param
+    # Bearer token in URL: /chat?token=<CHAT_BEARER_TOKEN>
+    # This avoids the session-expiry problem after redeploys.
+    import hashlib as _hl
+    if not session.get('dashboard_auth'):
+        # Check query param token
+        qt = request.args.get('token', '')
+        env_token = os.environ.get('CHAT_BEARER_TOKEN', '')
+        if not (qt and env_token and qt == env_token):
+            # Check Authorization header as fallback
+            if not check_bearer_token():
+                return redirect(url_for('login'))
+    chat_token = os.environ.get('CHAT_BEARER_TOKEN', '')
+    return render_template('chat.html', config=config, chat_token=chat_token)
 
 @app.route('/api/chat', methods=['POST'])
 @login_required
@@ -1048,7 +1084,8 @@ def tools():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', config=config)
+    chat_token = os.environ.get('CHAT_BEARER_TOKEN', '')
+    return render_template('dashboard.html', config=config, chat_token=chat_token)
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required

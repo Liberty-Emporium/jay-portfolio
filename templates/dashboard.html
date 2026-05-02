@@ -2063,33 +2063,49 @@ function loadEchoTasks() {
 function loadNetworkStatus() {
   const grid = document.getElementById('network-status-grid');
   if (!grid) return;
-  grid.innerHTML = '<div style="color:var(--muted);font-size:.85rem;padding:12px 0">⏳ Scanning all apps…</div>';
-  // Use the AI Widget /api/network-status endpoint which pings all apps
-  fetch('https://ai.widget.alexanderai.site/api/network-status', {mode: 'cors'})
+  grid.innerHTML = '<div style="color:var(--muted);font-size:.85rem;padding:12px 0">⏳ Scanning all 12 apps from server…</div>';
+  // Server-side scan — runs on EcDash, no CORS issues
+  fetch('/api/network-scan', {credentials: 'include'})
     .then(r => r.json())
     .then(data => {
       const results = data.results || {};
-      grid.innerHTML = Object.entries(results).map(([name, r]) => {
-        const ok      = r.healthy !== false && !r.error;
-        const uptime  = r.uptime_human || '';
-        const stats   = r.stats && !r.stats.error
-          ? Object.entries(r.stats).slice(0,2).map(([k,v])=>`${k}: ${v}`).join(' · ') : '';
-        return `<div style="display:flex;align-items:center;gap:10px;background:var(--card2);
-          border:1px solid ${ok ? 'rgba(16,185,129,.25)' : 'rgba(239,68,68,.25)'};
-          border-radius:12px;padding:11px 13px">
-          <span style="font-size:1.2rem">${ok ? '🟢' : '🔴'}</span>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:.88rem;font-weight:600">${name}</div>
-            <div style="font-size:.72rem;color:var(--muted)">${uptime || (ok ? 'online' : 'DOWN')}${stats ? ' · '+stats : ''}</div>
-          </div>
-        </div>`;
-      }).join('');
-      if (!Object.keys(results).length) grid.innerHTML = '<div style="color:var(--muted);padding:12px">No results</div>';
+      const total   = data.apps_total || 0;
+      const healthy = data.apps_healthy || 0;
+      // Summary row
+      const summaryColor = healthy === total ? 'var(--green)' : healthy > total/2 ? 'var(--yellow)' : 'var(--red)';
+      const summary = `<div style="grid-column:1/-1;background:rgba(0,0,0,.2);border-radius:10px;padding:10px 14px;
+        display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <span style="font-size:1.3rem">${healthy===total?'✅':'⚠️'}</span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:${summaryColor}">
+          ${healthy}/${total} apps online</span>
+      </div>`;
+      const cards = Object.entries(results)
+        .sort((a,b) => (b[1].healthy?1:0)-(a[1].healthy?1:0) || a[0].localeCompare(b[0]))
+        .map(([name, r]) => {
+          const ok     = r.healthy !== false;
+          const uptime = r.uptime_human || '';
+          const s      = r.stats || {};
+          const stats  = Object.keys(s).length && !s.error
+            ? Object.entries(s).slice(0,2).map(([k,v])=>`${k.replace(/_/g,' ')}: ${v}`).join(' · ') : '';
+          const ms     = r.ms ? `${r.ms}ms` : '';
+          return `<div style="display:flex;align-items:center;gap:10px;background:var(--card2);
+            border:1px solid ${ok?'rgba(16,185,129,.25)':'rgba(239,68,68,.3)'};
+            border-radius:12px;padding:11px 13px">
+            <span style="font-size:1.2rem">${ok?'🟢':'🔴'}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:.88rem;font-weight:600">${name}</div>
+              <div style="font-size:.72rem;color:${ok?'var(--muted)':'var(--red)'}">
+                ${ok ? (uptime||ms||'online')+(stats?' · '+stats:'') : 'DOWN — needs attention'}
+              </div>
+            </div>
+            <a href="${r.url||'#'}" target="_blank"
+               style="font-size:.75rem;color:var(--accent3);text-decoration:none;flex-shrink:0">↗</a>
+          </div>`;
+        }).join('');
+      grid.innerHTML = summary + cards;
     })
-    .catch(() => {
-      // Fallback: run our own health check
-      loadHealth();
-      grid.innerHTML = '<div style="color:var(--yellow);font-size:.82rem;padding:12px">Widget offline — check App Health panel for status.</div>';
+    .catch(e => {
+      grid.innerHTML = `<div style="color:var(--red);font-size:.85rem;padding:12px">❌ Scan failed: ${e.message}. Try refreshing the page.</div>`;
     });
 }
 

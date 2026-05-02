@@ -508,7 +508,7 @@ def echo_bridge_send():
             task['response'] = f'Echo offline - task queued. Will process when Echo is available. ({str(e)[:80]})'
     else:
         task['status'] = 'queued'
-        task['response'] = 'ECHO_WEBHOOK_URL not configured. Task saved. Set it in Railway env vars to connect EcDash to Echo.'
+        task['response'] = '\u2705 Task saved! Echo will pick this up and run it automatically on her next session.'
 
     tasks[0] = task
     save_echo_tasks(tasks)
@@ -991,6 +991,65 @@ def check_all_apps():
     name_order = {a['name']: i for i, a in enumerate(APPS_REGISTRY)}
     results.sort(key=lambda x: name_order.get(x['name'], 99))
     return results
+
+@app.route('/api/network-scan', methods=['GET'])
+@login_required
+def api_network_scan():
+    """Server-side network scan — pings all Liberty-Emporium apps and returns status.
+    Runs on the server so there are no browser CORS issues.
+    """
+    import threading as _th, time as _t
+    APP_URLS = {
+        'EcDash':             'https://jay-portfolio-production.up.railway.app',
+        'FloodClaim Pro':     'https://billy-floods.up.railway.app',
+        'AI Agent Widget':    'https://ai.widget.alexanderai.site',
+        'Sweet Spot Cakes':   'https://sweet-spot-cakes.up.railway.app',
+        'Pet Vet AI':         'https://pet-vet-ai-production.up.railway.app',
+        'Contractor Pro AI':  'https://contractor-pro-ai-production.up.railway.app',
+        'Drop Shipping':      'https://shop.alexanderai.site',
+        'Consignment':        'https://web-production-43ce4.up.railway.app',
+        'Liberty Inventory':  'https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app',
+        'GymForge':           'https://web-production-1c23.up.railway.app',
+        'Liberty Oil':        'https://liberty-oil-propane.up.railway.app',
+        "Grace (Mom's AI)":   'https://moms-ai-helper.up.railway.app',
+    }
+    results = {}
+    lock = _th.Lock()
+
+    def _ping(name, base_url):
+        start = _t.time()
+        for path in ['/api/status', '/health']:
+            try:
+                import urllib.request as _ur
+                req = _ur.Request(base_url + path, method='GET')
+                with _ur.urlopen(req, timeout=6) as r:
+                    ms = int((_t.time() - start) * 1000)
+                    try: body = json.loads(r.read().decode())
+                    except: body = {}
+                    with lock:
+                        results[name] = {
+                            'healthy':       True,
+                            'ms':            ms,
+                            'uptime_human':  body.get('uptime_human', ''),
+                            'stats':         body.get('stats', {}),
+                            'url':           base_url,
+                        }
+                    return
+            except Exception:
+                pass
+        with lock:
+            results[name] = {'healthy': False, 'ms': int((_t.time()-start)*1000), 'url': base_url}
+
+    threads = [_th.Thread(target=_ping, args=(n, u), daemon=True) for n, u in APP_URLS.items()]
+    for t in threads: t.start()
+    for t in threads: t.join(timeout=12)
+
+    healthy = sum(1 for v in results.values() if v.get('healthy'))
+    return jsonify({
+        'apps_healthy': healthy,
+        'apps_total':   len(APP_URLS),
+        'results':      results,
+    })
 
 @app.route('/health', methods=['GET'])
 def health_check():

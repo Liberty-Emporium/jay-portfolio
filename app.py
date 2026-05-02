@@ -295,12 +295,25 @@ def _register_permanent_token():
     save_api_tokens(tokens)
 
 def _vault_first_run():
-    """Ensure vault DB tables exist on startup."""
+    """Ensure vault DB exists and register the ecdash-bridge token as a valid Bearer."""
+    import hashlib as _hl
     try:
         db = get_vault_db()
         db.close()
     except Exception:
         pass
+    # Register ecdash-bridge token by hash (no plaintext stored here)
+    _ECDASH_HASH = '5803387781fc886a228f16c41272f22edf1ccbe085ee19b533aaa8fdda9ee1a8'
+    tokens = load_api_tokens()
+    if not any(t.get('token_hash') == _ECDASH_HASH for t in tokens):
+        tokens = [t for t in tokens if t.get('label') != 'ecdash-bridge']
+        tokens.append({
+            'token_hash': _ECDASH_HASH,
+            'label': 'ecdash-bridge',
+            'expires_at': None,
+            'created': datetime.datetime.utcnow().isoformat(),
+        })
+        save_api_tokens(tokens)
 
 _register_permanent_token()
 _vault_first_run()

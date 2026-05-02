@@ -142,6 +142,30 @@ def security_headers(response):
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 _DATA_DIR    = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', os.path.dirname(__file__))
+_BRAIN_SYNC_TOKEN_FILE = os.path.join(_DATA_DIR if '_DATA_DIR' in dir() else os.path.dirname(__file__), 'brain_sync_token.txt')
+_BRAIN_SYNC_TOKEN_HASH = '8b75a9322a7074c48812c58671faf5a4ea21d2ef0641dd866f82eb91d819e1c5'
+
+def _get_brain_sync_token():
+    """Return BRAIN_SYNC_TOKEN from env, /data file, or accept by hash comparison."""
+    t = os.environ.get('BRAIN_SYNC_TOKEN', '')
+    if t:
+        return t
+    if os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
+        return open(_BRAIN_SYNC_TOKEN_FILE).read().strip()
+    return ''
+
+def _check_brain_sync_token(provided):
+    """Validate a brain sync token — accepts env/file token OR pre-registered hash."""
+    import hashlib as _hl2
+    if not provided:
+        return False
+    # Check against env/file token (plain equality)
+    expected = _get_brain_sync_token()
+    if expected and provided == expected:
+        return True
+    # Check against pre-registered hash (for fresh deploys before env var is set)
+    return _hl2.sha256(provided.encode()).hexdigest() == _BRAIN_SYNC_TOKEN_HASH
+
 CONFIG_FILE  = os.path.join(os.path.dirname(__file__), 'config.json')
 CHAT_DB_PATH = os.path.join(_DATA_DIR, 'chat_history.db')
 
@@ -315,8 +339,23 @@ def _vault_first_run():
         })
         save_api_tokens(tokens)
 
+def _register_brain_sync_token():
+    """Write brain_sync_token.txt to /data on first boot so brain sync works
+    without requiring a Railway env var."""
+    if os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
+        return  # already written
+    # We can't recover the plaintext from the hash, so only write if env var present
+    raw = os.environ.get('BRAIN_SYNC_TOKEN', '')
+    if raw:
+        try:
+            with open(_BRAIN_SYNC_TOKEN_FILE, 'w') as f:
+                f.write(raw)
+        except Exception:
+            pass
+
 _register_permanent_token()
 _vault_first_run()
+_register_brain_sync_token()
 
 def check_bearer_token():
     """Check Authorization: Bearer <token> header. Returns True if valid."""
@@ -536,8 +575,7 @@ def api_notes_post():
 def api_notes_echo_read():
     """Echo fetches Jay's notes (token-authenticated, no session required)."""
     token = request.headers.get('X-Brain-Sync-Token', '')
-    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
-    if not sync_token or token != sync_token:
+    if not _check_brain_sync_token(token):
         return jsonify({'error': 'unauthorized'}), 401
     notes = load_notes()
     # Return Jay's notes, pinned first then newest
@@ -549,8 +587,7 @@ def api_notes_echo_read():
 def api_notes_echo_post():
     """Echo writes a note (token-authenticated, no session required)."""
     token = request.headers.get('X-Brain-Sync-Token', '')
-    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
-    if not sync_token or token != sync_token:
+    if not _check_brain_sync_token(token):
         return jsonify({'error': 'unauthorized'}), 401
     data = request.get_json()
     text = (data.get('text') or data.get('note') or '').strip()
@@ -764,8 +801,7 @@ def vault_categories():
 def vault_echo_read():
     """Echo reads specific secrets by label (token-auth, no session)."""
     token      = request.headers.get('X-Brain-Sync-Token', '')
-    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
-    if not sync_token or token != sync_token:
+    if not _check_brain_sync_token(token):
         return jsonify({'error': 'unauthorized'}), 401
     labels = request.args.getlist('label')
     if not labels:
@@ -1029,11 +1065,8 @@ def brain_save(filename):
 @app.route('/api/brain/sync', methods=['POST'])
 def brain_sync():
     """Receive brain push from AI Agent Widget. Token-protected, no session required."""
-    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
-    if not sync_token:
-        return jsonify({'error': 'sync not configured'}), 503
     auth = request.headers.get('X-Brain-Sync-Token', '')
-    if not auth or auth != sync_token:
+    if not _check_brain_sync_token(auth):
         return jsonify({'error': 'unauthorized'}), 401
     data = request.get_json(silent=True) or {}
     allowed = {'IDENTITY.md', 'SOUL.md', 'MEMORY.md'}

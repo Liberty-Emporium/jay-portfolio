@@ -82,17 +82,28 @@ def install_reporter(flask_app, app_name):
     def _handle_exception(e):
         from flask import request as freq
         from werkzeug.exceptions import HTTPException
-        # Don't report 4xx client errors (404, 410, etc.) — they're not real errors
-        if isinstance(e, HTTPException) and e.code < 500:
-            raise e
+        # Pass 4xx HTTP errors through as-is — do NOT re-raise (causes them to
+        # become 500s). Return the exception directly so Flask renders it correctly.
+        if isinstance(e, HTTPException):
+            if e.code < 500:
+                return e  # let Flask render 404/405/etc. normally
+            # 5xx HTTP exceptions: report but return them, don't re-raise
+            report_error(
+                app_name,
+                error=e,
+                route=freq.path,
+                extra={'method': freq.method, 'args': dict(freq.args)}
+            )
+            return e
+        # Non-HTTP exceptions → real 500
         report_error(
             app_name,
             error=e,
             route=freq.path,
             extra={'method': freq.method, 'args': dict(freq.args)}
         )
-        # Re-raise so Flask still returns a 500 to the user
-        raise e
+        from flask import jsonify
+        return jsonify({'error': 'internal server error'}), 500
 
     # 2. Track slow requests
     @flask_app.before_request

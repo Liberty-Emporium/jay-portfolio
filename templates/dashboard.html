@@ -2174,13 +2174,25 @@ window.showPanel = function(id) {
   };
 
   window.vaultReveal = function(id) {
-    const valEl  = document.getElementById('vault-val-'+id);
-    const textEl = document.getElementById('vault-val-text-'+id);
-    if (valEl.style.display !== 'none') { valEl.style.display='none'; return; }
-    textEl.textContent = '🔄 Loading...';
-    valEl.style.display = 'block';
-    fetch('/api/vault/'+id).then(r=>r.json()).then(d=>{
+    const textEl = document.getElementById('vault-val-text-' + id);
+    const eyeBtn = document.getElementById('vault-eye-' + id);
+    const dots   = '••••••••';
+    if (!textEl) return;
+    // If already revealed, toggle back to dots
+    if (textEl.dataset.revealed === '1') {
+      textEl.textContent = dots;
+      textEl.dataset.revealed = '0';
+      if (eyeBtn) eyeBtn.textContent = '👁';
+      return;
+    }
+    // Fetch and reveal
+    textEl.textContent = '⏳ Loading...';
+    fetch('/api/vault/' + id).then(r => r.json()).then(d => {
       textEl.textContent = d.secret || d.error || '(empty)';
+      textEl.dataset.revealed = '1';
+      if (eyeBtn) eyeBtn.textContent = '🙈';
+    }).catch(() => {
+      textEl.textContent = dots;
     });
   };
 

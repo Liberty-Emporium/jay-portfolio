@@ -908,11 +908,15 @@ def vault_app_tokens_delete(token_id):
     return jsonify({'ok': True})
 
 
-@app.route('/api/admin/reset-brain-token', methods=['POST'])
-@login_required
+@app.route('/api/admin/reset-brain-token', methods=['POST', 'GET'])
 def api_reset_brain_token():
-    """Delete stale brain_sync_token.txt so env var takes effect on next request."""
+    """Delete stale brain_sync_token.txt so env var takes effect on next request.
+    Accepts session login OR ?pw=DASHBOARD_PASSWORD query param."""
     import os as _os
+    # Allow if logged in via session OR correct password passed as query param
+    pw = request.args.get('pw', '')
+    if not session.get('logged_in') and pw != get_dashboard_password():
+        return jsonify({'error': 'unauthorized'}), 401
     deleted = False
     if _os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
         _os.remove(_BRAIN_SYNC_TOKEN_FILE)

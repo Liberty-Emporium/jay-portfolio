@@ -171,9 +171,21 @@ def auto_title(first_user_msg):
     if len(first_user_msg) > 60: t += '...'
     return t
 
-TODOS_FILE   = os.path.join(os.path.dirname(__file__), 'todos.json')
-TICKETS_FILE  = os.path.join(os.path.dirname(__file__), 'tickets.json')
+TODOS_FILE      = os.path.join(os.path.dirname(__file__), 'todos.json')
+TICKETS_FILE    = os.path.join(os.path.dirname(__file__), 'tickets.json')
 ECHO_TASKS_FILE = os.path.join(os.path.dirname(__file__), 'echo_tasks.json')
+NOTES_FILE      = os.path.join(_DATA_DIR, 'notes.json')  # persists on /data volume
+
+def load_notes():
+    if os.path.exists(NOTES_FILE):
+        try:
+            with open(NOTES_FILE) as f: return json.load(f)
+        except: pass
+    return []
+
+def save_notes(notes):
+    os.makedirs(os.path.dirname(NOTES_FILE), exist_ok=True)
+    with open(NOTES_FILE, 'w') as f: json.dump(notes, f, indent=2)
 
 
 
@@ -438,6 +450,93 @@ def echo_bridge_update(task_id):
             t['updated'] = datetime.datetime.utcnow().isoformat()
             save_echo_tasks(tasks)
             return jsonify(t)
+    return jsonify({'error': 'not found'}), 404
+
+# ── Notes (Jay ↔ Echo shared notepad) ─────────────────────────────────────────
+
+@app.route('/api/notes', methods=['GET'])
+@login_required
+def api_notes_get():
+    """Get all notes. Optional ?author=jay|echo filter."""
+    notes = load_notes()
+    author = request.args.get('author')
+    if author:
+        notes = [n for n in notes if n.get('author','').lower() == author.lower()]
+    return jsonify(notes[:100])
+
+@app.route('/api/notes', methods=['POST'])
+@login_required
+def api_notes_post():
+    """Jay writes a note from the dashboard."""
+    data = request.get_json()
+    text = (data.get('text') or data.get('note') or '').strip()
+    if not text:
+        return jsonify({'error': 'text required'}), 400
+    notes = load_notes()
+    note = {
+        'id': int(datetime.datetime.utcnow().timestamp() * 1000),
+        'author': 'jay',
+        'text': text,
+        'pinned': bool(data.get('pinned', False)),
+        'created': datetime.datetime.utcnow().isoformat(),
+    }
+    notes.insert(0, note)
+    save_notes(notes)
+    return jsonify(note), 201
+
+@app.route('/api/notes/echo-read', methods=['GET'])
+def api_notes_echo_read():
+    """Echo fetches Jay's notes (token-authenticated, no session required)."""
+    token = request.headers.get('X-Brain-Sync-Token', '')
+    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
+    if not sync_token or token != sync_token:
+        return jsonify({'error': 'unauthorized'}), 401
+    notes = load_notes()
+    # Return Jay's notes, pinned first then newest
+    jay_notes = [n for n in notes if n.get('author', '') == 'jay']
+    jay_notes.sort(key=lambda n: (not n.get('pinned', False), -n.get('id', 0)))
+    return jsonify(jay_notes[:50])
+
+@app.route('/api/notes/echo', methods=['POST'])
+def api_notes_echo_post():
+    """Echo writes a note (token-authenticated, no session required)."""
+    token = request.headers.get('X-Brain-Sync-Token', '')
+    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
+    if not sync_token or token != sync_token:
+        return jsonify({'error': 'unauthorized'}), 401
+    data = request.get_json()
+    text = (data.get('text') or data.get('note') or '').strip()
+    if not text:
+        return jsonify({'error': 'text required'}), 400
+    notes = load_notes()
+    note = {
+        'id': int(datetime.datetime.utcnow().timestamp() * 1000),
+        'author': 'echo',
+        'text': text,
+        'pinned': bool(data.get('pinned', False)),
+        'created': datetime.datetime.utcnow().isoformat(),
+    }
+    notes.insert(0, note)
+    save_notes(notes)
+    return jsonify(note), 201
+
+@app.route('/api/notes/<int:note_id>', methods=['DELETE'])
+@login_required
+def api_notes_delete(note_id):
+    notes = load_notes()
+    notes = [n for n in notes if n.get('id') != note_id]
+    save_notes(notes)
+    return jsonify({'ok': True})
+
+@app.route('/api/notes/<int:note_id>/pin', methods=['POST'])
+@login_required
+def api_notes_pin(note_id):
+    notes = load_notes()
+    for n in notes:
+        if n.get('id') == note_id:
+            n['pinned'] = not n.get('pinned', False)
+            save_notes(notes)
+            return jsonify(n)
     return jsonify({'error': 'not found'}), 404
 
 @app.route('/api/settings', methods=['GET'])

@@ -1373,13 +1373,39 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
     <!-- ══════════════ NOTES ══════════════ -->
     <div class="panel" id="panel-notes">
       <div class="section-title">📝 Notes</div>
-      <div class="section-sub">Your scratch pad - auto-saved in your browser</div>
-      <div class="card" style="max-width:800px">
-        <div class="card-header">
-          <div class="card-title">Scratch Pad</div>
-          <span class="notes-saved" id="notes-saved">✅ Saved</span>
+      <div class="section-sub">Shared notepad between you and Echo — what you write, Echo reads. What Echo writes, you see here.</div>
+
+      <div style="max-width:860px">
+        <!-- Write a note -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header"><div class="card-title">✏️ Write a Note for Echo</div></div>
+          <textarea id="new-note-text" rows="3" style="
+            width:100%;box-sizing:border-box;
+            background:var(--card2);border:1px solid var(--border);border-radius:8px;
+            color:var(--text);padding:12px;font-size:.88rem;font-family:inherit;
+            resize:vertical;outline:none;margin-bottom:10px;
+          " placeholder="Tell Echo something to remember, a task, a decision, anything..."></textarea>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-sm" onclick="postNote()">📎 Save Note</button>
+            <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted);cursor:pointer">
+              <input type="checkbox" id="note-pin" style="cursor:pointer"> 📌 Pin this note
+            </label>
+            <span id="note-status" style="font-size:.78rem;color:var(--muted);margin-left:auto"></span>
+          </div>
         </div>
-        <textarea class="notes-area" id="notes-area" placeholder="Jot anything down here - ideas, URLs, quick reminders...&#10;&#10;Auto-saves as you type."></textarea>
+
+        <!-- Filter tabs -->
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn btn-sm" id="notes-filter-all" onclick="loadNotes('all')" style="background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.5)">All</button>
+          <button class="btn btn-sm btn-ghost" id="notes-filter-jay" onclick="loadNotes('jay')">👤 My Notes</button>
+          <button class="btn btn-sm btn-ghost" id="notes-filter-echo" onclick="loadNotes('echo')">🧠 From Echo</button>
+          <button class="btn btn-sm btn-ghost" onclick="loadNotes(_notesFilter)" style="margin-left:auto">🔄 Refresh</button>
+        </div>
+
+        <!-- Notes list -->
+        <div id="notes-loading" style="color:var(--muted);font-size:.88rem;padding:12px 0">Loading notes...</div>
+        <div id="notes-list" style="display:none;display:flex;flex-direction:column;gap:10px"></div>
+        <div id="notes-empty" style="display:none;color:var(--muted);font-size:.88rem;padding:20px;text-align:center">No notes yet. Write one above!</div>
       </div>
     </div>
 
@@ -2077,6 +2103,80 @@ window.showPanel = function(id) {
   }
   resize();
   window.addEventListener('resize', resize);
+})();
+
+// ── Notes (Jay ↔ Echo) ───────────────────────────────────────────────────────────
+(function(){
+  window._notesFilter = 'all';
+
+  window.loadNotes = function(filter) {
+    filter = filter || 'all';
+    window._notesFilter = filter;
+    // Update tab styles
+    ['all','jay','echo'].forEach(f => {
+      const btn = document.getElementById('notes-filter-' + f);
+      if (!btn) return;
+      if (f === filter) { btn.style.background='rgba(99,102,241,.2)'; btn.style.borderColor='rgba(99,102,241,.5)'; btn.classList.remove('btn-ghost'); }
+      else { btn.style.background=''; btn.style.borderColor=''; btn.classList.add('btn-ghost'); }
+    });
+    const list = document.getElementById('notes-list');
+    const loading = document.getElementById('notes-loading');
+    const empty = document.getElementById('notes-empty');
+    loading.style.display='block'; list.style.display='none'; empty.style.display='none';
+    const url = filter === 'all' ? '/api/notes' : '/api/notes?author=' + filter;
+    fetch(url).then(r=>r.json()).then(notes => {
+      loading.style.display='none';
+      if (!notes.length) { empty.style.display='block'; return; }
+      list.style.display='flex';
+      list.innerHTML = notes.map(n => {
+        const isEcho = n.author === 'echo';
+        const ts = new Date(n.created).toLocaleString();
+        const pinIcon = n.pinned ? '📌 ' : '';
+        const authorLabel = isEcho ? '🧠 Echo' : '👤 Jay';
+        const accentColor = isEcho ? 'rgba(99,102,241,.3)' : 'rgba(16,185,129,.3)';
+        return `<div style="background:var(--card2);border:1px solid ${accentColor};border-radius:10px;padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-size:.75rem;font-weight:700;color:${isEcho?'var(--accent3)':'var(--green)'}">${pinIcon}${authorLabel}</span>
+            <span style="font-size:.72rem;color:var(--muted);margin-left:auto">${ts}</span>
+            <button onclick="deleteNote(${n.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:.78rem;padding:2px 6px" title="Delete">✕</button>
+            <button onclick="pinNote(${n.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;padding:2px 6px" title="Pin/Unpin">${n.pinned?'📌':'pin'}</button>
+          </div>
+          <div style="font-size:.88rem;line-height:1.65;white-space:pre-wrap">${n.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        </div>`;
+      }).join('');
+    }).catch(()=>{ loading.style.display='none'; empty.style.display='block'; });
+  };
+
+  window.postNote = function() {
+    const text = document.getElementById('new-note-text').value.trim();
+    const pinned = document.getElementById('note-pin').checked;
+    const status = document.getElementById('note-status');
+    if (!text) { status.textContent='⚠️ Write something first'; return; }
+    status.textContent='🐾 Saving...';
+    fetch('/api/notes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,pinned})})
+      .then(r=>r.json()).then(()=>{
+        document.getElementById('new-note-text').value='';
+        document.getElementById('note-pin').checked=false;
+        status.textContent='✅ Saved!';
+        setTimeout(()=>status.textContent='',2000);
+        loadNotes(window._notesFilter);
+      }).catch(()=>{ status.textContent='❌ Failed to save'; });
+  };
+
+  window.deleteNote = function(id) {
+    if (!confirm('Delete this note?')) return;
+    fetch('/api/notes/'+id,{method:'DELETE'}).then(()=>loadNotes(window._notesFilter));
+  };
+
+  window.pinNote = function(id) {
+    fetch('/api/notes/'+id+'/pin',{method:'POST'}).then(()=>loadNotes(window._notesFilter));
+  };
+
+  // Auto-load when notes panel opens
+  const _origShowPanel = window.showPanel;
+  window.showPanel = function(id) { _origShowPanel(id); if(id==='notes') loadNotes('all'); };
+  const _origShowPanelMob = window.showPanelMob;
+  window.showPanelMob = function(id) { _origShowPanelMob(id); if(id==='notes') loadNotes('all'); };
 })();
 
 // ── Echo Brain Viewer ───────────────────────────────────────────────────────────

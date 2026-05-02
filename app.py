@@ -294,7 +294,16 @@ def _register_permanent_token():
     })
     save_api_tokens(tokens)
 
+def _vault_first_run():
+    """Ensure vault DB tables exist on startup."""
+    try:
+        db = get_vault_db()
+        db.close()
+    except Exception:
+        pass
+
 _register_permanent_token()
+_vault_first_run()
 
 def check_bearer_token():
     """Check Authorization: Bearer <token> header. Returns True if valid."""
@@ -564,6 +573,200 @@ def api_notes_pin(note_id):
             save_notes(notes)
             return jsonify(n)
     return jsonify({'error': 'not found'}), 404
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# VAULT — Encrypted Secrets Manager (replaces KYS)
+# ══════════════════════════════════════════════════════════════════════════════
+import base64, hashlib as _hashlib
+from cryptography.fernet import Fernet, InvalidToken
+
+VAULT_DB_PATH = os.path.join(_DATA_DIR, 'vault.db')
+
+def _get_vault_key():
+    """Derive a stable Fernet key from the Flask secret key + a salt.
+    This means the vault is tied to this instance's secret key — stored on /data."""
+    raw = app.secret_key if isinstance(app.secret_key, bytes) else app.secret_key.encode()
+    dk  = _hashlib.pbkdf2_hmac('sha256', raw, b'vault-salt-v1', 200_000, dklen=32)
+    return base64.urlsafe_b64encode(dk)
+
+def get_vault_db():
+    db = sqlite3.connect(VAULT_DB_PATH)
+    db.row_factory = sqlite3.Row
+    db.execute('PRAGMA journal_mode=WAL')
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS secrets (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            category    TEXT    NOT NULL DEFAULT 'General',
+            label       TEXT    NOT NULL,
+            username    TEXT    NOT NULL DEFAULT '',
+            secret      TEXT    NOT NULL,          -- Fernet-encrypted value
+            url         TEXT    NOT NULL DEFAULT '',
+            notes       TEXT    NOT NULL DEFAULT '',
+            created     TEXT    DEFAULT CURRENT_TIMESTAMP,
+            updated     TEXT    DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS vault_audit (
+            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            action  TEXT NOT NULL,
+            label   TEXT NOT NULL,
+            ts      TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    db.commit()
+    return db
+
+def vault_encrypt(plaintext):
+    f = Fernet(_get_vault_key())
+    return f.encrypt(plaintext.encode()).decode()
+
+def vault_decrypt(ciphertext):
+    try:
+        f = Fernet(_get_vault_key())
+        return f.decrypt(ciphertext.encode()).decode()
+    except (InvalidToken, Exception):
+        return '⚠️ Decryption failed'
+
+def vault_audit(action, label):
+    try:
+        db = get_vault_db()
+        db.execute('INSERT INTO vault_audit(action,label) VALUES(?,?)', (action, label))
+        db.commit()
+        db.close()
+    except Exception:
+        pass
+
+# ── Vault API routes ──────────────────────────────────────────────────────────
+
+@app.route('/api/vault', methods=['GET'])
+@login_required
+def vault_list():
+    """List all secrets (values redacted)."""
+    db = get_vault_db()
+    rows = db.execute(
+        'SELECT id,category,label,username,url,notes,created,updated FROM secrets ORDER BY category,label'
+    ).fetchall()
+    db.close()
+    return jsonify([dict(r) for r in rows])
+
+@app.route('/api/vault', methods=['POST'])
+@login_required
+def vault_create():
+    """Add a new secret."""
+    data     = request.get_json()
+    label    = (data.get('label') or '').strip()
+    secret   = (data.get('secret') or data.get('value') or '').strip()
+    if not label or not secret:
+        return jsonify({'error': 'label and secret required'}), 400
+    encrypted = vault_encrypt(secret)
+    db = get_vault_db()
+    cur = db.execute(
+        '''INSERT INTO secrets(category,label,username,secret,url,notes)
+           VALUES(?,?,?,?,?,?)''',
+        (
+            (data.get('category') or 'General').strip(),
+            label,
+            (data.get('username') or '').strip(),
+            encrypted,
+            (data.get('url') or '').strip(),
+            (data.get('notes') or '').strip(),
+        )
+    )
+    db.commit()
+    row_id = cur.lastrowid
+    db.close()
+    vault_audit('create', label)
+    return jsonify({'ok': True, 'id': row_id}), 201
+
+@app.route('/api/vault/<int:secret_id>', methods=['GET'])
+@login_required
+def vault_reveal(secret_id):
+    """Reveal the decrypted value for a single secret."""
+    db = get_vault_db()
+    row = db.execute('SELECT * FROM secrets WHERE id=?', (secret_id,)).fetchone()
+    db.close()
+    if not row:
+        return jsonify({'error': 'not found'}), 404
+    vault_audit('reveal', row['label'])
+    return jsonify({**dict(row), 'secret': vault_decrypt(row['secret'])})
+
+@app.route('/api/vault/<int:secret_id>', methods=['PUT'])
+@login_required
+def vault_update(secret_id):
+    """Update an existing secret."""
+    data = request.get_json()
+    db   = get_vault_db()
+    row  = db.execute('SELECT * FROM secrets WHERE id=?', (secret_id,)).fetchone()
+    if not row:
+        db.close()
+        return jsonify({'error': 'not found'}), 404
+    new_secret = (data.get('secret') or data.get('value') or '').strip()
+    encrypted  = vault_encrypt(new_secret) if new_secret else row['secret']
+    db.execute('''
+        UPDATE secrets SET
+            category=?, label=?, username=?, secret=?, url=?, notes=?,
+            updated=CURRENT_TIMESTAMP
+        WHERE id=?
+    ''', (
+        (data.get('category') or row['category']).strip(),
+        (data.get('label')    or row['label']).strip(),
+        (data.get('username') or row['username'] or '').strip(),
+        encrypted,
+        (data.get('url')      or row['url'] or '').strip(),
+        (data.get('notes')    or row['notes'] or '').strip(),
+        secret_id,
+    ))
+    db.commit()
+    db.close()
+    vault_audit('update', data.get('label') or row['label'])
+    return jsonify({'ok': True})
+
+@app.route('/api/vault/<int:secret_id>', methods=['DELETE'])
+@login_required
+def vault_delete(secret_id):
+    """Delete a secret."""
+    db  = get_vault_db()
+    row = db.execute('SELECT label FROM secrets WHERE id=?', (secret_id,)).fetchone()
+    if not row:
+        db.close()
+        return jsonify({'error': 'not found'}), 404
+    label = row['label']
+    db.execute('DELETE FROM secrets WHERE id=?', (secret_id,))
+    db.commit()
+    db.close()
+    vault_audit('delete', label)
+    return jsonify({'ok': True})
+
+@app.route('/api/vault/categories', methods=['GET'])
+@login_required
+def vault_categories():
+    db = get_vault_db()
+    rows = db.execute('SELECT DISTINCT category FROM secrets ORDER BY category').fetchall()
+    db.close()
+    return jsonify([r['category'] for r in rows])
+
+@app.route('/api/vault/echo', methods=['GET'])
+def vault_echo_read():
+    """Echo reads specific secrets by label (token-auth, no session)."""
+    token      = request.headers.get('X-Brain-Sync-Token', '')
+    sync_token = os.environ.get('BRAIN_SYNC_TOKEN', '')
+    if not sync_token or token != sync_token:
+        return jsonify({'error': 'unauthorized'}), 401
+    labels = request.args.getlist('label')
+    if not labels:
+        return jsonify({'error': 'label param required'}), 400
+    db   = get_vault_db()
+    out  = {}
+    for lbl in labels:
+        row = db.execute('SELECT * FROM secrets WHERE label=?', (lbl,)).fetchone()
+        if row:
+            out[lbl] = vault_decrypt(row['secret'])
+            vault_audit('echo-read', lbl)
+    db.close()
+    return jsonify(out)
+
 
 @app.route('/api/settings', methods=['GET'])
 @login_required

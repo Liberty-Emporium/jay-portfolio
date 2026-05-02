@@ -908,6 +908,20 @@ def vault_app_tokens_delete(token_id):
     return jsonify({'ok': True})
 
 
+@app.route('/api/admin/reset-brain-token', methods=['POST'])
+@login_required
+def api_reset_brain_token():
+    """Delete stale brain_sync_token.txt so env var takes effect on next request."""
+    import os as _os
+    deleted = False
+    if _os.path.exists(_BRAIN_SYNC_TOKEN_FILE):
+        _os.remove(_BRAIN_SYNC_TOKEN_FILE)
+        deleted = True
+    # Re-register from env var immediately
+    _register_brain_sync_token()
+    return jsonify({'ok': True, 'deleted': deleted, 'reregistered': True})
+
+
 @app.route('/api/settings', methods=['GET'])
 @login_required
 def api_settings_get():

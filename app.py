@@ -1292,6 +1292,85 @@ def dashboard():
     chat_token = os.environ.get('CHAT_BEARER_TOKEN', '')
     return render_template('dashboard.html', config=config, chat_token=chat_token)
 
+# ── Code Editor ──────────────────────────────────────────────────────────────
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+_CODE_ALLOWED_DIRS = ['templates', 'static']
+_CODE_ALLOWED_EXTS = {'.html', '.css', '.js', '.json', '.txt', '.md', '.py'}
+
+def _safe_code_path(rel_path):
+    """Resolve a relative path and ensure it stays inside APP_ROOT."""
+    full = os.path.normpath(os.path.join(APP_ROOT, rel_path))
+    if not full.startswith(APP_ROOT + os.sep) and full != APP_ROOT:
+        return None
+    top = rel_path.split(os.sep)[0] if rel_path else ''
+    if top not in _CODE_ALLOWED_DIRS:
+        return None
+    _, ext = os.path.splitext(full)
+    if ext not in _CODE_ALLOWED_EXTS:
+        return None
+    return full
+
+@app.route('/code')
+@login_required
+def code_editor():
+    """EcDash code editor — browse and edit templates & static files."""
+    return render_template('code.html', config=config)
+
+@app.route('/api/code/files')
+@login_required
+def api_code_files():
+    """Return the file tree for allowed directories."""
+    tree = []
+    for d in _CODE_ALLOWED_DIRS:
+        dir_path = os.path.join(APP_ROOT, d)
+        if not os.path.isdir(dir_path):
+            continue
+        for root, dirs, files in os.walk(dir_path):
+            dirs[:] = [x for x in sorted(dirs) if not x.startswith('.')]
+            for fname in sorted(files):
+                _, ext = os.path.splitext(fname)
+                if ext not in _CODE_ALLOWED_EXTS:
+                    continue
+                full = os.path.join(root, fname)
+                rel = os.path.relpath(full, APP_ROOT)
+                size = os.path.getsize(full)
+                tree.append({'path': rel, 'size': size})
+    return jsonify(tree)
+
+@app.route('/api/code/file', methods=['GET'])
+@login_required
+def api_code_file_get():
+    """Read a file."""
+    rel = request.args.get('path', '')
+    full = _safe_code_path(rel)
+    if not full or not os.path.isfile(full):
+        return jsonify({'error': 'not found or not allowed'}), 404
+    with open(full, encoding='utf-8', errors='replace') as f:
+        content = f.read()
+    return jsonify({'path': rel, 'content': content})
+
+@app.route('/api/code/file', methods=['POST'])
+@login_required
+def api_code_file_save():
+    """Save a file. Creates a .bak backup first."""
+    data = request.get_json(silent=True) or {}
+    rel = data.get('path', '')
+    content = data.get('content', '')
+    full = _safe_code_path(rel)
+    if not full:
+        return jsonify({'error': 'not allowed'}), 403
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    # Backup
+    if os.path.exists(full):
+        import shutil
+        shutil.copy2(full, full + '.bak')
+    with open(full, 'w', encoding='utf-8') as f:
+        f.write(content)
+    app.logger.info(f'Code editor saved: {rel}')
+    return jsonify({'ok': True, 'path': rel, 'bytes': len(content.encode())})
+
+# ─────────────────────────────────────────────────────────────────────────────
+
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 @csrf_required

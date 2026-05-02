@@ -454,7 +454,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">Menu</div>
-    <button class="nav-item active" onclick="showPanelMob('overview')">🏠 <span>Overview</span></button>
+    <button class="nav-item active" onclick="showPanelMob('today')">🌅 <span>Today</span></button>
+    <button class="nav-item" onclick="showPanelMob('overview')">🏠 <span>Overview</span></button>
     <button class="nav-item" onclick="showPanelMob('projects')">🚀 <span>Projects</span></button>
     <button class="nav-item" onclick="showPanelMob('todos')">✅ <span>To-Do List</span></button>
     <button class="nav-item" onclick="showPanelMob('links')">🔗 <span>Quick Links</span></button>
@@ -480,17 +481,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
 <!-- ── Mobile bottom nav bar ── -->
 <nav id="mob-bottom-nav" role="navigation" aria-label="Bottom navigation">
-  <button class="mob-nav-btn active" id="mbn-overview" onclick="showPanelMob('overview')">
-    <span class="mbn-icon">🏠</span><span>Home</span>
+  <button class="mob-nav-btn active" id="mbn-today" onclick="showPanelMob('today')">
+    <span class="mbn-icon">🌅</span><span>Today</span>
+  </button>
+  <button class="mob-nav-btn" id="mbn-todos" onclick="showPanelMob('todos')">
+    <span class="mbn-icon">✅</span><span>Tasks</span>
   </button>
   <button class="mob-nav-btn" id="mbn-projects" onclick="showPanelMob('projects')">
     <span class="mbn-icon">🚀</span><span>Apps</span>
   </button>
   <button class="mob-nav-btn" id="mbn-credentials" onclick="showPanelMob('credentials')">
     <span class="mbn-icon">🔐</span><span>Creds</span>
-  </button>
-  <button class="mob-nav-btn" id="mbn-todos" onclick="showPanelMob('todos')">
-    <span class="mbn-icon">✅</span><span>Tasks</span>
   </button>
   <button class="mob-nav-btn" id="mbn-more" onclick="openMobMenu()">
     <span class="mbn-icon">☰</span><span>More</span>
@@ -509,8 +510,92 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
   <div class="content">
 
+    <!-- ══════════════ TODAY (new default landing) ══════════════ -->
+    <div class="panel active" id="panel-today">
+
+      <!-- Big date banner -->
+      <div style="background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.12));border:1px solid rgba(99,102,241,.3);border-radius:18px;padding:28px 28px 22px;margin-bottom:22px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;line-height:1.1" id="today-greeting">Good morning, Jay 👋</div>
+            <div style="font-size:1.1rem;color:var(--muted);margin-top:6px" id="today-date-str">Loading date...</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:2.2rem;font-weight:700;font-family:'Space Grotesk',sans-serif" id="today-clock-big">--:--</div>
+            <div id="today-health-pill" style="font-size:.85rem;padding:5px 14px;border-radius:20px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.1);color:var(--green);margin-top:4px;cursor:pointer" onclick="loadHealth()">⟳ Checking apps...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Echo's message to Jay -->
+      <div id="today-echo-note-wrap" style="margin-bottom:22px;display:none">
+        <div style="background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.05));border:1px solid rgba(16,185,129,.3);border-radius:14px;padding:20px 22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="font-size:1.4rem">🧠</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;color:var(--green)">Echo's Note for You</span>
+          </div>
+          <div id="today-echo-note-text" style="font-size:1rem;line-height:1.7;color:var(--text)"></div>
+        </div>
+      </div>
+
+      <!-- FOCUS: Top tasks BIG -->
+      <div style="margin-bottom:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700">🎯 Focus Right Now</div>
+          <button class="btn btn-sm btn-ghost" onclick="showPanelMob('todos')">All Tasks →</button>
+        </div>
+        <div id="today-focus-list" style="display:flex;flex-direction:column;gap:10px">
+          <div style="color:var(--muted);font-size:.9rem;padding:12px 0">Loading your tasks...</div>
+        </div>
+        <!-- Quick add -->
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <input class="todo-input" id="today-quick-add" placeholder="+ Quick add a task..." onkeydown="if(event.key==='Enter')todayQuickAdd()" style="font-size:.95rem;padding:11px 14px">
+          <button class="btn btn-primary" onclick="todayQuickAdd()">Add</button>
+        </div>
+      </div>
+
+      <!-- App health — bigger cards -->
+      <div style="margin-bottom:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700">🟢 App Health</div>
+          <button class="btn btn-sm btn-ghost" onclick="loadHealth()">Refresh</button>
+        </div>
+        <div id="today-health-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+          <div style="color:var(--muted);font-size:.9rem;padding:12px 0">Checking apps...</div>
+        </div>
+      </div>
+
+      <!-- Echo Bridge quick send -->
+      <div style="margin-bottom:22px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;margin-bottom:14px">💬 Send Echo a Task</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px">
+          <div style="display:flex;gap:8px">
+            <input id="today-bridge-input" class="todo-input" placeholder="Tell Echo what to do — she'll handle it next session..." style="font-size:.95rem;padding:11px 14px">
+            <button class="btn btn-primary" onclick="todaySendBridge()">Send 🚀</button>
+          </div>
+          <div id="today-bridge-status" style="font-size:.8rem;color:var(--muted);margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- Quick-tap app launchers -->
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;margin-bottom:14px">⚡ Open an App</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+          <a href="https://alexanderai.site" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s;cursor:pointer" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">🌐</div><div style="font-size:.88rem;font-weight:600">Portfolio</div></div></a>
+          <a href="https://billy-floods.up.railway.app" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">🌊</div><div style="font-size:.88rem;font-weight:600">FloodClaim Pro</div></div></a>
+          <a href="https://ai.widget.alexanderai.site" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">🤖</div><div style="font-size:.88rem;font-weight:600">AI Widget</div></div></a>
+          <a href="https://sweet-spot-cakes.up.railway.app" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">🍰</div><div style="font-size:.88rem;font-weight:600">Sweet Spot</div></div></a>
+          <a href="https://pet-vet-ai-production.up.railway.app" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">🐕</div><div style="font-size:.88rem;font-weight:600">Pet Vet AI</div></div></a>
+          <a href="https://moms-ai-helper.up.railway.app" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">💜</div><div style="font-size:.88rem;font-weight:600">Grace</div></div></a>
+          <a href="https://web-production-1c23.up.railway.app" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">🏋️</div><div style="font-size:.88rem;font-weight:600">GymForge</div></div></a>
+          <a href="https://shop.alexanderai.site" target="_blank" style="text-decoration:none"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.8rem;margin-bottom:6px">🛒</div><div style="font-size:.88rem;font-weight:600">Drop Shop</div></div></a>
+        </div>
+      </div>
+
+    </div>
+
     <!-- ══════════════ OVERVIEW ══════════════ -->
-    <div class="panel active" id="panel-overview">
+    <div class="panel" id="panel-overview">
 
       <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px">
@@ -1578,6 +1663,7 @@ async function fetchTodos() {
     _todos = await r.json();
     updateOverviewTodos();
     renderTodos();
+    if (typeof _renderTodayFocus === 'function') _renderTodayFocus();
   } catch(e) { console.error('Failed to fetch todos', e); }
 }
 
@@ -1728,6 +1814,141 @@ function copyPw(btn) {
   });
 }
 
+// ── Today panel ──
+(function(){
+  // Big clock
+  function updateTodayClock() {
+    const el = document.getElementById('today-clock-big');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  }
+  updateTodayClock();
+  setInterval(updateTodayClock, 1000);
+
+  // Greeting + date
+  function updateTodayDate() {
+    const greet = document.getElementById('today-greeting');
+    const dateStr = document.getElementById('today-date-str');
+    if (!greet || !dateStr) return;
+    const now = new Date();
+    const h = now.getHours();
+    const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+    greet.textContent = g + ', Jay \ud83d\udc4b';
+    const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+    dateStr.textContent = now.toLocaleDateString('en-US', opts);
+  }
+  updateTodayDate();
+
+  // Load Echo's latest pinned note for Today panel
+  window._loadTodayEchoNote = function() {
+    fetch('/api/notes?filter=echo')
+      .then(r => r.json())
+      .then(data => {
+        const notes = (data.notes || []).filter(n => n.author === 'echo' || n.from_echo);
+        // Prefer pinned, then latest
+        const pinned = notes.filter(n => n.pinned);
+        const note = pinned.length ? pinned[0] : notes.length ? notes[0] : null;
+        const wrap = document.getElementById('today-echo-note-wrap');
+        const txt  = document.getElementById('today-echo-note-text');
+        if (note && wrap && txt) {
+          txt.textContent = note.text || note.content || '';
+          wrap.style.display = 'block';
+        }
+      })
+      .catch(() => {});
+  };
+  window._loadTodayEchoNote();
+
+  // Today focus list (mirrors overview todos but bigger)
+  window._renderTodayFocus = function() {
+    const el = document.getElementById('today-focus-list');
+    if (!el) return;
+    const open = (_todos || []).filter(t => !t.done);
+    const priOrder = {high:0, medium:1, low:2};
+    const top = [...open].sort((a,b) => (priOrder[a.priority]||1)-(priOrder[b.priority]||1)).slice(0,5);
+    if (!top.length) {
+      el.innerHTML = '<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:20px;text-align:center;font-size:1rem;color:var(--green)">🎉 All clear! No open tasks. Enjoy the day.</div>';
+      return;
+    }
+    const priLabel = {high:'\ud83d\udd34 HIGH',medium:'\ud83d\udfe1 MED',low:'\ud83d\udfe2 LOW'};
+    const priBg    = {high:'rgba(239,68,68,.1)',medium:'rgba(245,158,11,.08)',low:'rgba(16,185,129,.08)'};
+    const priBdr   = {high:'rgba(239,68,68,.25)',medium:'rgba(245,158,11,.2)',low:'rgba(16,185,129,.2)'};
+    el.innerHTML = top.map(t => `
+      <div style="display:flex;align-items:center;gap:14px;background:${priBg[t.priority]||'var(--card)'};border:1px solid ${priBdr[t.priority]||'var(--border)'};border-radius:12px;padding:14px 16px;cursor:pointer" onclick="toggleTodo(${t.id});setTimeout(_renderTodayFocus,150)">
+        <div style="width:24px;height:24px;border-radius:7px;border:2px solid ${t.priority==='high'?'#ef4444':t.priority==='low'?'#10b981':'#f59e0b'};flex-shrink:0;display:flex;align-items:center;justify-content:center">&nbsp;</div>
+        <div style="flex:1;font-size:1rem;font-weight:500;line-height:1.4">${escHtml(t.text)}</div>
+        <span style="font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;background:${priBg[t.priority]};border:1px solid ${priBdr[t.priority]};color:${t.priority==='high'?'#f87171':t.priority==='low'?'#34d399':'#fbbf24'};flex-shrink:0">${priLabel[t.priority]||t.priority}</span>
+      </div>
+    `).join('');
+  };
+
+  // Today quick-add
+  window.todayQuickAdd = function() {
+    const inp = document.getElementById('today-quick-add');
+    if (!inp || !inp.value.trim()) return;
+    const orig = inp.value;
+    inp.value = '';
+    fetch('/api/todos', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({text: orig, priority:'high'})
+    }).then(r=>r.json()).then(todo=>{
+      _todos.unshift(todo);
+      updateOverviewTodos();
+      _renderTodayFocus();
+      renderTodos();
+    }).catch(()=>{ inp.value = orig; alert('Could not save'); });
+  };
+
+  // Today health grid — bigger cards
+  window._renderTodayHealth = function(results) {
+    const grid = document.getElementById('today-health-grid');
+    const pill = document.getElementById('today-health-pill');
+    if (!grid) return;
+    const up = results.filter(r=>r.ok).length;
+    const total = results.length;
+    if (pill) {
+      pill.textContent = up === total ? `\u2705 ${up}/${total} Online` : `\u26a0\ufe0f ${up}/${total} Online`;
+      pill.style.color = up === total ? 'var(--green)' : 'var(--yellow)';
+      pill.style.borderColor = up === total ? 'rgba(16,185,129,.3)' : 'rgba(245,158,11,.3)';
+      pill.style.background  = up === total ? 'rgba(16,185,129,.1)' : 'rgba(245,158,11,.08)';
+    }
+    grid.innerHTML = results.map(r => `
+      <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid ${r.ok?'rgba(16,185,129,.25)':'rgba(239,68,68,.25)'};border-radius:12px;padding:12px 14px">
+        <span style="font-size:1.3rem">${r.ok ? '\ud83d\udfe2' : '\ud83d\udd34'}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.name}</div>
+          <div style="font-size:.75rem;color:${r.ok?(r.ms<800?'var(--green)':r.ms<2000?'var(--yellow)':'var(--red)'):'var(--red)'}">${r.ok ? r.ms+'ms' : 'DOWN \u2014 needs attention'}</div>
+        </div>
+        <a href="${r.url}" target="_blank" style="font-size:.75rem;color:var(--accent3);text-decoration:none;flex-shrink:0">↗</a>
+      </div>`).join('');
+  };
+
+  // Bridge send from Today
+  window.todaySendBridge = function() {
+    const inp = document.getElementById('today-bridge-input');
+    const stat = document.getElementById('today-bridge-status');
+    const task = inp ? inp.value.trim() : '';
+    if (!task) return;
+    inp.value = ''; inp.disabled = true;
+    if (stat) stat.textContent = '\u23f3 Sending...';
+    fetch('/api/echo-bridge', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({task})
+    }).then(r=>r.json()).then(()=>{
+      inp.disabled = false;
+      if (stat) { stat.textContent = '\u2705 Task sent! Echo will pick it up next session.'; stat.style.color='var(--green)'; }
+      loadEchoBridge();
+    }).catch(()=>{
+      inp.disabled = false;
+      if (stat) { stat.textContent = '\u274c Failed to send'; stat.style.color='var(--red)'; }
+    });
+  };
+
+})();
+
 // ── Init ──
 fetchTodos();
 loadHealth();
@@ -1764,6 +1985,8 @@ function loadHealth() {
           <a href="${r.url}" target="_blank" style="flex:1;font-size:.82rem;font-weight:500;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.name}</a>
           <span style="font-size:.72rem;color:${r.ms < 800 ? 'var(--green)' : r.ms < 2000 ? 'var(--yellow)' : 'var(--red)'};font-family:monospace;flex-shrink:0">${r.ok ? r.ms + 'ms' : 'DOWN'}</span>
         </div>`).join('');
+      // Also update Today panel health
+      if (typeof _renderTodayHealth === 'function') _renderTodayHealth(results);
     })
     .catch(() => {
       if (grid) grid.innerHTML = '<div style="color:var(--muted);font-size:.83rem;text-align:center;padding:12px 0">Could not reach /api/health</div>';

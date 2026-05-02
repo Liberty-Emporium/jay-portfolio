@@ -637,7 +637,7 @@ def _get_vault_key():
     """Derive a stable Fernet key from the Flask secret key + a salt.
     This means the vault is tied to this instance's secret key — stored on /data."""
     raw = app.secret_key if isinstance(app.secret_key, bytes) else app.secret_key.encode()
-    dk  = _hashlib.pbkdf2_hmac('sha256', raw, b'vault-salt-v1', 10_000, dklen=32)
+    dk  = _hashlib.pbkdf2_hmac('sha256', raw, b'vault-salt-v1', 200_000, dklen=32)
     return base64.urlsafe_b64encode(dk)
 
 def get_vault_db():

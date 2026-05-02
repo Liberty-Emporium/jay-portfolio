@@ -1008,7 +1008,7 @@ def api_network_scan():
         'Contractor Pro AI':  'https://contractor-pro-ai-production.up.railway.app',
         'Drop Shipping':      'https://shop.alexanderai.site',
         'Consignment':        'https://web-production-43ce4.up.railway.app',
-        'Liberty Inventory':  'https://liberty-emporium-and-thrift-inventory-app-production.up.railway.app',
+        'Liberty Inventory':  'https://liberty-emporium-inventory-demo-app-production.up.railway.app',
         'GymForge':           'https://web-production-1c23.up.railway.app',
         'Liberty Oil':        'https://liberty-oil-propane.up.railway.app',
         "Grace (Mom's AI)":   'https://moms-ai-helper.up.railway.app',

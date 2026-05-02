@@ -823,20 +823,30 @@ function toggleEye(inputId, btn) {
 }
 
 // ── Photo preview ─────────────────────────────────────────────────────────────
+function getRawPhotoUrl(url) {
+  if (!url) return '';
+  // Fix GitHub blob URLs → raw URLs
+  url = url.replace('https://github.com/', 'https://raw.githubusercontent.com/')
+            .replace('/blob/', '/');
+  return url;
+}
+
 function previewPhoto(url) {
-  const img = document.getElementById('avatar-img');
-  const emoji = document.getElementById('avatar-emoji');
-  if (url && url.startsWith('http')) {
+  const display = document.getElementById('avatar-display');
+  let img = document.getElementById('avatar-img');
+  let emoji = document.getElementById('avatar-emoji');
+  const rawUrl = getRawPhotoUrl(url);
+  if (rawUrl && (rawUrl.startsWith('http') || rawUrl.startsWith('/'))) {
     if (!img) {
-      const i = document.createElement('img');
-      i.id = 'avatar-img'; i.className = 'avatar-preview'; i.style.display = 'block';
-      document.getElementById('avatar-display').appendChild(i);
-      if (emoji) emoji.style.display = 'none';
-      i.src = url;
-    } else {
-      img.src = url; img.style.display = 'block';
-      if (emoji) emoji.style.display = 'none';
+      img = document.createElement('img');
+      img.id = 'avatar-img'; img.className = 'avatar-preview'; img.style.display = 'block';
+      display.appendChild(img);
     }
+    img.src = rawUrl; img.style.display = 'block';
+    if (emoji) emoji.style.display = 'none';
+    // Also fix the input field to the raw URL
+    const inp = document.getElementById('photo_url_input');
+    if (inp && url !== rawUrl) inp.value = rawUrl;
   } else {
     if (img) img.style.display = 'none';
     if (emoji) emoji.style.display = 'flex';
@@ -1001,7 +1011,11 @@ window.addEventListener('load', async () => {
     if (saved) document.getElementById('selected-model-label').textContent = saved;
   }
 
-  // Auto-load brain if starting on brain or ai tab (rare, but handle it)
+  // Fix and preview the photo URL on load
+  const photoInp = document.getElementById('photo_url_input');
+  if (photoInp && photoInp.value) previewPhoto(photoInp.value);
+
+  // Auto-load brain if starting on brain or ai tab
   const hash = location.hash.replace('#','');
   if (hash) {
     const btn = document.querySelector('[onclick*="showTab(\'' + hash + '\'"]');

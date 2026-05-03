@@ -104,6 +104,28 @@
     .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
     .dot-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
     .dot-red { background: var(--red); }
+    /* Custom domain pulse badge */
+    @keyframes domain-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.7), 0 0 6px rgba(59,130,246,.5); }
+      50%      { box-shadow: 0 0 0 5px rgba(59,130,246,0),  0 0 8px rgba(59,130,246,.8); }
+    }
+    .dot-domain {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #3b82f6;
+      display: inline-block;
+      animation: domain-pulse 1.8s ease-in-out infinite;
+      vertical-align: middle;
+      cursor: default;
+    }
+    .domain-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .65rem; font-weight: 700; color: #60a5fa;
+      background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.3);
+      border-radius: 20px; padding: 2px 7px 2px 5px;
+      text-decoration: none; transition: background .2s;
+      white-space: nowrap;
+    }
+    .domain-badge:hover { background: rgba(59,130,246,.22); color: #93c5fd; }
     .proj-links { display: flex; gap: 10px; }
     .proj-links a { font-size: 0.78rem; font-weight: 600; color: var(--accent3); text-decoration: none; transition: color .2s; }
     .proj-links a:hover { color: white; }
@@ -827,7 +849,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
           <div class="proj-category">Construction · AI</div>
           <div class="proj-name">Contractor Pro AI</div>
           <div class="proj-desc">AI-powered construction estimating with 19 templates. Generates quotes, scope of work, and client proposals.</div>
-          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span><span class="tag">Estimating</span></div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span><span class="tag">Estimating</span>
+            <a href="https://contractor.ai.solutions.alexanderai.site" target="_blank" class="domain-badge" title="Custom domain active"><span class="dot-domain"></span>contractor.ai.solutions.alexanderai.site</a>
+          </div>
           <div class="proj-links">
             <a href="https://contractor.ai.solutions.alexanderai.site" target="_blank">Live App ↗</a>
             <a href="https://github.com/Liberty-Emporium/Contractor-Pro-AI" target="_blank">GitHub ↗</a>
@@ -853,7 +877,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
           <div class="proj-category">Portfolio · Personal</div>
           <div class="proj-name">Jay's Portfolio</div>
           <div class="proj-desc">This site - developer portfolio, investor deck, business card, tools library, and command center.</div>
-          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Portfolio</span></div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">Portfolio</span>
+            <a href="https://alexanderai.site" target="_blank" class="domain-badge" title="Custom domain active"><span class="dot-domain"></span>alexanderai.site</a>
+          </div>
           <div class="proj-links">
             <a href="https://alexanderai.site" target="_blank">Live Site ↗</a>
             <a href="https://github.com/Liberty-Emporium/jay-portfolio" target="_blank">GitHub ↗</a>
@@ -895,7 +921,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
           <div class="proj-category">Demo · E-commerce</div>
           <div class="proj-name">Consignment Solutions</div>
           <div class="proj-desc">Consignment store management system with AI pricing and automated listing syndication.</div>
-          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span></div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span>
+            <a href="https://consignment.ai.solutions.alexanderai.site" target="_blank" class="domain-badge" title="Custom domain active"><span class="dot-domain"></span>consignment.ai.solutions.alexanderai.site</a>
+          </div>
           <div class="proj-links">
             <a href="https://consignment.ai.solutions.alexanderai.site" target="_blank">Live ↗</a>
             <a href="https://github.com/Liberty-Emporium/Consignment-Solutions" target="_blank">GitHub ↗</a>
@@ -913,7 +941,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
           <div class="proj-category">AI Widget</div>
           <div class="proj-name">AI Agent Widget</div>
           <div class="proj-desc">Embeddable AI chat widget for any site. Drop in one script tag and you have a live AI assistant.</div>
-          <div class="proj-tags"><span class="tag">JS Widget</span><span class="tag">AI</span><span class="tag">Embeddable</span></div>
+          <div class="proj-tags"><span class="tag">JS Widget</span><span class="tag">AI</span><span class="tag">Embeddable</span>
+            <a href="https://ai.widget.alexanderai.site" target="_blank" class="domain-badge" title="Custom domain active"><span class="dot-domain"></span>ai.widget.alexanderai.site</a>
+          </div>
           <div class="proj-links">
             <a href="https://ai.widget.alexanderai.site" target="_blank">Live App ↗</a>
             <a href="https://github.com/Liberty-Emporium/AI-Agent-Widget" target="_blank">GitHub ↗</a>
@@ -969,6 +999,49 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
           <div class="proj-links">
             <a href="https://moms-ai-helper.up.railway.app" target="_blank">Live App ↗</a>
             <a href="https://github.com/Liberty-Emporium/grace-app" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">📦</div>
+          <div class="proj-category">E-Commerce · Dropshipping</div>
+          <div class="proj-name">Drop Shipping by Alexander AI</div>
+          <div class="proj-desc">CJ Dropshipping integration with one-click product import, auto-fulfillment, and AI-written marketing emails.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">CJ API</span><span class="tag">E-Commerce</span>
+            <a href="https://shop.alexanderai.site" target="_blank" class="domain-badge" title="Custom domain active"><span class="dot-domain"></span>shop.alexanderai.site</a>
+          </div>
+          <div class="proj-links">
+            <a href="https://shop.alexanderai.site" target="_blank">Live App ↗</a>
+            <a href="https://github.com/Liberty-Emporium/Drop-Shipping-by-alexander-ai-solutions" target="_blank">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">🎙️</div>
+          <div class="proj-category">Marketing · Landing Page</div>
+          <div class="proj-name">Alexander AI Voice</div>
+          <div class="proj-desc">Landing page for Alexander AI's voice AI product line. Clean, conversion-focused design.</div>
+          <div class="proj-tags"><span class="tag">HTML</span><span class="tag">Landing</span>
+            <a href="https://voice.alexanderai.site" target="_blank" class="domain-badge" title="Custom domain active"><span class="dot-domain"></span>voice.alexanderai.site</a>
+          </div>
+          <div class="proj-links">
+            <a href="https://voice.alexanderai.site" target="_blank">Live Site ↗</a>
+          </div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-status"><span class="dot dot-green" title="Live"></span></div>
+          <div class="proj-icon">📊</div>
+          <div class="proj-category">Listings · AI</div>
+          <div class="proj-name">List It Everywhere</div>
+          <div class="proj-desc">AI-powered listing syndication tool — create once, publish everywhere.</div>
+          <div class="proj-tags"><span class="tag">Flask</span><span class="tag">AI</span>
+            <a href="https://ai.info1.alexanderai.site" target="_blank" class="domain-badge" title="Custom domain active"><span class="dot-domain"></span>ai.info1.alexanderai.site</a>
+          </div>
+          <div class="proj-links">
+            <a href="https://ai.info1.alexanderai.site" target="_blank">Live App ↗</a>
           </div>
         </div>
 

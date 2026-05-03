@@ -1311,6 +1311,60 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
       <div style="max-width:800px;display:flex;flex-direction:column;gap:1.25rem">
 
+        <div class="card" style="border-left:3px solid #6366f1">
+          <div class="card-header"><div class="card-title">📆 Sun May 3, 2026 - Full System Reboot + Dashboard Fix</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🚀 <strong>New KiloClaw Instance</strong> - Fresh boot, bootstrap.sh ran clean, all tools installed</li>
+            <li>✅ <strong>GitHub + GitLab tokens refreshed</strong> - Both remotes re-configured</li>
+            <li>🔧 <strong>Dashboard Bug Fix</strong> - Moved App Tokens section from Daily panel → Credentials panel (wrong panel)</li>
+            <li>🔧 <strong>Dashboard Bug Fix</strong> - Added missing Sweet Spot Login Users table to Credentials panel</li>
+            <li>🔧 <strong>Dashboard Bug Fix</strong> - Added missing Sweet Spot Employee PINs table to Credentials panel</li>
+            <li>📅 <strong>Daily Summary updated</strong> - Added missing May 2026 sessions</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:3px solid #a855f7">
+          <div class="card-header"><div class="card-title">📆 Fri May 2, 2026 - EcDash Phase 2 Completion + Overnight Build</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🔐 <strong>Encrypted Vault</strong> - Live AES-256 Fernet database-backed secrets manager, 19 entries seeded</li>
+            <li>🧠 <strong>Brain Sync Fixed</strong> - MEMORY.md / SOUL.md / IDENTITY.md live on dashboard, token registered by SHA-256</li>
+            <li>💬 <strong>Chat Auth Fixed</strong> - Permanent bearer token in /data/api_tokens.json (survives Railway redeploys)</li>
+            <li>🔗 <strong>Phase 2: App-to-Vault Key Pull</strong> - /api/vault/app-keys endpoint, 10 app tokens generated</li>
+            <li>🦊 <strong>Full GitLab Backup</strong> - All 10 repos pushed to GitLab mirror</li>
+            <li>🔁 <strong>Tokens Refreshed</strong> - GitHub PAT, GitLab PAT, Railway token all updated</li>
+            <li>⏸️ <strong>Stripe on Hold</strong> - Jay decided to wait on Stripe for Sweet Spot</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-header"><div class="card-title">📆 Thu May 1, 2026 - Notes System + EcDash Phase 1</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>📝 <strong>Jay ↔ Echo Notes System</strong> - Built notes panel: Jay writes, Echo reads on every boot + posts boot notes</li>
+            <li>🔐 <strong>EcDash Phase 1</strong> - Encrypted Vault infrastructure (initial build)</li>
+            <li>📊 <strong>App Monitoring</strong> - EcDash error tracking wired up, auto-writes app-status.md</li>
+            <li>⚠️ <strong>500 Errors Logged</strong> - EcDash getting 500s from scanners/bots on /login, /settings, /api/monitor/error</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:3px solid #10b981">
+          <div class="card-header"><div class="card-title">📆 Wed Apr 30, 2026 - Custom Domains + Drop Shipping App</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🌐 <strong>Custom Domain Map</strong> - alexanderai.site, ai.widget.alexanderai.site, shop.alexanderai.site, voice.alexanderai.site all wired</li>
+            <li>🚀 <strong>Drop-Shipping-by-alexander-ai-solutions</strong> - Built full new app: CJ Dropshipping one-click import + auto-fulfillment</li>
+            <li>🔐 <strong>CJ Dropshipping API</strong> - Key integrated, product import working</li>
+            <li>📍 <strong>Liberty Oil DNS</strong> - Pointed to libertyoilandpropane.com (in progress)</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:3px solid #22d3ee">
+          <div class="card-header"><div class="card-title">📆 Tue Apr 29, 2026 - KYS Deleted + GymForge</div></div>
+          <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
+            <li>🗑️ <strong>KYS (Keep Your Secrets) DELETED</strong> - Replaced by EcDash Credentials panel as single source of truth</li>
+            <li>🏋️ <strong>GymForge</strong> - Multi-role gym management app: 7 roles, 29 pages, Django + Railway Postgres</li>
+            <li>🔧 <strong>GymForge migration fixes</strong> - Stale Railway Postgres migration records repaired</li>
+          </ul>
+        </div>
+
         <div class="card" style="border-left:3px solid #34d399">
           <div class="card-header"><div class="card-title">📆 Tue Apr 28, 2026 - Dropship App Completion</div></div>
           <ul style="font-size:.9rem;line-height:2;color:var(--muted);padding-left:1.25rem">
@@ -1454,18 +1508,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
           </ul>
         </div>
 
-      </div>
-
-      <!-- ── Phase 2: App Tokens ── -->
-      <div style="margin-top:2rem;max-width:980px">
-        <div class="card-header" style="margin-bottom:12px">
-          <div class="card-title">🔗 Phase 2 - App API Tokens</div>
-          <button class="btn btn-sm" onclick="createAppToken()">+ Register App</button>
-        </div>
-        <div class="section-sub" style="margin-bottom:14px">Each Liberty-Emporium app gets its own token to pull secrets from the vault at startup. Set <code>ECDASH_APP_TOKEN</code> in Railway for each app.</div>
-        <div id="app-tokens-list" style="display:flex;flex-direction:column;gap:8px">
-          <div style="color:var(--muted);font-size:.85rem">Loading...</div>
-        </div>
       </div>
 
     </div>
@@ -1647,6 +1689,39 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
         </div>
         <div id="vault-list" style="display:none"></div>
       </div>
+
+      <!-- ── Phase 2: App Tokens ── -->
+      <div style="margin-top:2rem;max-width:980px">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title">🔗 Phase 2 - App API Tokens</div>
+          <button class="btn btn-sm" onclick="createAppToken()">+ Register App</button>
+        </div>
+        <div class="section-sub" style="margin-bottom:14px">Each Liberty-Emporium app gets its own token to pull secrets from the vault at startup. Set <code>ECDASH_APP_TOKEN</code> in Railway for each app.</div>
+        <div id="app-tokens-list" style="display:flex;flex-direction:column;gap:8px">
+          <div style="color:var(--muted);font-size:.85rem">Loading...</div>
+        </div>
+      </div>
+
+      <!-- ── Sweet Spot: Login Users ── -->
+      <div style="margin-top:2rem;max-width:980px">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title">🍰 Sweet Spot - Login Credentials</div>
+          <button class="btn btn-sm btn-ghost" onclick="loadSweetSpotUsers()">🔄 Refresh</button>
+        </div>
+        <div class="section-sub" style="margin-bottom:14px">Staff login accounts for the Sweet Spot Cakes app.</div>
+        <div id="ss-users-table"><div style="color:var(--muted);font-size:.85rem">Loading...</div></div>
+      </div>
+
+      <!-- ── Sweet Spot: Employee PINs ── -->
+      <div style="margin-top:2rem;max-width:980px">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title">🍰 Sweet Spot - Employee Clock-In PINs</div>
+          <button class="btn btn-sm btn-ghost" onclick="loadSweetSpotEmployees()">🔄 Refresh</button>
+        </div>
+        <div class="section-sub" style="margin-bottom:14px">Employee PINs for clock-in/clock-out on the timesheet system.</div>
+        <div id="ss-emp-table"><div style="color:var(--muted);font-size:.85rem">Loading...</div></div>
+      </div>
+
     </div>
 
   </div><!-- /content -->

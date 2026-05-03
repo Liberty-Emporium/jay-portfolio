@@ -7,6 +7,9 @@ import urllib.error
 import time
 import threading
 import sqlite3
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from datetime import timedelta
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
@@ -357,6 +360,72 @@ _register_permanent_token()
 _vault_first_run()
 _register_brain_sync_token()
 
+# ── Password Reset ───────────────────────────────────────────────────────────
+RESET_EMAILS   = ['alexanderjay70@gmail.com', 'emporiumandthrift@gmail.com']
+_RESET_DB_PATH = None  # set after _DATA_DIR is defined below
+
+def _get_reset_db_path():
+    global _RESET_DB_PATH
+    if _RESET_DB_PATH is None:
+        _RESET_DB_PATH = os.path.join(_DATA_DIR, 'pw_resets.db')
+    return _RESET_DB_PATH
+
+def _init_reset_db():
+    db = sqlite3.connect(_get_reset_db_path())
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS pw_resets (
+            token TEXT PRIMARY KEY,
+            created_at TEXT NOT NULL,
+            used INTEGER DEFAULT 0
+        )
+    ''')
+    db.commit()
+    db.close()
+
+_init_reset_db()
+
+def _send_reset_email(token):
+    """Send reset link to both recovery emails via Gmail SMTP or Railway SMTP env vars."""
+    reset_url = f'https://jay-portfolio-production.up.railway.app/reset-password/{token}'
+    subject   = 'EcDash — Password Reset'
+    body_html = f'''<div style="font-family:Inter,sans-serif;max-width:480px;margin:0 auto;background:#030712;color:#f9fafb;padding:32px;border-radius:16px">
+  <h2 style="color:#a78bfa;margin-bottom:8px">🔐 EcDash Password Reset</h2>
+  <p style="color:#9ca3af;margin-bottom:24px">Click the button below to set a new password. This link expires in <strong>30 minutes</strong>.</p>
+  <a href="{reset_url}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700">Reset My Password</a>
+  <p style="color:#6b7280;font-size:.8rem;margin-top:24px">If you didn\'t request this, ignore this email. Your password won\'t change.</p>
+  <hr style="border-color:#1f2937;margin:24px 0">
+  <p style="color:#4b5563;font-size:.75rem">Or copy this link:<br>{reset_url}</p>
+</div>'''
+
+    smtp_host = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
+    smtp_port = int(os.environ.get('SMTP_PORT', '587'))
+    smtp_user = os.environ.get('SMTP_USER', '')
+    smtp_pass = os.environ.get('SMTP_PASS', '')
+
+    if not smtp_user or not smtp_pass:
+        # Log the link so Jay can still reset even without SMTP configured
+        app.logger.warning(f'SMTP not configured — reset link: {reset_url}')
+        return False
+
+    sent = 0
+    for to_addr in RESET_EMAILS:
+        try:
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From']    = smtp_user
+            msg['To']      = to_addr
+            msg.attach(MIMEText(body_html, 'html'))
+            with smtplib.SMTP(smtp_host, smtp_port) as server:
+                server.ehlo()
+                server.starttls()
+                server.login(smtp_user, smtp_pass)
+                server.sendmail(smtp_user, to_addr, msg.as_string())
+            sent += 1
+        except Exception as e:
+            app.logger.error(f'Reset email to {to_addr} failed: {e}')
+    return sent > 0
+
+
 def check_bearer_token():
     """Check Authorization: Bearer <token> header. Returns True if valid."""
     auth = request.headers.get('Authorization', '')
@@ -447,6 +516,68 @@ def login():
             return redirect(url_for('dashboard'))
         error = 'Wrong password. Try again.'
     return render_template('login.html', error=error)
+
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+@csrf_required
+def forgot_password():
+    sent = False
+    if request.method == 'POST':
+        import secrets as _sec
+        token = _sec.token_urlsafe(32)
+        db = sqlite3.connect(_get_reset_db_path())
+        # Invalidate old unused tokens
+        db.execute('UPDATE pw_resets SET used=1 WHERE used=0')
+        db.execute('INSERT INTO pw_resets(token,created_at) VALUES(?,?)',
+                   (token, datetime.datetime.utcnow().isoformat()))
+        db.commit()
+        db.close()
+        email_ok = _send_reset_email(token)
+        sent = True
+    return render_template('forgot_password.html', sent=sent)
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+@csrf_required
+def reset_password(token):
+    db   = sqlite3.connect(_get_reset_db_path())
+    row  = db.execute('SELECT created_at, used FROM pw_resets WHERE token=?', (token,)).fetchone()
+    db.close()
+
+    error   = None
+    expired = False
+
+    if not row or row[1]:
+        expired = True
+    else:
+        created = datetime.datetime.fromisoformat(row[0])
+        if (datetime.datetime.utcnow() - created).total_seconds() > 1800:  # 30 min
+            expired = True
+
+    if expired:
+        return render_template('reset_password.html', token=token, expired=True, error=None)
+
+    if request.method == 'POST':
+        new_pw  = request.form.get('password', '').strip()
+        confirm = request.form.get('confirm', '').strip()
+        if len(new_pw) < 6:
+            error = 'Password must be at least 6 characters.'
+        elif new_pw != confirm:
+            error = 'Passwords do not match.'
+        else:
+            # Save new password
+            global config
+            config = load_config()
+            config['dashboard_password'] = new_pw
+            save_config(config)
+            # Mark token used
+            db2 = sqlite3.connect(_get_reset_db_path())
+            db2.execute('UPDATE pw_resets SET used=1 WHERE token=?', (token,))
+            db2.commit()
+            db2.close()
+            return render_template('reset_password.html', token=token, success=True, error=None, expired=False)
+
+    return render_template('reset_password.html', token=token, expired=False, error=error)
 
 @app.route('/logout')
 def logout():

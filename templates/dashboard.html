@@ -2576,7 +2576,7 @@ window.showPanel = function(id) {
     const list  = document.getElementById('vault-list');
     const empty = document.getElementById('vault-empty');
     if (!secrets.length) { if(empty) empty.style.display='block'; return; }
-    if (list) { list.style.display='block'; }
+    if (list) list.style.display = 'block';
 
     // Group by category
     const grouped = {};
@@ -2587,74 +2587,102 @@ window.showPanel = function(id) {
     });
 
     list.innerHTML = Object.keys(grouped).sort().map(cat => `
-      <div style="margin-bottom:24px">
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
-                    color:var(--muted);margin-bottom:10px;padding:0 2px">${cat}</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px">
-          ${grouped[cat].map(s => _secretCard(s)).join('')}
+      <div style="margin-bottom:32px">
+        <!-- Category header -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px">
+          <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;
+                      color:var(--accent3);padding:3px 10px;background:rgba(99,102,241,.1);
+                      border-radius:20px;border:1px solid rgba(99,102,241,.2)">${cat}</div>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <div style="font-size:.7rem;color:var(--muted)">${grouped[cat].length} item${grouped[cat].length!==1?'s':''}</div>
         </div>
+        <!-- Table -->
+        <table style="width:100%;border-collapse:collapse;margin-top:8px">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;font-size:.68rem;font-weight:700;color:var(--muted);padding:6px 10px 8px;text-transform:uppercase;letter-spacing:.06em;width:22%">Name</th>
+              <th style="text-align:left;font-size:.68rem;font-weight:700;color:var(--muted);padding:6px 10px 8px;text-transform:uppercase;letter-spacing:.06em;width:20%">Username</th>
+              <th style="text-align:left;font-size:.68rem;font-weight:700;color:var(--muted);padding:6px 10px 8px;text-transform:uppercase;letter-spacing:.06em;width:22%">Password</th>
+              <th style="text-align:left;font-size:.68rem;font-weight:700;color:var(--muted);padding:6px 10px 8px;text-transform:uppercase;letter-spacing:.06em">Notes &amp; Links</th>
+              <th style="text-align:right;font-size:.68rem;font-weight:700;color:var(--muted);padding:6px 10px 8px;text-transform:uppercase;letter-spacing:.06em;width:80px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${grouped[cat].map((s,i) => _secretRow(s,i)).join('')}
+          </tbody>
+        </table>
       </div>
     `).join('');
   }
 
-  function _secretCard(s) {
-    const ts = s.updated ? s.updated.slice(0,10) : '';
-    return `<div id="vault-card-${s.id}" style="background:var(--card2);border:1px solid var(--border);
-              border-radius:10px;padding:14px 16px;position:relative">
+  function _secretRow(s, i) {
+    const ts  = s.updated ? s.updated.slice(0,10) : '';
+    const odd = i % 2 === 0;
+    const bg  = odd ? 'transparent' : 'rgba(255,255,255,.02)';
+    return `
+    <tr id="vault-card-${s.id}" style="background:${bg};border-bottom:1px solid rgba(255,255,255,.05);transition:background .1s"
+        onmouseover="this.style.background='rgba(99,102,241,.07)'" onmouseout="this.style.background='${bg}'">
 
-      <!-- Header: label + edit/delete -->
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:.9rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_esc(s.label)}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
-            ${s.url ? `<a href="${_esc(s.url)}" target="_blank"
-              style="font-size:.72rem;color:var(--accent3);text-decoration:none;display:inline-flex;align-items:center;gap:3px">
-              🔗 ${_esc(s.url.replace(/^https?:\/\//, '').split('/')[0])} ↗</a>` : ''}
-            ${s.change_url ? `<a href="${_esc(s.change_url)}" target="_blank"
-              style="font-size:.72rem;color:#f59e0b;text-decoration:none;display:inline-flex;align-items:center;gap:3px;
-                     background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:1px 6px">
-              🔑 Change Password ↗</a>` : ''}
-          </div>
+      <!-- Name + site link -->
+      <td style="padding:10px 10px;vertical-align:middle">
+        <div style="font-size:.88rem;font-weight:700;color:var(--text)">${_esc(s.label)}</div>
+        ${s.url ? `<a href="${_esc(s.url)}" target="_blank"
+          style="font-size:.7rem;color:var(--accent3);text-decoration:none;opacity:.8"
+          title="${_esc(s.url)}">&#x1F517; ${_esc(s.url.replace(/^https?:\/\//, '').split('/')[0])}</a>` : ''}
+      </td>
+
+      <!-- Username -->
+      <td style="padding:10px 10px;vertical-align:middle">
+        ${s.username ? `
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:.82rem;font-family:monospace;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px"
+                title="${_esc(s.username)}">${_esc(s.username)}</span>
+          <button onclick="vaultQuickCopy(this, \`${s.username.replace(/`/g,'\\`')}\`)"
+            style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);color:var(--accent3);
+                   border-radius:4px;padding:2px 7px;font-size:.68rem;cursor:pointer;flex-shrink:0;white-space:nowrap"
+            title="Copy username">Copy</button>
+        </div>` : `<span style="color:var(--muted);font-size:.78rem">&mdash;</span>`}
+      </td>
+
+      <!-- Password -->
+      <td style="padding:10px 10px;vertical-align:middle">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span id="vault-val-text-${s.id}" style="font-size:.82rem;font-family:monospace;color:var(--green);
+                letter-spacing:.08em">&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</span>
+          <button id="vault-eye-${s.id}" onclick="vaultReveal(${s.id})" title="Show / hide"
+            style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:0 2px;flex-shrink:0"
+            >&#x1F441;</button>
+          <button id="vault-copy-btn-${s.id}" onclick="vaultCopyDirect(${s.id}, this)"
+            style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);color:var(--accent3);
+                   border-radius:4px;padding:2px 7px;font-size:.68rem;cursor:pointer;flex-shrink:0;white-space:nowrap"
+            title="Copy password">Copy</button>
         </div>
-        <div style="display:flex;gap:4px;flex-shrink:0">
+      </td>
+
+      <!-- Notes + links -->
+      <td style="padding:10px 10px;vertical-align:middle">
+        ${s.notes ? `<div style="font-size:.78rem;color:var(--muted);margin-bottom:4px">${_esc(s.notes)}</div>` : ''}
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${s.change_url ? `<a href="${_esc(s.change_url)}" target="_blank"
+            style="font-size:.7rem;color:#f59e0b;text-decoration:none;
+                   background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
+                   border-radius:4px;padding:2px 7px;white-space:nowrap">&#x1F511; Change Password &#x2197;</a>` : ''}
+        </div>
+        ${ts ? `<div style="font-size:.62rem;color:var(--muted);margin-top:4px;opacity:.6">Updated ${ts}</div>` : ''}
+      </td>
+
+      <!-- Actions -->
+      <td style="padding:10px 10px;vertical-align:middle;text-align:right">
+        <div style="display:flex;gap:4px;justify-content:flex-end">
           <button onclick="vaultEdit(${s.id})" title="Edit"
-            style="background:var(--card);border:1px solid var(--border);color:var(--muted);
-                   border-radius:6px;padding:4px 8px;font-size:.75rem;cursor:pointer">✏️</button>
+            style="background:var(--card2);border:1px solid var(--border);color:var(--muted);
+                   border-radius:5px;padding:4px 9px;font-size:.72rem;cursor:pointer">&#x270F;&#xFE0F; Edit</button>
           <button onclick="vaultConfirmDelete(${s.id},'${_esc(s.label)}')" title="Delete"
-            style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;
-                   border-radius:6px;padding:4px 8px;font-size:.75rem;cursor:pointer">🗑</button>
+            style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#ef4444;
+                   border-radius:5px;padding:4px 9px;font-size:.72rem;cursor:pointer">&#x1F5D1;</button>
         </div>
-      </div>
-
-      <!-- Username row (always visible + one-click copy) -->
-      ${s.username ? `
-      <div style="display:flex;align-items:center;gap:8px;background:var(--card);
-                   border:1px solid var(--border);border-radius:7px;padding:7px 10px;margin-bottom:7px">
-        <span style="font-size:.68rem;color:var(--muted);width:60px;flex-shrink:0">👤 User</span>
-        <span style="flex:1;font-size:.82rem;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-              title="${_esc(s.username)}">${_esc(s.username)}</span>
-        <button onclick="vaultQuickCopy(this, \`${s.username.replace(/`/g,'\\`')}\`)"
-          style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:var(--accent3);
-                 border-radius:5px;padding:3px 9px;font-size:.7rem;cursor:pointer;flex-shrink:0">📋 Copy</button>
-      </div>` : ''}
-
-      <!-- Password row (dots by default, show/hide toggle + direct copy) -->
-      <div style="display:flex;align-items:center;gap:8px;background:var(--card);
-                   border:1px solid var(--border);border-radius:7px;padding:7px 10px;margin-bottom:7px">
-        <span style="font-size:.68rem;color:var(--muted);width:60px;flex-shrink:0">🔑 Pass</span>
-        <span id="vault-val-text-${s.id}" style="flex:1;font-size:.82rem;font-family:monospace;
-              color:var(--green);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">••••••••</span>
-        <button id="vault-eye-${s.id}" onclick="vaultReveal(${s.id})" title="Show/hide"
-          style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;
-                 padding:0 4px;flex-shrink:0">👁</button>
-        <button id="vault-copy-btn-${s.id}" onclick="vaultCopyDirect(${s.id}, this)" title="Copy password"
-          style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:var(--accent3);
-                 border-radius:5px;padding:3px 9px;font-size:.7rem;cursor:pointer;flex-shrink:0">📋 Copy</button>
-      </div>
-
-      ${s.notes ? `<div style="font-size:.75rem;color:var(--muted);margin-top:6px;padding:0 2px">${_esc(s.notes)}</div>` : ''}
-      <div style="font-size:.65rem;color:var(--muted);margin-top:6px;padding:0 2px">Updated ${ts}</div>
-    </div>`;
+      </td>
+    </tr>`;
   }
 
   // One-click copy for static values (username etc.)

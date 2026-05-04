@@ -783,11 +783,18 @@ def get_vault_db():
             username    TEXT    NOT NULL DEFAULT '',
             secret      TEXT    NOT NULL,          -- Fernet-encrypted value
             url         TEXT    NOT NULL DEFAULT '',
+            change_url  TEXT    NOT NULL DEFAULT '',
             notes       TEXT    NOT NULL DEFAULT '',
             created     TEXT    DEFAULT CURRENT_TIMESTAMP,
             updated     TEXT    DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    # Migrate: add change_url column if it doesn't exist yet
+    try:
+        db.execute('ALTER TABLE secrets ADD COLUMN change_url TEXT NOT NULL DEFAULT \'\'')
+        db.commit()
+    except Exception:
+        pass  # Column already exists
     db.execute('''
         CREATE TABLE IF NOT EXISTS vault_audit (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -827,7 +834,7 @@ def vault_list():
     """List all secrets (values redacted)."""
     db = get_vault_db()
     rows = db.execute(
-        'SELECT id,category,label,username,url,notes,created,updated FROM secrets ORDER BY category,label'
+        'SELECT id,category,label,username,url,change_url,notes,created,updated FROM secrets ORDER BY category,label'
     ).fetchall()
     db.close()
     return jsonify([dict(r) for r in rows])
@@ -844,14 +851,15 @@ def vault_create():
     encrypted = vault_encrypt(secret)
     db = get_vault_db()
     cur = db.execute(
-        '''INSERT INTO secrets(category,label,username,secret,url,notes)
-           VALUES(?,?,?,?,?,?)''',
+        '''INSERT INTO secrets(category,label,username,secret,url,change_url,notes)
+           VALUES(?,?,?,?,?,?,?)''',
         (
             (data.get('category') or 'General').strip(),
             label,
             (data.get('username') or '').strip(),
             encrypted,
             (data.get('url') or '').strip(),
+            (data.get('change_url') or '').strip(),
             (data.get('notes') or '').strip(),
         )
     )
@@ -887,16 +895,17 @@ def vault_update(secret_id):
     encrypted  = vault_encrypt(new_secret) if new_secret else row['secret']
     db.execute('''
         UPDATE secrets SET
-            category=?, label=?, username=?, secret=?, url=?, notes=?,
+            category=?, label=?, username=?, secret=?, url=?, change_url=?, notes=?,
             updated=CURRENT_TIMESTAMP
         WHERE id=?
     ''', (
-        (data.get('category') or row['category']).strip(),
-        (data.get('label')    or row['label']).strip(),
-        (data.get('username') or row['username'] or '').strip(),
+        (data.get('category')   or row['category']).strip(),
+        (data.get('label')      or row['label']).strip(),
+        (data.get('username')   or row['username'] or '').strip(),
         encrypted,
-        (data.get('url')      or row['url'] or '').strip(),
-        (data.get('notes')    or row['notes'] or '').strip(),
+        (data.get('url')        or row['url'] or '').strip(),
+        (data.get('change_url') if 'change_url' in data else (row['change_url'] if 'change_url' in dict(row) else '')),
+        (data.get('notes')      or row['notes'] or '').strip(),
         secret_id,
     ))
     db.commit()

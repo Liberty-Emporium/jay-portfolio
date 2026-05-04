@@ -1742,6 +1742,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
                        border-radius:7px;color:var(--text);padding:8px 11px;font-size:.85rem;outline:none">
             </div>
           </div>
+          <div style="margin-bottom:10px">
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">🔑 Change Password URL <span style="color:var(--muted);font-size:.7rem;font-style:italic">(direct link to password-change page)</span></div>
+            <input id="vf-change-url" type="text" placeholder="https://example.com/account/security"
+              style="width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--border);
+                     border-radius:7px;color:var(--text);padding:8px 11px;font-size:.85rem;outline:none">
+          </div>
           <div style="margin-bottom:14px">
             <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Notes</div>
             <input id="vf-notes" type="text" placeholder="Optional notes"
@@ -2600,9 +2606,15 @@ window.showPanel = function(id) {
       <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px">
         <div style="flex:1;min-width:0">
           <div style="font-size:.9rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_esc(s.label)}</div>
-          ${s.url ? `<a href="${_esc(s.url)}" target="_blank"
-            style="font-size:.72rem;color:var(--accent3);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:3px">
-            🔗 ${_esc(s.url.replace(/^https?:\/\//, '').split('/')[0])} ↗</a>` : ''}
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+            ${s.url ? `<a href="${_esc(s.url)}" target="_blank"
+              style="font-size:.72rem;color:var(--accent3);text-decoration:none;display:inline-flex;align-items:center;gap:3px">
+              🔗 ${_esc(s.url.replace(/^https?:\/\//, '').split('/')[0])} ↗</a>` : ''}
+            ${s.change_url ? `<a href="${_esc(s.change_url)}" target="_blank"
+              style="font-size:.72rem;color:#f59e0b;text-decoration:none;display:inline-flex;align-items:center;gap:3px;
+                     background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:1px 6px">
+              🔑 Change Password ↗</a>` : ''}
+          </div>
         </div>
         <div style="display:flex;gap:4px;flex-shrink:0">
           <button onclick="vaultEdit(${s.id})" title="Edit"
@@ -2740,13 +2752,14 @@ window.showPanel = function(id) {
   window.vaultShowForm = function(prefill) {
     document.getElementById('vault-form').style.display = 'block';
     document.getElementById('vault-form-title').textContent = '➕ Add New Secret';
-    document.getElementById('vf-id').value       = '';
-    document.getElementById('vf-label').value    = prefill?.label    || '';
-    document.getElementById('vf-category').value = prefill?.category || '';
-    document.getElementById('vf-secret').value   = '';
-    document.getElementById('vf-username').value = prefill?.username || '';
-    document.getElementById('vf-url').value      = prefill?.url      || '';
-    document.getElementById('vf-notes').value    = prefill?.notes    || '';
+    document.getElementById('vf-id').value         = '';
+    document.getElementById('vf-label').value      = prefill?.label      || '';
+    document.getElementById('vf-category').value   = prefill?.category   || '';
+    document.getElementById('vf-secret').value     = '';
+    document.getElementById('vf-username').value   = prefill?.username   || '';
+    document.getElementById('vf-url').value        = prefill?.url        || '';
+    document.getElementById('vf-change-url').value = prefill?.change_url || '';
+    document.getElementById('vf-notes').value      = prefill?.notes      || '';
     document.getElementById('vault-form-status').textContent = '';
     document.getElementById('vf-label').focus();
     document.getElementById('vault-form').scrollIntoView({behavior:'smooth',block:'start'});
@@ -2767,12 +2780,13 @@ window.showPanel = function(id) {
     document.getElementById('vault-form').style.display = 'block';
     document.getElementById('vault-form-title').textContent = '✏️ Edit Secret';
     document.getElementById('vf-id').value       = id;
-    document.getElementById('vf-label').value    = s.label    || '';
-    document.getElementById('vf-category').value = s.category || '';
-    document.getElementById('vf-secret').value   = '';
-    document.getElementById('vf-username').value = s.username || '';
-    document.getElementById('vf-url').value      = s.url      || '';
-    document.getElementById('vf-notes').value    = s.notes    || '';
+    document.getElementById('vf-label').value      = s.label      || '';
+    document.getElementById('vf-category').value   = s.category   || '';
+    document.getElementById('vf-secret').value     = '';
+    document.getElementById('vf-username').value   = s.username   || '';
+    document.getElementById('vf-url').value        = s.url        || '';
+    document.getElementById('vf-change-url').value = s.change_url || '';
+    document.getElementById('vf-notes').value      = s.notes      || '';
     document.getElementById('vault-form-status').textContent = '(leave secret blank to keep existing value)';
     document.getElementById('vault-form').scrollIntoView({behavior:'smooth',block:'start'});
   };
@@ -2787,10 +2801,11 @@ window.showPanel = function(id) {
     status.textContent='💾 Saving...'; status.style.color='var(--muted)';
     const body = {
       label,
-      category: document.getElementById('vf-category').value.trim() || 'General',
-      username: document.getElementById('vf-username').value.trim(),
-      url:      document.getElementById('vf-url').value.trim(),
-      notes:    document.getElementById('vf-notes').value.trim(),
+      category:   document.getElementById('vf-category').value.trim() || 'General',
+      username:   document.getElementById('vf-username').value.trim(),
+      url:        document.getElementById('vf-url').value.trim(),
+      change_url: document.getElementById('vf-change-url').value.trim(),
+      notes:      document.getElementById('vf-notes').value.trim(),
     };
     if (secret) body.secret = secret;
     const url    = id ? '/api/vault/'+id : '/api/vault';

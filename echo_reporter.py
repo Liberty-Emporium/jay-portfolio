@@ -17,7 +17,7 @@ import urllib.error
 from datetime import datetime, timezone
 
 # ── Config from env ───────────────────────────────────────────────────────────
-ECDASH_URL   = os.environ.get('ECDASH_REPORTER_URL',   'https://jay-portfolio-production.up.railway.app')
+ECDASH_URL   = os.environ.get('ECDASH_REPORTER_URL',   'https://aionui-1-production.up.railway.app')
 REPORT_TOKEN = os.environ.get('ECDASH_REPORTER_TOKEN', '')
 PING_INTERVAL = int(os.environ.get('ECDASH_PING_INTERVAL', '300'))  # seconds, default 5 min
 

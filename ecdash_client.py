@@ -36,7 +36,7 @@ from typing import Any, Dict, List, Optional
 logger = logging.getLogger("ecdash_client")
 
 # ── Config ────────────────────────────────────────────────────────────────────
-ECDASH_URL       = os.environ.get("ECDASH_URL",        "https://jay-portfolio-production.up.railway.app")
+ECDASH_URL       = os.environ.get("ECDASH_URL",        "https://aionui-1-production.up.railway.app")
 ECDASH_APP_TOKEN = os.environ.get("ECDASH_APP_TOKEN",  "")
 ECDASH_APP_NAME  = os.environ.get("ECDASH_APP_NAME",   "")
 _REQUEST_TIMEOUT = int(os.environ.get("ECDASH_TIMEOUT", "8"))

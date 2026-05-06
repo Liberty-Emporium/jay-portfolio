@@ -107,6 +107,28 @@ def rate_limit(key, max_calls=30, window=60):
     return False
 
 
+# ── Scanner / bot sink paths — return 410 Gone to reduce noise ─────────────────
+_SINK_PATHS = frozenset([
+    '/api', '/admin', '/_next/', '/en/', '/login',
+    '/wp-admin', '/wp-login', '/xmlrpc.php', '/wordpress',
+    '/.env', '/config.php', '/setup.php', '/administrator',
+    '/phpmyadmin', '/mysql', '/database', '/backup', '/bak',
+    '/old/', '/new/', '/test/', '/dev/', '/v1/', '/v2/',
+    '/console', '/api-docs', '/swagger', '/graphiql', '/graphql',
+    '/favicon.ico', '/sitemap.xml', '/robots.txt',
+])
+
+@app.before_request
+def _scanner_sink():
+    """Drop known scanner bait with 410 Gone before they hit app logic."""
+    from flask import abort
+    path = request.path.rstrip('/')
+    if path in _SINK_PATHS or any(path.startswith(p) for p in [
+        '/_next/', '/wp-', '/api ', '/admin/', '/.env',
+    ]):
+        abort(410)  # Gone — tells scanners to stop hitting this path
+
+
 @app.before_request
 def _csrf_protect():
     """Enforce CSRF on all state-changing requests."""

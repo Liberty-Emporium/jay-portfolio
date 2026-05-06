@@ -813,7 +813,13 @@ def get_vault_db():
     ''')
     # Migrate: add change_url column if it doesn't exist yet
     try:
-        db.execute('ALTER TABLE secrets ADD COLUMN change_url TEXT NOT NULL DEFAULT \'\'')
+        db.execute('ALTER TABLE secrets ADD COLUMN change_url TEXT NOT NULL DEFAULT \'\' ')
+        db.commit()
+    except Exception:
+        pass  # Column already exists
+    # Migrate: add expires_at column if it doesn't exist yet
+    try:
+        db.execute('ALTER TABLE secrets ADD COLUMN expires_at TEXT NOT NULL DEFAULT \'\' ')
         db.commit()
     except Exception:
         pass  # Column already exists
@@ -856,7 +862,7 @@ def vault_list():
     """List all secrets (values redacted)."""
     db = get_vault_db()
     rows = db.execute(
-        'SELECT id,category,label,username,url,change_url,notes,created,updated FROM secrets ORDER BY category,label'
+        'SELECT id,category,label,username,url,change_url,notes,expires_at,created,updated FROM secrets ORDER BY category,label'
     ).fetchall()
     db.close()
     return jsonify([dict(r) for r in rows])
@@ -873,8 +879,8 @@ def vault_create():
     encrypted = vault_encrypt(secret)
     db = get_vault_db()
     cur = db.execute(
-        '''INSERT INTO secrets(category,label,username,secret,url,change_url,notes)
-           VALUES(?,?,?,?,?,?,?)''',
+        '''INSERT INTO secrets(category,label,username,secret,url,change_url,notes,expires_at)
+           VALUES(?,?,?,?,?,?,?,?)''',
         (
             (data.get('category') or 'General').strip(),
             label,
@@ -883,6 +889,7 @@ def vault_create():
             (data.get('url') or '').strip(),
             (data.get('change_url') or '').strip(),
             (data.get('notes') or '').strip(),
+            (data.get('expires_at') or '').strip(),
         )
     )
     db.commit()
@@ -918,6 +925,7 @@ def vault_update(secret_id):
     db.execute('''
         UPDATE secrets SET
             category=?, label=?, username=?, secret=?, url=?, change_url=?, notes=?,
+            expires_at=?,
             updated=CURRENT_TIMESTAMP
         WHERE id=?
     ''', (
@@ -928,6 +936,7 @@ def vault_update(secret_id):
         (data.get('url')        or row['url'] or '').strip(),
         (data.get('change_url') if 'change_url' in data else (row['change_url'] if 'change_url' in dict(row) else '')),
         (data.get('notes')      or row['notes'] or '').strip(),
+        (data.get('expires_at') or row['expires_at'] or '').strip(),
         secret_id,
     ))
     db.commit()
@@ -1384,7 +1393,13 @@ def brain_get(filename):
     allowed = {'SOUL.md', 'IDENTITY.md', 'MEMORY.md'}
     if filename not in allowed:
         return jsonify({'error': 'not allowed'}), 403
-    return jsonify({'filename': filename, 'content': load_brain_file(filename)})
+    path = os.path.join(DATA_DIR, filename)
+    last_modified = None
+    if os.path.exists(path):
+        try:
+            last_modified = datetime.fromtimestamp(os.path.getmtime(path)).strftime('%b %d %Y %H:%M')
+        except: pass
+    return jsonify({'filename': filename, 'content': load_brain_file(filename), 'last_modified': last_modified})
 
 @app.route('/api/brain/<filename>', methods=['POST'])
 @login_required

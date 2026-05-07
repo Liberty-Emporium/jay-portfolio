@@ -109,7 +109,7 @@ def rate_limit(key, max_calls=30, window=60):
 
 # ── Scanner / bot sink paths — return 410 Gone to reduce noise ─────────────────
 _SINK_PATHS = frozenset([
-    '/api', '/admin', '/_next/', '/en/', '/login',
+    '/api', '/admin', '/_next/', '/en/',
     '/wp-admin', '/wp-login', '/xmlrpc.php', '/wordpress',
     '/.env', '/config.php', '/setup.php', '/administrator',
     '/phpmyadmin', '/mysql', '/database', '/backup', '/bak',
